@@ -1,0 +1,448 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		6D34876C23E734660067B26C /* Bytecode.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34876B23E734660067B26C /* Bytecode.c */; };
+		6D34877023E734780067B26C /* Compiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34876F23E734780067B26C /* Compiler.c */; };
+		6D34877323E734880067B26C /* CompilerErrors.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34877223E734880067B26C /* CompilerErrors.c */; };
+		6D34877623E734930067B26C /* Debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34877523E734930067B26C /* Debug.c */; };
+		6D34877923E7349E0067B26C /* HashTable.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34877823E7349D0067B26C /* HashTable.c */; };
+		6D34877D23E734B00067B26C /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34877C23E734B00067B26C /* main.c */; };
+		6D34877F23E734B70067B26C /* Memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34877E23E734B70067B26C /* Memory.c */; };
+		6D34878223E734C30067B26C /* Object.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34878123E734C20067B26C /* Object.c */; };
+		6D34878523E734D00067B26C /* Scanner.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34878423E734D00067B26C /* Scanner.c */; };
+		6D34878923E734FF0067B26C /* Value.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34878823E734FF0067B26C /* Value.c */; };
+		6D7C7BBE23E73B2400AED8F5 /* VM.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D7C7BBD23E73B2400AED8F5 /* VM.c */; };
+		6D7C7BCC23E73C1700AED8F5 /* Local.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D7C7BCB23E73C1700AED8F5 /* Local.c */; };
+		6D7C7BCF23E73F8F00AED8F5 /* CompilerBytecode.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D7C7BCE23E73F8F00AED8F5 /* CompilerBytecode.c */; };
+		6D7C7BD223E742CB00AED8F5 /* Helpers.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D7C7BD123E742CB00AED8F5 /* Helpers.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6D34875823E733100067B26C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		6D34875A23E733100067B26C /* PyInt */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PyInt; sourceTree = BUILT_PRODUCTS_DIR; };
+		6D34876B23E734660067B26C /* Bytecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Bytecode.c; sourceTree = "<group>"; };
+		6D34876D23E7346D0067B26C /* Bytecode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bytecode.h; sourceTree = "<group>"; };
+		6D34876F23E734780067B26C /* Compiler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Compiler.c; sourceTree = "<group>"; };
+		6D34877123E734830067B26C /* Compiler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Compiler.h; sourceTree = "<group>"; };
+		6D34877223E734880067B26C /* CompilerErrors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CompilerErrors.c; sourceTree = "<group>"; };
+		6D34877423E7348D0067B26C /* CompilerErrors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompilerErrors.h; sourceTree = "<group>"; };
+		6D34877523E734930067B26C /* Debug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Debug.c; sourceTree = "<group>"; };
+		6D34877723E734980067B26C /* Debug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Debug.h; sourceTree = "<group>"; };
+		6D34877823E7349D0067B26C /* HashTable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = HashTable.c; sourceTree = "<group>"; };
+		6D34877A23E734A30067B26C /* HashTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HashTable.h; sourceTree = "<group>"; };
+		6D34877C23E734B00067B26C /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		6D34877E23E734B70067B26C /* Memory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Memory.c; sourceTree = "<group>"; };
+		6D34878023E734BD0067B26C /* Memory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Memory.h; sourceTree = "<group>"; };
+		6D34878123E734C20067B26C /* Object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Object.c; sourceTree = "<group>"; };
+		6D34878323E734C90067B26C /* Object.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
+		6D34878423E734D00067B26C /* Scanner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Scanner.c; sourceTree = "<group>"; };
+		6D34878623E734DA0067B26C /* Scanner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Scanner.h; sourceTree = "<group>"; };
+		6D34878723E734F40067B26C /* Token.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Token.h; sourceTree = "<group>"; };
+		6D34878823E734FF0067B26C /* Value.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Value.c; sourceTree = "<group>"; };
+		6D34878A23E735090067B26C /* Value.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Value.h; sourceTree = "<group>"; };
+		6D7C7BBC23E73A5D00AED8F5 /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
+		6D7C7BBD23E73B2400AED8F5 /* VM.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = VM.c; sourceTree = "<group>"; };
+		6D7C7BBF23E73B3400AED8F5 /* VM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VM.h; sourceTree = "<group>"; };
+		6D7C7BCA23E73C1700AED8F5 /* Local.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Local.h; sourceTree = "<group>"; };
+		6D7C7BCB23E73C1700AED8F5 /* Local.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Local.c; sourceTree = "<group>"; };
+		6D7C7BCD23E73F8F00AED8F5 /* CompilerBytecode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompilerBytecode.h; sourceTree = "<group>"; };
+		6D7C7BCE23E73F8F00AED8F5 /* CompilerBytecode.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CompilerBytecode.c; sourceTree = "<group>"; };
+		6D7C7BD023E742CA00AED8F5 /* Helpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Helpers.h; sourceTree = "<group>"; };
+		6D7C7BD123E742CB00AED8F5 /* Helpers.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Helpers.c; sourceTree = "<group>"; };
+		6DC6235D23E738C400D5F621 /* PyInt_Script */ = {isa = PBXFileReference; lastKnownFileType = text; path = PyInt_Script; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6D34875723E733100067B26C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6D34875123E733100067B26C = {
+			isa = PBXGroup;
+			children = (
+				6D34875C23E733100067B26C /* PyInt */,
+				6D34875B23E733100067B26C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6D34875B23E733100067B26C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6D34875A23E733100067B26C /* PyInt */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6D34875C23E733100067B26C /* PyInt */ = {
+			isa = PBXGroup;
+			children = (
+				6D7C7BC923E73BEA00AED8F5 /* Bytecode */,
+				6D7C7BC823E73BD000AED8F5 /* Compiler */,
+				6D7C7BC723E73BC100AED8F5 /* Debug */,
+				6D7C7BC623E73BB000AED8F5 /* HashTable */,
+				6D7C7BC523E73B9600AED8F5 /* Memory */,
+				6D7C7BC423E73B8800AED8F5 /* Object */,
+				6D7C7BC323E73B7700AED8F5 /* Scanner */,
+				6D7C7BC223E73B6600AED8F5 /* Token */,
+				6D7C7BC123E73B5800AED8F5 /* Value */,
+				6D7C7BC023E73B3F00AED8F5 /* VM */,
+				6D34877C23E734B00067B26C /* main.c */,
+				6DC6235D23E738C400D5F621 /* PyInt_Script */,
+				6D7C7BBC23E73A5D00AED8F5 /* Common.h */,
+			);
+			path = PyInt;
+			sourceTree = "<group>";
+		};
+		6D7C7BC023E73B3F00AED8F5 /* VM */ = {
+			isa = PBXGroup;
+			children = (
+				6D7C7BBD23E73B2400AED8F5 /* VM.c */,
+				6D7C7BBF23E73B3400AED8F5 /* VM.h */,
+			);
+			path = VM;
+			sourceTree = "<group>";
+		};
+		6D7C7BC123E73B5800AED8F5 /* Value */ = {
+			isa = PBXGroup;
+			children = (
+				6D34878823E734FF0067B26C /* Value.c */,
+				6D34878A23E735090067B26C /* Value.h */,
+			);
+			path = Value;
+			sourceTree = "<group>";
+		};
+		6D7C7BC223E73B6600AED8F5 /* Token */ = {
+			isa = PBXGroup;
+			children = (
+				6D34878723E734F40067B26C /* Token.h */,
+			);
+			path = Token;
+			sourceTree = "<group>";
+		};
+		6D7C7BC323E73B7700AED8F5 /* Scanner */ = {
+			isa = PBXGroup;
+			children = (
+				6D34878423E734D00067B26C /* Scanner.c */,
+				6D34878623E734DA0067B26C /* Scanner.h */,
+			);
+			path = Scanner;
+			sourceTree = "<group>";
+		};
+		6D7C7BC423E73B8800AED8F5 /* Object */ = {
+			isa = PBXGroup;
+			children = (
+				6D34878123E734C20067B26C /* Object.c */,
+				6D34878323E734C90067B26C /* Object.h */,
+			);
+			path = Object;
+			sourceTree = "<group>";
+		};
+		6D7C7BC523E73B9600AED8F5 /* Memory */ = {
+			isa = PBXGroup;
+			children = (
+				6D34877E23E734B70067B26C /* Memory.c */,
+				6D34878023E734BD0067B26C /* Memory.h */,
+			);
+			path = Memory;
+			sourceTree = "<group>";
+		};
+		6D7C7BC623E73BB000AED8F5 /* HashTable */ = {
+			isa = PBXGroup;
+			children = (
+				6D34877823E7349D0067B26C /* HashTable.c */,
+				6D34877A23E734A30067B26C /* HashTable.h */,
+			);
+			path = HashTable;
+			sourceTree = "<group>";
+		};
+		6D7C7BC723E73BC100AED8F5 /* Debug */ = {
+			isa = PBXGroup;
+			children = (
+				6D34877523E734930067B26C /* Debug.c */,
+				6D34877723E734980067B26C /* Debug.h */,
+			);
+			path = Debug;
+			sourceTree = "<group>";
+		};
+		6D7C7BC823E73BD000AED8F5 /* Compiler */ = {
+			isa = PBXGroup;
+			children = (
+				6D34876F23E734780067B26C /* Compiler.c */,
+				6D34877123E734830067B26C /* Compiler.h */,
+				6D34877223E734880067B26C /* CompilerErrors.c */,
+				6D34877423E7348D0067B26C /* CompilerErrors.h */,
+				6D7C7BCA23E73C1700AED8F5 /* Local.h */,
+				6D7C7BCB23E73C1700AED8F5 /* Local.c */,
+				6D7C7BCD23E73F8F00AED8F5 /* CompilerBytecode.h */,
+				6D7C7BCE23E73F8F00AED8F5 /* CompilerBytecode.c */,
+				6D7C7BD023E742CA00AED8F5 /* Helpers.h */,
+				6D7C7BD123E742CB00AED8F5 /* Helpers.c */,
+			);
+			path = Compiler;
+			sourceTree = "<group>";
+		};
+		6D7C7BC923E73BEA00AED8F5 /* Bytecode */ = {
+			isa = PBXGroup;
+			children = (
+				6D34876B23E734660067B26C /* Bytecode.c */,
+				6D34876D23E7346D0067B26C /* Bytecode.h */,
+			);
+			path = Bytecode;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6D34875923E733100067B26C /* PyInt */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6D34876123E733100067B26C /* Build configuration list for PBXNativeTarget "PyInt" */;
+			buildPhases = (
+				6D34875623E733100067B26C /* Sources */,
+				6D34875723E733100067B26C /* Frameworks */,
+				6D34875823E733100067B26C /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PyInt;
+			productName = PyInt;
+			productReference = 6D34875A23E733100067B26C /* PyInt */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6D34875223E733100067B26C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1120;
+				ORGANIZATIONNAME = "Shaun Mitchell";
+				TargetAttributes = {
+					6D34875923E733100067B26C = {
+						CreatedOnToolsVersion = 11.2.1;
+					};
+				};
+			};
+			buildConfigurationList = 6D34875523E733100067B26C /* Build configuration list for PBXProject "PyInt" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 6D34875123E733100067B26C;
+			productRefGroup = 6D34875B23E733100067B26C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6D34875923E733100067B26C /* PyInt */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6D34875623E733100067B26C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6D34878223E734C30067B26C /* Object.c in Sources */,
+				6D7C7BCF23E73F8F00AED8F5 /* CompilerBytecode.c in Sources */,
+				6D34877023E734780067B26C /* Compiler.c in Sources */,
+				6D34877323E734880067B26C /* CompilerErrors.c in Sources */,
+				6D7C7BCC23E73C1700AED8F5 /* Local.c in Sources */,
+				6D7C7BD223E742CB00AED8F5 /* Helpers.c in Sources */,
+				6D34878923E734FF0067B26C /* Value.c in Sources */,
+				6D7C7BBE23E73B2400AED8F5 /* VM.c in Sources */,
+				6D34877D23E734B00067B26C /* main.c in Sources */,
+				6D34877923E7349E0067B26C /* HashTable.c in Sources */,
+				6D34877F23E734B70067B26C /* Memory.c in Sources */,
+				6D34878523E734D00067B26C /* Scanner.c in Sources */,
+				6D34876C23E734660067B26C /* Bytecode.c in Sources */,
+				6D34877623E734930067B26C /* Debug.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		6D34875F23E733100067B26C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		6D34876023E733100067B26C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		6D34876223E733100067B26C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2F2YDXSHY6;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_NO_COMMON_BLOCKS = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		6D34876323E733100067B26C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2F2YDXSHY6;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_NO_COMMON_BLOCKS = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6D34875523E733100067B26C /* Build configuration list for PBXProject "PyInt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6D34875F23E733100067B26C /* Debug */,
+				6D34876023E733100067B26C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6D34876123E733100067B26C /* Build configuration list for PBXNativeTarget "PyInt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6D34876223E733100067B26C /* Debug */,
+				6D34876323E733100067B26C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6D34875223E733100067B26C /* Project object */;
+}
