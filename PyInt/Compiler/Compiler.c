@@ -60,7 +60,7 @@ static void Test() {
     if (MatchToken(LAMBDA_TOKEN)) {
         LambdaDef();
     } else {
-        ParsePrecedence(PREC_OR);
+        ParsePrecedence(PREC_ASSIGNMENT);
     }
     if (MatchToken(IF_TOKEN)) {
         ParsePrecedence(PREC_OR);
@@ -140,7 +140,7 @@ static void Suite() {
         do {
             Statement();
             TryConsumeToken(NEWLINE_TOKEN);
-        } while(!MatchToken(DEDENT_TOKEN));
+        } while(!MatchToken(DEDENT_TOKEN) && !MatchToken(EOF_TOKEN));
     }
     else {
         SimpleStatement();
@@ -245,6 +245,19 @@ static void FunctionDefinition() {
 
 static void ClassDefinition() {
     
+}
+
+static void VariableDeclaration() {
+    uint8_t global = ParseVariable();
+
+    if (MatchToken(EQUAL_TOKEN)) {
+        Expression();
+    }
+    else {
+        WriteByte(NONE_OP);
+    }
+
+    DefineVariable(global);
 }
 
 static void PrintStatement() {
@@ -353,30 +366,38 @@ static void Boolean(bool canAssign) {
     WriteConstantOperation(BOOLEAN_VAL(boolean));
 }
 
-static void Identifier(bool canAssign) {
-    uint8_t address = StoreConstant(OBJ_VAL(CopyString(parser.previous.start, parser.previous.length)));
-    
-    uint8_t getOp, setOp;
+static void LocalIdentifier(bool canAssign) {
     int arg = ResolveLocal(&parser.previous);
-    if (arg != -1) {
-        getOp = GET_LOCAL_OP;
-        setOp = SET_LOCAL_OP;
-    }
-    else {
-        arg = IdentifierConstant(&parser.previous);
-        getOp = GET_GLOBAL_OP;
-        setOp = SET_GLOBAL_OP;
-    }
     
-    if (canAssign & MatchToken(EQUAL_TOKEN)) {
-        ParsePrecedence(PREC_ASSIGNMENT);
-        WriteBytes(setOp, address);
-     }
+    if (arg == -1) {
+        VariableDeclaration();
+    }
     else {
-        WriteBytes(getOp, address);
+        WriteBytes(GET_LOCAL_OP, (uint8_t)arg);
     }
 }
 
+static void GlobalIdentifier(bool canAssign) {
+    int arg = IdentifierConstant(&parser.previous);
+    
+     if (canAssign && MatchToken(EQUAL_TOKEN)) {
+           Expression();
+           WriteBytes(SET_GLOBAL_OP, (uint8_t)arg);
+       }
+       else {
+           WriteBytes(GET_GLOBAL_OP, (uint8_t)arg);
+       }
+}
+
+static void Identifier(bool canAssign) {
+
+    if (compiler.scopeDepth > 0) {
+        LocalIdentifier(canAssign);
+    }
+    else {
+        GlobalIdentifier(canAssign);
+    }
+}
 
 ParseRule rules[] = {
     {Grouping,   NULL,      PREC_CALL},         //      LEFT_PAREN_TOKEN
@@ -471,7 +492,7 @@ bool Compile(Bytecode* bytecode, const char* sourceCode, const char* path) {
     }
     else {
         while (parser.current.type != EOF_TOKEN) {
-            if (!MatchToken(NEWLINE_TOKEN)) {
+            if (!MatchToken(NEWLINE_TOKEN) && !MatchToken(EOF_TOKEN)) {
                 Statement();
             }
         }

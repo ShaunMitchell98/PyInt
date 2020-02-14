@@ -16,16 +16,6 @@ void WriteReturn() {
     WriteByte(RETURN_OP);
 }
 
-uint8_t MakeConstant(Value value) {
-    int constant = AddConstant(compiler.bytecode, value);
-    if (constant > UINT8_MAX) {
-        Error("Too many constants in one chunk.");
-        return 0;
-    }
-    
-    return (uint8_t) constant;
-}
-
 uint8_t StoreConstant(Value value) {
     int address = AddConstant(compiler.bytecode, value);
     if (address > UINT8_MAX) {

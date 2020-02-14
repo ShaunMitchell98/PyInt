@@ -10,6 +10,7 @@
 #define ExceptError "'except' expected"
 #define NameError "Name expected"
 #define NewlineError "Newline expected"
+#define GlobalError "Global Error"
 
 void Error(const char* message);
 void SyntaxError(Token* token);

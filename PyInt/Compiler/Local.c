@@ -10,7 +10,7 @@
 #include "Compiler.h"
 
 uint8_t IdentifierConstant(Token* name) {
-    return MakeConstant(OBJ_VAL(CopyString(name->start, name->length)));
+    return StoreConstant(OBJ_VAL(CopyString(name->start, name->length)));
 }
 
 static bool IdentifiersEqual(Token* a, Token* b) {
@@ -32,15 +32,16 @@ int ResolveLocal(Token* name) {
     return -1;
 }
 
-static void AddLocal(Token* token) {
+static int AddLocal(Token* token) {
     if (compiler.localCount == UINT8_COUNT) {
         Error("Too many local variables in function.");
-        return;
+        return -1;
     }
 
     Local* local = &compiler.locals[compiler.localCount++];
     local->name = *token;
     local->depth = -1;
+    return compiler.localCount-1;
 }
 
 bool LocalDeclared(Token* token) {
@@ -59,20 +60,24 @@ bool LocalDeclared(Token* token) {
     return false;
 }
 
-void DeclareVariable() {
+ int DeclareVariable() {
     //Global variables are implicitly declared.
-    if (compiler.scopeDepth == 0) return;
+    if (compiler.scopeDepth == 0) return -1;
     
     Token* token = &parser.previous;
     if (!LocalDeclared(token)) {
-        AddLocal(token);
+        return AddLocal(token);
     }
+     return -1;
 }
 
-uint8_t ParseVariable(const char* errorMessage) {
-    ConsumeToken(IDENTIFIER_TOKEN, errorMessage);
-
-    DeclareVariable();
+uint8_t ParseVariable() {
+    int address = DeclareVariable();
+    
+    if (address != -1){
+        WriteBytes(DECLARE_LOCAL_OP, address);
+    }
+    
     if (compiler.scopeDepth > 0) return 0;
     return IdentifierConstant(&parser.previous);
 }
@@ -90,14 +95,15 @@ void EndScope() {
     }
 }
 
-static void MarkInitialized(Compiler* compiler) {
-    if (compiler->scopeDepth == 0) return;
-    compiler->locals[compiler->localCount-1].depth = compiler->scopeDepth;
+void MarkInitialised() {
+    if (compiler.scopeDepth == 0) return;
+    compiler.locals[compiler.localCount-1].depth = compiler.scopeDepth;
 }
 
-static void DefineVariable(Compiler* compiler, uint8_t global) {
-    if (compiler->scopeDepth > 0) {
-        MarkInitialized(compiler);
+void DefineVariable(uint8_t global) {
+    if (compiler.scopeDepth > 0) {
+        MarkInitialised();
+        WriteBytes(SET_LOCAL_OP, (uint8_t)compiler.localCount-1);
         return;
     }
     WriteBytes(DEFINE_GLOBAL_OP, global);

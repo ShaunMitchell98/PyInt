@@ -172,7 +172,7 @@ static bool Run() {
             }
             case SET_LOCAL_OP: {
                 uint8_t slot = ReadByte();
-                vm.stack[slot] = Peek(0);
+                vm.stack[slot] = Peek(1);
                 break;
             }
             case GET_LOCAL_OP: {
@@ -181,12 +181,16 @@ static bool Run() {
                 break;
             }
             case DECLARE_LOCAL_OP: {
+                uint8_t slot = ReadByte();
+                vm.stack[slot] = NONE_VAL;
                 break;
             }
             case RETURN_OP: {
                 //Do nothing;
                 return true;
             }
+            case NONE_OP:
+                break;
             default:
                 return false;
         }

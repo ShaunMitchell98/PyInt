@@ -36,6 +36,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6D048E5F23F5F55C006FB4A5 /* PyInt_Script */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PyInt_Script; sourceTree = "<group>"; };
 		6D34875A23E733100067B26C /* PyInt */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PyInt; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D34876B23E734660067B26C /* Bytecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Bytecode.c; sourceTree = "<group>"; };
 		6D34876D23E7346D0067B26C /* Bytecode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bytecode.h; sourceTree = "<group>"; };
@@ -98,6 +99,7 @@
 		6D34875C23E733100067B26C /* PyInt */ = {
 			isa = PBXGroup;
 			children = (
+				6D048E5F23F5F55C006FB4A5 /* PyInt_Script */,
 				6D7C7BC923E73BEA00AED8F5 /* Bytecode */,
 				6D7C7BC823E73BD000AED8F5 /* Compiler */,
 				6D7C7BC723E73BC100AED8F5 /* Debug */,

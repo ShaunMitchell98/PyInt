@@ -21,6 +21,7 @@ typedef enum {
     LESSER_OP,
     GET_LOCAL_OP,
     SET_LOCAL_OP,
+    DECLARE_LOCAL_OP,
     JUMP_IF_FALSE_OP,
     POP_OP,
     JUMP_OP,
@@ -28,7 +29,8 @@ typedef enum {
     LOOP_OP,
     DEFINE_GLOBAL_OP,
     SET_GLOBAL_OP,
-    GET_GLOBAL_OP
+    GET_GLOBAL_OP,
+    NONE_OP
 } Opcode;
 
 typedef struct {

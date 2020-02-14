@@ -2,6 +2,7 @@
 
 #include "Debug.h"
 #include "Value.h"
+#include "Vm.h"
 
 static int PrintWithoutConstant(const char* instructionName, int offset) {
      printf(" \t%-16s  \t  ", instructionName);
@@ -105,6 +106,7 @@ static int PrintInstruction(Bytecode *bytecode, int offset) {
             break;
         case JUMP_OP:
             offset = PrintJump("JUMP_OP", bytecode, 1, offset);
+            break;
         case POP_OP:
             offset = PrintWithoutConstant("POP_OP", offset);
             break;
@@ -128,14 +130,19 @@ static int PrintInstruction(Bytecode *bytecode, int offset) {
             break;
         case SET_LOCAL_OP:
             constant = bytecode->code[offset+1];
-            offset= PrintWithConstant("SET_LOCAL_OP", constant, bytecode->constants.values[constant], offset);
+            offset= PrintWithConstant("SET_LOCAL_OP", constant, vm.stack[constant], offset);
             break;
         case GET_LOCAL_OP:
             constant = bytecode->code[offset+1];
-            offset = PrintWithConstant("GET_LOCAL_OP", constant, bytecode->constants.values[constant], offset);
+            offset = PrintWithConstant("GET_LOCAL_OP", constant, vm.stack[constant], offset);
+            break;
+        case DECLARE_LOCAL_OP:
+            constant = bytecode->code[offset+1];
+            offset = PrintWithConstant("DECLARE_LOCAL_OP", constant, vm.stack[constant], offset);
             break;
         default:
             offset = PrintWithoutConstant("Unknown Opcode", offset);
+            break;
         }
 
     return offset;
