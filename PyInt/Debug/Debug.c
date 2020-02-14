@@ -140,6 +140,9 @@ static int PrintInstruction(Bytecode *bytecode, int offset) {
             constant = bytecode->code[offset+1];
             offset = PrintWithConstant("DECLARE_LOCAL_OP", constant, vm.stack[constant], offset);
             break;
+        case DECLARE_LOCAL_OP:
+            offset = PrintWithoutConstant("DECLARE_LOCAL_OP", offset);
+            break;
         default:
             offset = PrintWithoutConstant("Unknown Opcode", offset);
             break;
