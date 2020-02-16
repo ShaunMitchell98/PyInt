@@ -124,6 +124,9 @@ static bool Run() {
                 else if (IS_BOOLEAN(a)) {
                     printf(AS_BOOLEAN(a) ? "True\n" : "False\n");
                 }
+                else if (IS_OBJ(a)) {
+                    PrintObject(a, PROGRAM_OUTPUT);
+                }
                 else {
                     return false;
                 }

@@ -1,5 +1,6 @@
 #include "Memory.h"
 #include "Value.h"
+#include "Debug.h"
 #include <stdio.h>
 #include <string.h>
 #include "Object.h"
@@ -25,32 +26,32 @@ void FreeValueArray(ValueArray* array) {
 	InitValueArray(array);
 }
 
-void PrintValue(Value value, bool tab) {
+void PrintValue(Value value, PrintType printType) {
     char* formatString;
-    if (tab) {
+    if (printType == OPERAND_VALUE) {
         formatString = "\t\t\t\t";
     }
-    else {
+    else if (printType == STACK) {
         formatString="";
     }
     
     if (IS_NUMBER(value)) {
-        if (tab) {
+        if (printType == OPERAND_VALUE) {
             printf("\t\t\t\t%g", AS_NUMBER(value));
         }
-        else {
+        else if (printType == STACK) {
             printf("%g", AS_NUMBER(value));
         }
     }
     else if (IS_BOOLEAN(value)) {
-        if (tab) {
+        if (printType == OPERAND_VALUE) {
             printf("\t\t\t\t%s", AS_BOOLEAN(value) ? "True" : "False");
         }
-        else {
+        else if (printType == STACK) {
             printf("%s", AS_BOOLEAN(value) ? "True" : "False");
         }
     }
     else if (IS_OBJ(value)) {
-        PrintObject(value, tab);
+        PrintObject(value, printType);
     }
 }

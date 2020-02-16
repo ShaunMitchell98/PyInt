@@ -66,6 +66,10 @@ static bool IsAlpha (char _char) {
     return (_char >= 'a' && _char <= 'z') || (_char >= 'A' && _char <= 'Z');
 }
 
+static bool IsChar(char _char) {
+    return IsAlpha(_char) || IsDigit(_char) || _char == '_';
+}
+    
 static bool CheckKeyword(const char* letters, int length) {
     for (int i = 1; i <= length; i++) {
         if (scanner.start[i] != letters[i-1]) {
@@ -176,6 +180,16 @@ static Token Number() {
     return MakeToken(NUMBER_TOKEN);
 }
 
+static Token String(char quoteMark) {
+    scanner.start++;
+    while(*scanner.current != quoteMark) {
+        scanner.current++;
+    }
+    Token token = MakeToken(STRING_TOKEN);
+    scanner.current += 1;
+    return token;
+}
+
 static void SkipWhiteSpace() {
     for (;;) {
         switch(*scanner.current) {
@@ -263,6 +277,10 @@ Token GetToken() {
             return MakeToken(COLON_TOKEN);
         case ',':
             return MakeToken(COMMA_TOKEN);
+        case '\'':
+            return String('\'');
+        case '"':
+            return String('"');
         case '=': {
             if (CheckKeyword("=", 1)) {
                 scanner.current++;

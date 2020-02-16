@@ -2,7 +2,8 @@
 
 #include "Debug.h"
 #include "Value.h"
-#include "Vm.h"
+#include "VM.h"
+#include "PrintType.h"
 
 static int PrintWithoutConstant(const char* instructionName, int offset) {
      printf(" \t%-16s  \t  ", instructionName);
@@ -11,7 +12,7 @@ static int PrintWithoutConstant(const char* instructionName, int offset) {
 
 static int PrintWithConstant(const char* instructionName, uint8_t constant, Value value, int offset) {
        printf(" \t%-16s  \t  %d ", instructionName, constant);
-      PrintValue(value, true);
+      PrintValue(value, OPERAND_VALUE);
       return offset + 2;
 }
 
@@ -27,7 +28,7 @@ static void DisassembleStack(Value* stack, Value* stackTop, bool hadOperand) {
         printf("\t\t ");
         for (Value* slot = stack; slot < stackTop; slot++) {
             printf("[");
-            PrintValue(*slot, false);
+            PrintValue(*slot, STACK);
             printf("]");
         }
         if (stack == stackTop) {
@@ -39,7 +40,7 @@ static void DisassembleStack(Value* stack, Value* stackTop, bool hadOperand) {
         printf("\t\t\t\t\t\t\t ");
         for (Value* slot = stack; slot < stackTop; slot++) {
             printf("[");
-            PrintValue(*slot, false);
+            PrintValue(*slot, STACK);
             printf("] ");
         }
         printf("\n");
@@ -139,9 +140,6 @@ static int PrintInstruction(Bytecode *bytecode, int offset) {
         case DECLARE_LOCAL_OP:
             constant = bytecode->code[offset+1];
             offset = PrintWithConstant("DECLARE_LOCAL_OP", constant, vm.stack[constant], offset);
-            break;
-        case DECLARE_LOCAL_OP:
-            offset = PrintWithoutConstant("DECLARE_LOCAL_OP", offset);
             break;
         default:
             offset = PrintWithoutConstant("Unknown Opcode", offset);

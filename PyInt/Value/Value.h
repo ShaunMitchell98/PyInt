@@ -1,8 +1,8 @@
 #include "Common.h"
+#include "PrintType.h"
 
 #ifndef PyInt_Value_h
 #define PyInt_Value_h
-
 
 typedef struct sObj Obj;
 typedef struct sObjString ObjString;
@@ -48,7 +48,7 @@ typedef struct {
 void InitValueArray(ValueArray* array);
 void WriteValueArray(ValueArray* array, Value value);
 void FreeValueArray(ValueArray* array);
-void PrintValue(Value value, bool tab);
+void PrintValue(Value value, PrintType printType);
 
 #endif
 

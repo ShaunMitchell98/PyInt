@@ -67,6 +67,7 @@
 		6D7C7BCE23E73F8F00AED8F5 /* CompilerBytecode.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CompilerBytecode.c; sourceTree = "<group>"; };
 		6D7C7BD023E742CA00AED8F5 /* Helpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Helpers.h; sourceTree = "<group>"; };
 		6D7C7BD123E742CB00AED8F5 /* Helpers.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Helpers.c; sourceTree = "<group>"; };
+		6DA45C6123F9B234000DD0CF /* PrintType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrintType.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +113,7 @@
 				6D7C7BC023E73B3F00AED8F5 /* VM */,
 				6D34877C23E734B00067B26C /* main.c */,
 				6D7C7BBC23E73A5D00AED8F5 /* Common.h */,
+				6DA45C6123F9B234000DD0CF /* PrintType.h */,
 			);
 			path = PyInt;
 			sourceTree = "<group>";

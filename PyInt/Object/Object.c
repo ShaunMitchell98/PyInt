@@ -3,6 +3,7 @@
 #include "VM.h"
 #include "Memory.h"
 #include "HashTable.h"
+#include "Debug.h"
 #include <string.h>
 
 #include <stdio.h>
@@ -64,14 +65,17 @@ ObjString* CopyString(const char* chars, int length) {
     return AllocateString(heapChars, length, hash);
 }
 
-void PrintObject(Value value, bool tab) {
+void PrintObject(Value value, PrintType printType) {
     switch (OBJ_TYPE(value)) {
         case OBJ_STRING: {
-            if (tab) {
+            if (printType == OPERAND_VALUE) {
                  printf("\t\t\t%s", AS_CSTRING(value));
             }
-            else {
+            else if (printType == STACK) {
                  printf("%s", AS_CSTRING(value));
+            }
+            else if (printType == PROGRAM_OUTPUT) {
+                printf("%s\n", AS_CSTRING(value));
             }
         }
     }

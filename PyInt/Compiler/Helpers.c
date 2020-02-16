@@ -4,6 +4,11 @@
 #include "CompilerErrors.h"
 
 void GetNextToken() {
+    
+    if (parser.current.type == EOF_TOKEN) {
+        return;
+    }
+    
     parser.previous = parser.current;
     
     parser.current = GetToken();

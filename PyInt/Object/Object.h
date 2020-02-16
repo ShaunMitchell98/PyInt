@@ -3,6 +3,7 @@
 
 #include "Common.h"
 #include "Value.h"
+#include "Debug.h"
 
 #define OBJ_TYPE(value) (AS_OBJ(value)->type)
 
@@ -27,6 +28,6 @@ struct sObjString {
 
 ObjString* TakeString(char* chars, int length);
 ObjString* CopyString(const char* chars, int length);
-void PrintObject(Value value, bool tab);
+void PrintObject(Value value, PrintType printType);
 
 #endif

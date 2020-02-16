@@ -361,6 +361,12 @@ static void Number(bool canAssign) {
     WriteConstantOperation(NUMBER_VAL(number));
 }
 
+static void String(bool canAssign) {
+    uint8_t address = StoreConstant(OBJ_VAL(CopyString(parser.previous.start, parser.previous.length)));
+    WriteBytes(CONSTANT_OP, address);
+    GetNextToken();
+}
+
 static void Boolean(bool canAssign) {
     bool boolean = parser.previous.start;
     WriteConstantOperation(BOOLEAN_VAL(boolean));
@@ -420,7 +426,7 @@ ParseRule rules[] = {
     {NULL,       Binary,    PREC_FACTOR},       //      STAR_TOKEN
     {NULL,       Binary,    PREC_FACTOR},       //      SLASH_TOKEN
     {Number,     NULL,      PREC_NONE},         //      NUMBER_TOKEN
-    {NULL,       NULL,      PREC_NONE},         //      STRING_TOKEN
+    {String,     NULL,      PREC_NONE},         //      STRING_TOKEN
     {NULL,       NULL,      PREC_NONE},         //      EOF_TOKEN
     {NULL,       NULL,      PREC_NONE},         //      IF_TOKEN
     {NULL,       NULL,      PREC_NONE},         //      ELIF_TOKEN
