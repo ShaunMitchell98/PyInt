@@ -23,6 +23,7 @@ typedef enum {
     SET_LOCAL_OP,
     DECLARE_LOCAL_OP,
     JUMP_IF_FALSE_OP,
+    JUMP_IF_TRUE_OP,
     POP_OP,
     JUMP_OP,
     PRINT_OP,
@@ -30,7 +31,9 @@ typedef enum {
     DEFINE_GLOBAL_OP,
     SET_GLOBAL_OP,
     GET_GLOBAL_OP,
-    NONE_OP
+    NONE_OP,
+    GET_INDEX_OP,
+    END_OF_ARRAY_OP
 } Opcode;
 
 typedef struct {

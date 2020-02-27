@@ -51,6 +51,14 @@ void PrintValue(Value value, PrintType printType) {
             printf("%s", AS_BOOLEAN(value) ? "True" : "False");
         }
     }
+    else if (IS_CHAR(value)) {
+        if (printType == OPERAND_VALUE) {
+            printf("\t\t\t\t%c", AS_CHAR(value));
+        }
+        else if (printType == STACK) {
+              printf("%c", AS_CHAR(value));
+        }
+    }
     else if (IS_OBJ(value)) {
         PrintObject(value, printType);
     }

@@ -65,10 +65,6 @@ static bool IsDigit(char _char) {
 static bool IsAlpha (char _char) {
     return (_char >= 'a' && _char <= 'z') || (_char >= 'A' && _char <= 'Z');
 }
-
-static bool IsChar(char _char) {
-    return IsAlpha(_char) || IsDigit(_char) || _char == '_';
-}
     
 static bool CheckKeyword(const char* letters, int length) {
     for (int i = 1; i <= length; i++) {
@@ -108,6 +104,9 @@ static Token Identifier() {
                 if (CheckKeyword("f", 1)) {
                     return MakeToken(IF_TOKEN);
                 }
+                else if (CheckKeyword("n", 1)) {
+                    return MakeToken(IN_TOKEN);
+                }
                 else {
                     return MakeToken(IDENTIFIER_TOKEN);
                 }
@@ -115,6 +114,9 @@ static Token Identifier() {
             case 'f': {
                 if (CheckKeyword("alse", 4)) {
                     return MakeToken(FALSE_TOKEN);
+                }
+                else if (CheckKeyword("or", 2)) {
+                    return MakeToken(FOR_TOKEN);
                 }
                 else {
                     return MakeToken(IDENTIFIER_TOKEN);

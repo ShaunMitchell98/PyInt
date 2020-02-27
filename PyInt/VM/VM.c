@@ -42,6 +42,18 @@ static ObjString* ReadString() {
     return AS_STRING(vm.bytecode->constants.values[address]);
 }
 
+static bool Equal(Value a, Value b) {
+    if (IS_CHAR(a) && IS_CHAR(b)) {
+        return AS_CHAR(a) == AS_CHAR(b);
+    }
+    else if (IS_NUMBER(a) && IS_NUMBER(b)) {
+        return AS_NUMBER(a) == AS_NUMBER(b);
+    }
+    else {
+        return false;
+    }
+ }
+
 static bool Run() {
 #ifdef DEBUG_TRACE_EXECUTION
     DisassembleBytecode(vm.bytecode);
@@ -116,6 +128,21 @@ static bool Run() {
                 Push(BOOLEAN_VAL(AS_BOOLEAN(a) || AS_BOOLEAN(b)));
                 break;
             }
+            case EQUAL_OP: {
+                Value b = Pop();
+                Value a = Pop();
+                bool equal = Equal(a, b);
+                Push(BOOLEAN_VAL(equal));
+                break;
+            }
+            case END_OF_ARRAY_OP: {
+                ObjString* name = ReadString();
+                Value value;
+                GetTableEntry(&vm.globals, name, &value);
+                ObjString* string = AS_STRING(value);
+                Push(BOOLEAN_VAL(vm.arrayIndex == string->length-1));
+                break;
+            }
             case PRINT_OP: {
                 Value a = Pop();
                 if (IS_NUMBER(a)) {
@@ -123,6 +150,9 @@ static bool Run() {
                 }
                 else if (IS_BOOLEAN(a)) {
                     printf(AS_BOOLEAN(a) ? "True\n" : "False\n");
+                }
+                else if (IS_CHAR(a)) {
+                    printf("%c", AS_CHAR(a));
                 }
                 else if (IS_OBJ(a)) {
                     PrintObject(a, PROGRAM_OUTPUT);
@@ -140,7 +170,15 @@ static bool Run() {
                 }
                 break;
             }
-            case JUMP_OP: {
+             case JUMP_IF_TRUE_OP: {
+                 bool doJump = AS_BOOLEAN(Pop());
+                 vm.ip += 2;
+                 if (doJump) {
+                     vm.ip += (uint16_t)((vm.ip[-2] << 8) | vm.ip[-1]);
+                 }
+                 break;
+             }
+             case JUMP_OP: {
                 vm.ip += 2;
                 vm.ip += (uint16_t)((vm.ip[-2] << 8) | vm.ip[-1]);
                 break;
@@ -188,6 +226,16 @@ static bool Run() {
                 vm.stack[slot] = NONE_VAL;
                 break;
             }
+            case GET_INDEX_OP: {
+                ObjString* name = ReadString();
+                Value value;
+                GetTableEntry(&vm.globals, name, &value);
+                ObjString* string = AS_STRING(value);
+                char currentChar = *(string->chars+vm.arrayIndex);
+                Push(CHAR_VAL(currentChar));
+                vm.arrayIndex++;
+                break;
+            }
             case RETURN_OP: {
                 //Do nothing;
                 return true;
@@ -204,6 +252,7 @@ static bool Run() {
 
 void InitVM() {
     ResetStack();
+    vm.arrayIndex = 0;
     InitTable(&vm.strings);
     InitTable(&vm.globals);
 }

@@ -12,6 +12,7 @@
 #include "CompilerBytecode.h"
 #include "Local.h"
 #include "Helpers.h"
+#include "Memory.h"
 
 static void InitCompiler(Bytecode* bytecode, const char* sourceCode, const char* path) {
     compiler.bytecode = bytecode;
@@ -165,6 +166,28 @@ static void ExceptClause() {
     }
 }
 
+static void VariableDeclaration() {
+    uint8_t global = ParseVariable();
+
+    if (MatchToken(EQUAL_TOKEN)) {
+        Expression();
+    }
+    else {
+        WriteByte(NONE_OP);
+    }
+
+    DefineVariable(global);
+}
+
+static uint8_t GetIdentifierAddress() {
+    if (compiler.scopeDepth > 0) {
+        return (uint8_t) ResolveLocal(&parser.previous);
+    }
+    else {
+        return IdentifierConstant(&parser.previous);
+    }
+}
+
 static void IfStatement() {
     NamedExpressionTest();
     ConsumeToken(COLON_TOKEN, ColonError);
@@ -213,15 +236,28 @@ static void WhileStatement() {
 }
 
 static void ForStatement() {
-    ExpressionList();
+    GetNextToken();
+    Token loopVariable = parser.previous;
+    VariableDeclaration();
     ConsumeToken(IN_TOKEN, InError);
-    TestList();
-    MatchToken(TYPE_COMMENT_TOKEN);
-    Suite();
-    if (MatchToken(ELSE_TOKEN)) {
-        ConsumeToken(COLON_TOKEN, ColonError);
-        Suite();
+    GetNextToken();
+    uint8_t identifierAddress = GetIdentifierAddress();
+    ConsumeToken(COLON_TOKEN, ColonError);
+    
+    int loopStart = compiler.bytecode->count;
+    WriteBytes(END_OF_ARRAY_OP, identifierAddress);
+    
+    int ifTrueOpcodeAddress = WriteJump(JUMP_IF_TRUE_OP);
+    WriteBytes(GET_INDEX_OP, identifierAddress);
+    if (compiler.scopeDepth > 0) {
+        WriteBytes(SET_LOCAL_OP, (uint8_t) ResolveLocal(&loopVariable));
     }
+    else {
+        WriteBytes(SET_GLOBAL_OP, IdentifierConstant(&loopVariable));
+    }
+    Suite();
+    WriteLoop(loopStart);
+    PatchJump(ifTrueOpcodeAddress);
 }
 
 static void TryStatement() {
@@ -245,19 +281,6 @@ static void FunctionDefinition() {
 
 static void ClassDefinition() {
     
-}
-
-static void VariableDeclaration() {
-    uint8_t global = ParseVariable();
-
-    if (MatchToken(EQUAL_TOKEN)) {
-        Expression();
-    }
-    else {
-        WriteByte(NONE_OP);
-    }
-
-    DefineVariable(global);
 }
 
 static void PrintStatement() {
@@ -311,8 +334,6 @@ static void Statement() {
     }
 }
 
-
-
 static void Unary(bool canAssign) {
     TokenType operatorType = parser.previous.type;
     
@@ -362,7 +383,10 @@ static void Number(bool canAssign) {
 }
 
 static void String(bool canAssign) {
-    uint8_t address = StoreConstant(OBJ_VAL(CopyString(parser.previous.start, parser.previous.length)));
+    char* string = ALLOCATE(char, parser.previous.length);
+    string = memcpy(string, parser.previous.start, parser.previous.length);
+    string[parser.previous.length] = '\0';
+    uint8_t address = StoreConstant(OBJ_VAL(CopyString(parser.previous.start, parser.previous.length+1)));
     WriteBytes(CONSTANT_OP, address);
     GetNextToken();
 }

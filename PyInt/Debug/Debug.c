@@ -66,6 +66,9 @@ static int PrintInstruction(Bytecode *bytecode, int offset) {
             offset = PrintWithConstant("CONSTANT_OP", constant, bytecode->constants.values[constant], offset);
             break;
         }
+        case NONE_OP:
+            offset = PrintWithoutConstant("NONE_OP", offset);
+            break;
         case RETURN_OP:
             offset = PrintWithoutConstant("RETURN_OP", offset);
             break;
@@ -105,6 +108,9 @@ static int PrintInstruction(Bytecode *bytecode, int offset) {
         case JUMP_IF_FALSE_OP:
             offset = PrintJump("JUMP_IF_FALSE_OP", bytecode, 1, offset);
             break;
+        case JUMP_IF_TRUE_OP:
+            offset = PrintJump("JUMP_IF_TRUE_OP", bytecode, 1, offset);
+            break;
         case JUMP_OP:
             offset = PrintJump("JUMP_OP", bytecode, 1, offset);
             break;
@@ -140,6 +146,14 @@ static int PrintInstruction(Bytecode *bytecode, int offset) {
         case DECLARE_LOCAL_OP:
             constant = bytecode->code[offset+1];
             offset = PrintWithConstant("DECLARE_LOCAL_OP", constant, vm.stack[constant], offset);
+            break;
+        case END_OF_ARRAY_OP:
+            constant = bytecode->code[offset+1];
+            offset = PrintWithConstant("END_OF_ARRAY_OP", constant, vm.stack[constant], offset);
+            break;
+        case GET_INDEX_OP:
+            constant = bytecode->code[offset+1];
+            offset = PrintWithConstant("GET_INDEX_OP", constant, vm.stack[constant], offset);
             break;
         default:
             offset = PrintWithoutConstant("Unknown Opcode", offset);

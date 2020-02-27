@@ -16,6 +16,7 @@ typedef struct {
     Obj* heap;
     Table strings;
     Table globals;
+    int arrayIndex;
 } VM;
 
 typedef enum {

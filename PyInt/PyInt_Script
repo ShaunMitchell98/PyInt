@@ -1,2 +1,4 @@
-a = "Hello world"
-print a
+greeting = "Hello world my name is Shaun"
+
+for letter in greeting:
+    print letter
