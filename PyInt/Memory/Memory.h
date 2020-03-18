@@ -2,6 +2,7 @@
 #define PyInt_Memory_h
 
 #include "Common.h"
+#include "Object.h"
 
 #define ALLOCATE(type, count) \
     (type*)Reallocate(NULL, 0, sizeof(type)*(count))
@@ -19,5 +20,5 @@
 	Reallocate(pointer, sizeof(type) * (oldCount), 0)
 
 void* Reallocate(void* currentArray, size_t oldSize, size_t newSize);
-
+void FreeObject(Obj* obj);
 #endif

@@ -89,6 +89,14 @@ static Token Identifier() {
                 return MakeToken(IDENTIFIER_TOKEN);
             }
         }
+        case 'd': {
+            if (CheckKeyword("ef", 2)) {
+                return MakeToken(DEF_TOKEN);
+            }
+            else {
+                return MakeToken(IDENTIFIER_TOKEN);
+            }
+        }
         case 'e': {
                if (CheckKeyword("lse", 3)) {
                    return MakeToken(ELSE_TOKEN);

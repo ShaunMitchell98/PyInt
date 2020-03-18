@@ -1,7 +1,8 @@
 #ifndef PyInt_VM_h
 #define PyInt_VM_h
 
-#define STACK_MAX 256
+#define FRAMES_MAX 64
+#define STACK_MAX (FRAMES_MAX * UINT8_COUNT)
 
 #include "Common.h"
 #include "Value.h"
@@ -9,9 +10,15 @@
 #include "HashTable.h"
 
 typedef struct {
-    Value stack[STACK_MAX];
+    ObjFunction* function;
     uint8_t* ip;
-    Bytecode* bytecode;
+    Value* locals;
+} CallFrame;
+
+typedef struct {
+    CallFrame frames [FRAMES_MAX];
+    int frameCount;
+    Value stack[STACK_MAX];
     Value* stackTop;
     Obj* heap;
     Table strings;

@@ -7,24 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6D34876C23E734660067B26C /* Bytecode.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34876B23E734660067B26C /* Bytecode.c */; };
-		6D34877023E734780067B26C /* Compiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34876F23E734780067B26C /* Compiler.c */; };
-		6D34877323E734880067B26C /* CompilerErrors.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34877223E734880067B26C /* CompilerErrors.c */; };
-		6D34877623E734930067B26C /* Debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34877523E734930067B26C /* Debug.c */; };
-		6D34877923E7349E0067B26C /* HashTable.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34877823E7349D0067B26C /* HashTable.c */; };
-		6D34877D23E734B00067B26C /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34877C23E734B00067B26C /* main.c */; };
-		6D34877F23E734B70067B26C /* Memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34877E23E734B70067B26C /* Memory.c */; };
-		6D34878223E734C30067B26C /* Object.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34878123E734C20067B26C /* Object.c */; };
-		6D34878523E734D00067B26C /* Scanner.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34878423E734D00067B26C /* Scanner.c */; };
-		6D34878923E734FF0067B26C /* Value.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D34878823E734FF0067B26C /* Value.c */; };
-		6D7C7BBE23E73B2400AED8F5 /* VM.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D7C7BBD23E73B2400AED8F5 /* VM.c */; };
-		6D7C7BCC23E73C1700AED8F5 /* Local.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D7C7BCB23E73C1700AED8F5 /* Local.c */; };
-		6D7C7BCF23E73F8F00AED8F5 /* CompilerBytecode.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D7C7BCE23E73F8F00AED8F5 /* CompilerBytecode.c */; };
-		6D7C7BD223E742CB00AED8F5 /* Helpers.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D7C7BD123E742CB00AED8F5 /* Helpers.c */; };
+		6D14A18E239EE9F700118F78 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D14A18D239EE9F700118F78 /* main.c */; };
+		6D14A1A2239EF7F300118F78 /* Value.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D14A1A1239EF7F300118F78 /* Value.c */; };
+		6D14A1A6239EF81300118F78 /* Scanner.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D14A1A5239EF81300118F78 /* Scanner.c */; };
+		6D14A1A9239EF81D00118F78 /* Memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D14A1A8239EF81C00118F78 /* Memory.c */; };
+		6D14A1AD239EF83200118F78 /* Compiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D14A1AC239EF83100118F78 /* Compiler.c */; };
+		6D14A1B0239EF84B00118F78 /* CompilerErrors.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D14A1AF239EF84A00118F78 /* CompilerErrors.c */; };
+		6D14A1B6239EF87000118F78 /* VM.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D14A1B5239EF87000118F78 /* VM.c */; };
+		6D14A1B9239EF87900118F78 /* Bytecode.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D14A1B8239EF87900118F78 /* Bytecode.c */; };
+		6DE3FDEF23BCDA5C0002ADF4 /* Debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 6DE3FDEE23BCDA5C0002ADF4 /* Debug.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		6D34875823E733100067B26C /* CopyFiles */ = {
+		6D14A188239EE9F700118F78 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -36,42 +31,39 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		6D048E5F23F5F55C006FB4A5 /* PyInt_Script */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PyInt_Script; sourceTree = "<group>"; };
-		6D34875A23E733100067B26C /* PyInt */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PyInt; sourceTree = BUILT_PRODUCTS_DIR; };
-		6D34876B23E734660067B26C /* Bytecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Bytecode.c; sourceTree = "<group>"; };
-		6D34876D23E7346D0067B26C /* Bytecode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bytecode.h; sourceTree = "<group>"; };
-		6D34876F23E734780067B26C /* Compiler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Compiler.c; sourceTree = "<group>"; };
-		6D34877123E734830067B26C /* Compiler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Compiler.h; sourceTree = "<group>"; };
-		6D34877223E734880067B26C /* CompilerErrors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CompilerErrors.c; sourceTree = "<group>"; };
-		6D34877423E7348D0067B26C /* CompilerErrors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompilerErrors.h; sourceTree = "<group>"; };
-		6D34877523E734930067B26C /* Debug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Debug.c; sourceTree = "<group>"; };
-		6D34877723E734980067B26C /* Debug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Debug.h; sourceTree = "<group>"; };
-		6D34877823E7349D0067B26C /* HashTable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = HashTable.c; sourceTree = "<group>"; };
-		6D34877A23E734A30067B26C /* HashTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HashTable.h; sourceTree = "<group>"; };
-		6D34877C23E734B00067B26C /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		6D34877E23E734B70067B26C /* Memory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Memory.c; sourceTree = "<group>"; };
-		6D34878023E734BD0067B26C /* Memory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Memory.h; sourceTree = "<group>"; };
-		6D34878123E734C20067B26C /* Object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Object.c; sourceTree = "<group>"; };
-		6D34878323E734C90067B26C /* Object.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
-		6D34878423E734D00067B26C /* Scanner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Scanner.c; sourceTree = "<group>"; };
-		6D34878623E734DA0067B26C /* Scanner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Scanner.h; sourceTree = "<group>"; };
-		6D34878723E734F40067B26C /* Token.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Token.h; sourceTree = "<group>"; };
-		6D34878823E734FF0067B26C /* Value.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Value.c; sourceTree = "<group>"; };
-		6D34878A23E735090067B26C /* Value.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Value.h; sourceTree = "<group>"; };
-		6D7C7BBC23E73A5D00AED8F5 /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
-		6D7C7BBD23E73B2400AED8F5 /* VM.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = VM.c; sourceTree = "<group>"; };
-		6D7C7BBF23E73B3400AED8F5 /* VM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VM.h; sourceTree = "<group>"; };
-		6D7C7BCA23E73C1700AED8F5 /* Local.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Local.h; sourceTree = "<group>"; };
-		6D7C7BCB23E73C1700AED8F5 /* Local.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Local.c; sourceTree = "<group>"; };
-		6D7C7BCD23E73F8F00AED8F5 /* CompilerBytecode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompilerBytecode.h; sourceTree = "<group>"; };
-		6D7C7BCE23E73F8F00AED8F5 /* CompilerBytecode.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CompilerBytecode.c; sourceTree = "<group>"; };
-		6D7C7BD023E742CA00AED8F5 /* Helpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Helpers.h; sourceTree = "<group>"; };
-		6D7C7BD123E742CB00AED8F5 /* Helpers.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Helpers.c; sourceTree = "<group>"; };
-		6DA45C6123F9B234000DD0CF /* PrintType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrintType.h; sourceTree = "<group>"; };
+		6D14A18A239EE9F700118F78 /* PyInt */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PyInt; sourceTree = BUILT_PRODUCTS_DIR; };
+		6D14A18D239EE9F700118F78 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		6D14A194239EEAD100118F78 /* Bytecode */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Bytecode; sourceTree = "<group>"; };
+		6D14A195239EEAF000118F78 /* VM */ = {isa = PBXFileReference; lastKnownFileType = folder; path = VM; sourceTree = "<group>"; };
+		6D14A196239EEB1800118F78 /* Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
+		6D14A197239EEB2700118F78 /* Compiler */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Compiler; sourceTree = "<group>"; };
+		6D14A198239EEB3200118F78 /* Debug */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Debug; sourceTree = "<group>"; };
+		6D14A199239EEB4600118F78 /* Memory */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Memory; sourceTree = "<group>"; };
+		6D14A19A239EEB5200118F78 /* Scanner */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scanner; sourceTree = "<group>"; };
+		6D14A19B239EEB5D00118F78 /* Token */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Token; sourceTree = "<group>"; };
+		6D14A19C239EEB6500118F78 /* Value */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Value; sourceTree = "<group>"; };
+		6D14A1A1239EF7F300118F78 /* Value.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Value.c; sourceTree = "<group>"; };
+		6D14A1A3239EF7FD00118F78 /* Value.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Value.h; sourceTree = "<group>"; };
+		6D14A1A4239EF80C00118F78 /* Token.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Token.h; sourceTree = "<group>"; };
+		6D14A1A5239EF81300118F78 /* Scanner.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Scanner.c; sourceTree = "<group>"; };
+		6D14A1A7239EF81700118F78 /* Scanner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Scanner.h; sourceTree = "<group>"; };
+		6D14A1A8239EF81C00118F78 /* Memory.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Memory.c; sourceTree = "<group>"; };
+		6D14A1AA239EF82500118F78 /* Memory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Memory.h; sourceTree = "<group>"; };
+		6D14A1AB239EF82D00118F78 /* Debug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Debug.h; sourceTree = "<group>"; };
+		6D14A1AC239EF83100118F78 /* Compiler.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Compiler.c; sourceTree = "<group>"; };
+		6D14A1AE239EF84300118F78 /* Compiler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Compiler.h; sourceTree = "<group>"; };
+		6D14A1AF239EF84A00118F78 /* CompilerErrors.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CompilerErrors.c; sourceTree = "<group>"; };
+		6D14A1B1239EF85000118F78 /* CompilerErrors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompilerErrors.h; sourceTree = "<group>"; };
+		6D14A1B5239EF87000118F78 /* VM.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = VM.c; sourceTree = "<group>"; };
+		6D14A1B7239EF87400118F78 /* VM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VM.h; sourceTree = "<group>"; };
+		6D14A1B8239EF87900118F78 /* Bytecode.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Bytecode.c; sourceTree = "<group>"; };
+		6D14A1BA239EF87E00118F78 /* Bytecode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bytecode.h; sourceTree = "<group>"; };
+		6D1547DE23BE8C7800F08AF0 /* PyInt_Script */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PyInt_Script; sourceTree = "<group>"; };
+		6DE3FDEE23BCDA5C0002ADF4 /* Debug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Debug.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		6D34875723E733100067B26C /* Frameworks */ = {
+		6D14A187239EE9F700118F78 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -81,150 +73,67 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		6D34875123E733100067B26C = {
+		6D14A181239EE9F600118F78 = {
 			isa = PBXGroup;
 			children = (
-				6D34875C23E733100067B26C /* PyInt */,
-				6D34875B23E733100067B26C /* Products */,
+				6D14A18C239EE9F700118F78 /* PyInt */,
+				6D14A18B239EE9F700118F78 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		6D34875B23E733100067B26C /* Products */ = {
+		6D14A18B239EE9F700118F78 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6D34875A23E733100067B26C /* PyInt */,
+				6D14A18A239EE9F700118F78 /* PyInt */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		6D34875C23E733100067B26C /* PyInt */ = {
+		6D14A18C239EE9F700118F78 /* PyInt */ = {
 			isa = PBXGroup;
 			children = (
-				6D048E5F23F5F55C006FB4A5 /* PyInt_Script */,
-				6D7C7BC923E73BEA00AED8F5 /* Bytecode */,
-				6D7C7BC823E73BD000AED8F5 /* Compiler */,
-				6D7C7BC723E73BC100AED8F5 /* Debug */,
-				6D7C7BC623E73BB000AED8F5 /* HashTable */,
-				6D7C7BC523E73B9600AED8F5 /* Memory */,
-				6D7C7BC423E73B8800AED8F5 /* Object */,
-				6D7C7BC323E73B7700AED8F5 /* Scanner */,
-				6D7C7BC223E73B6600AED8F5 /* Token */,
-				6D7C7BC123E73B5800AED8F5 /* Value */,
-				6D7C7BC023E73B3F00AED8F5 /* VM */,
-				6D34877C23E734B00067B26C /* main.c */,
-				6D7C7BBC23E73A5D00AED8F5 /* Common.h */,
-				6DA45C6123F9B234000DD0CF /* PrintType.h */,
+				6D1547DE23BE8C7800F08AF0 /* PyInt_Script */,
+				6D14A1BA239EF87E00118F78 /* Bytecode.h */,
+				6D14A1B8239EF87900118F78 /* Bytecode.c */,
+				6D14A1B7239EF87400118F78 /* VM.h */,
+				6D14A1B5239EF87000118F78 /* VM.c */,
+				6D14A1B1239EF85000118F78 /* CompilerErrors.h */,
+				6D14A1AF239EF84A00118F78 /* CompilerErrors.c */,
+				6D14A1AE239EF84300118F78 /* Compiler.h */,
+				6D14A1AC239EF83100118F78 /* Compiler.c */,
+				6D14A1AB239EF82D00118F78 /* Debug.h */,
+				6DE3FDEE23BCDA5C0002ADF4 /* Debug.c */,
+				6D14A1AA239EF82500118F78 /* Memory.h */,
+				6D14A1A8239EF81C00118F78 /* Memory.c */,
+				6D14A1A7239EF81700118F78 /* Scanner.h */,
+				6D14A1A5239EF81300118F78 /* Scanner.c */,
+				6D14A1A4239EF80C00118F78 /* Token.h */,
+				6D14A1A3239EF7FD00118F78 /* Value.h */,
+				6D14A1A1239EF7F300118F78 /* Value.c */,
+				6D14A19C239EEB6500118F78 /* Value */,
+				6D14A19B239EEB5D00118F78 /* Token */,
+				6D14A19A239EEB5200118F78 /* Scanner */,
+				6D14A199239EEB4600118F78 /* Memory */,
+				6D14A198239EEB3200118F78 /* Debug */,
+				6D14A197239EEB2700118F78 /* Compiler */,
+				6D14A196239EEB1800118F78 /* Common.h */,
+				6D14A195239EEAF000118F78 /* VM */,
+				6D14A194239EEAD100118F78 /* Bytecode */,
+				6D14A18D239EE9F700118F78 /* main.c */,
 			);
 			path = PyInt;
-			sourceTree = "<group>";
-		};
-		6D7C7BC023E73B3F00AED8F5 /* VM */ = {
-			isa = PBXGroup;
-			children = (
-				6D7C7BBD23E73B2400AED8F5 /* VM.c */,
-				6D7C7BBF23E73B3400AED8F5 /* VM.h */,
-			);
-			path = VM;
-			sourceTree = "<group>";
-		};
-		6D7C7BC123E73B5800AED8F5 /* Value */ = {
-			isa = PBXGroup;
-			children = (
-				6D34878823E734FF0067B26C /* Value.c */,
-				6D34878A23E735090067B26C /* Value.h */,
-			);
-			path = Value;
-			sourceTree = "<group>";
-		};
-		6D7C7BC223E73B6600AED8F5 /* Token */ = {
-			isa = PBXGroup;
-			children = (
-				6D34878723E734F40067B26C /* Token.h */,
-			);
-			path = Token;
-			sourceTree = "<group>";
-		};
-		6D7C7BC323E73B7700AED8F5 /* Scanner */ = {
-			isa = PBXGroup;
-			children = (
-				6D34878423E734D00067B26C /* Scanner.c */,
-				6D34878623E734DA0067B26C /* Scanner.h */,
-			);
-			path = Scanner;
-			sourceTree = "<group>";
-		};
-		6D7C7BC423E73B8800AED8F5 /* Object */ = {
-			isa = PBXGroup;
-			children = (
-				6D34878123E734C20067B26C /* Object.c */,
-				6D34878323E734C90067B26C /* Object.h */,
-			);
-			path = Object;
-			sourceTree = "<group>";
-		};
-		6D7C7BC523E73B9600AED8F5 /* Memory */ = {
-			isa = PBXGroup;
-			children = (
-				6D34877E23E734B70067B26C /* Memory.c */,
-				6D34878023E734BD0067B26C /* Memory.h */,
-			);
-			path = Memory;
-			sourceTree = "<group>";
-		};
-		6D7C7BC623E73BB000AED8F5 /* HashTable */ = {
-			isa = PBXGroup;
-			children = (
-				6D34877823E7349D0067B26C /* HashTable.c */,
-				6D34877A23E734A30067B26C /* HashTable.h */,
-			);
-			path = HashTable;
-			sourceTree = "<group>";
-		};
-		6D7C7BC723E73BC100AED8F5 /* Debug */ = {
-			isa = PBXGroup;
-			children = (
-				6D34877523E734930067B26C /* Debug.c */,
-				6D34877723E734980067B26C /* Debug.h */,
-			);
-			path = Debug;
-			sourceTree = "<group>";
-		};
-		6D7C7BC823E73BD000AED8F5 /* Compiler */ = {
-			isa = PBXGroup;
-			children = (
-				6D34876F23E734780067B26C /* Compiler.c */,
-				6D34877123E734830067B26C /* Compiler.h */,
-				6D34877223E734880067B26C /* CompilerErrors.c */,
-				6D34877423E7348D0067B26C /* CompilerErrors.h */,
-				6D7C7BCA23E73C1700AED8F5 /* Local.h */,
-				6D7C7BCB23E73C1700AED8F5 /* Local.c */,
-				6D7C7BCD23E73F8F00AED8F5 /* CompilerBytecode.h */,
-				6D7C7BCE23E73F8F00AED8F5 /* CompilerBytecode.c */,
-				6D7C7BD023E742CA00AED8F5 /* Helpers.h */,
-				6D7C7BD123E742CB00AED8F5 /* Helpers.c */,
-			);
-			path = Compiler;
-			sourceTree = "<group>";
-		};
-		6D7C7BC923E73BEA00AED8F5 /* Bytecode */ = {
-			isa = PBXGroup;
-			children = (
-				6D34876B23E734660067B26C /* Bytecode.c */,
-				6D34876D23E7346D0067B26C /* Bytecode.h */,
-			);
-			path = Bytecode;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		6D34875923E733100067B26C /* PyInt */ = {
+		6D14A189239EE9F700118F78 /* PyInt */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6D34876123E733100067B26C /* Build configuration list for PBXNativeTarget "PyInt" */;
+			buildConfigurationList = 6D14A191239EE9F700118F78 /* Build configuration list for PBXNativeTarget "PyInt" */;
 			buildPhases = (
-				6D34875623E733100067B26C /* Sources */,
-				6D34875723E733100067B26C /* Frameworks */,
-				6D34875823E733100067B26C /* CopyFiles */,
+				6D14A186239EE9F700118F78 /* Sources */,
+				6D14A187239EE9F700118F78 /* Frameworks */,
+				6D14A188239EE9F700118F78 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -232,24 +141,24 @@
 			);
 			name = PyInt;
 			productName = PyInt;
-			productReference = 6D34875A23E733100067B26C /* PyInt */;
+			productReference = 6D14A18A239EE9F700118F78 /* PyInt */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		6D34875223E733100067B26C /* Project object */ = {
+		6D14A182239EE9F600118F78 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1120;
 				ORGANIZATIONNAME = "Shaun Mitchell";
 				TargetAttributes = {
-					6D34875923E733100067B26C = {
+					6D14A189239EE9F700118F78 = {
 						CreatedOnToolsVersion = 11.2.1;
 					};
 				};
 			};
-			buildConfigurationList = 6D34875523E733100067B26C /* Build configuration list for PBXProject "PyInt" */;
+			buildConfigurationList = 6D14A185239EE9F600118F78 /* Build configuration list for PBXProject "PyInt" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -257,42 +166,37 @@
 				en,
 				Base,
 			);
-			mainGroup = 6D34875123E733100067B26C;
-			productRefGroup = 6D34875B23E733100067B26C /* Products */;
+			mainGroup = 6D14A181239EE9F600118F78;
+			productRefGroup = 6D14A18B239EE9F700118F78 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				6D34875923E733100067B26C /* PyInt */,
+				6D14A189239EE9F700118F78 /* PyInt */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		6D34875623E733100067B26C /* Sources */ = {
+		6D14A186239EE9F700118F78 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6D34878223E734C30067B26C /* Object.c in Sources */,
-				6D7C7BCF23E73F8F00AED8F5 /* CompilerBytecode.c in Sources */,
-				6D34877023E734780067B26C /* Compiler.c in Sources */,
-				6D34877323E734880067B26C /* CompilerErrors.c in Sources */,
-				6D7C7BCC23E73C1700AED8F5 /* Local.c in Sources */,
-				6D7C7BD223E742CB00AED8F5 /* Helpers.c in Sources */,
-				6D34878923E734FF0067B26C /* Value.c in Sources */,
-				6D7C7BBE23E73B2400AED8F5 /* VM.c in Sources */,
-				6D34877D23E734B00067B26C /* main.c in Sources */,
-				6D34877923E7349E0067B26C /* HashTable.c in Sources */,
-				6D34877F23E734B70067B26C /* Memory.c in Sources */,
-				6D34878523E734D00067B26C /* Scanner.c in Sources */,
-				6D34876C23E734660067B26C /* Bytecode.c in Sources */,
-				6D34877623E734930067B26C /* Debug.c in Sources */,
+				6D14A1B9239EF87900118F78 /* Bytecode.c in Sources */,
+				6D14A1B6239EF87000118F78 /* VM.c in Sources */,
+				6D14A1A6239EF81300118F78 /* Scanner.c in Sources */,
+				6D14A1B0239EF84B00118F78 /* CompilerErrors.c in Sources */,
+				6D14A18E239EE9F700118F78 /* main.c in Sources */,
+				6D14A1A9239EF81D00118F78 /* Memory.c in Sources */,
+				6DE3FDEF23BCDA5C0002ADF4 /* Debug.c in Sources */,
+				6D14A1AD239EF83200118F78 /* Compiler.c in Sources */,
+				6D14A1A2239EF7F300118F78 /* Value.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		6D34875F23E733100067B26C /* Debug */ = {
+		6D14A18F239EE9F700118F78 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -350,7 +254,7 @@
 			};
 			name = Debug;
 		};
-		6D34876023E733100067B26C /* Release */ = {
+		6D14A190239EE9F700118F78 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -401,24 +305,18 @@
 			};
 			name = Release;
 		};
-		6D34876223E733100067B26C /* Debug */ = {
+		6D14A192239EE9F700118F78 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 2F2YDXSHY6;
-				ENABLE_HARDENED_RUNTIME = YES;
-				GCC_NO_COMMON_BLOCKS = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
-		6D34876323E733100067B26C /* Release */ = {
+		6D14A193239EE9F700118F78 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 2F2YDXSHY6;
-				ENABLE_HARDENED_RUNTIME = YES;
-				GCC_NO_COMMON_BLOCKS = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -426,25 +324,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		6D34875523E733100067B26C /* Build configuration list for PBXProject "PyInt" */ = {
+		6D14A185239EE9F600118F78 /* Build configuration list for PBXProject "PyInt" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				6D34875F23E733100067B26C /* Debug */,
-				6D34876023E733100067B26C /* Release */,
+				6D14A18F239EE9F700118F78 /* Debug */,
+				6D14A190239EE9F700118F78 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6D34876123E733100067B26C /* Build configuration list for PBXNativeTarget "PyInt" */ = {
+		6D14A191239EE9F700118F78 /* Build configuration list for PBXNativeTarget "PyInt" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				6D34876223E733100067B26C /* Debug */,
-				6D34876323E733100067B26C /* Release */,
+				6D14A192239EE9F700118F78 /* Debug */,
+				6D14A193239EE9F700118F78 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 6D34875223E733100067B26C /* Project object */;
+	rootObject = 6D14A182239EE9F600118F78 /* Project object */;
 }

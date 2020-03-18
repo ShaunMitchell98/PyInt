@@ -4,6 +4,7 @@
 #define ColonError "Colon expected"
 #define CommaError "Comma expected"
 #define SemicolonError "Semicolon expected"
+#define LeftParenError "Left bracket expected"
 #define RightParenError "Right bracket expected"
 #define IndentError "Indent expected"
 #define InError "'in' expected"

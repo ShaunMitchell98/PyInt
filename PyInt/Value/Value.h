@@ -6,6 +6,7 @@
 
 typedef struct sObj Obj;
 typedef struct sObjString ObjString;
+typedef struct sObjFunction ObjFunction;
 
 typedef enum {
 	VAL_NUMBER,

@@ -65,8 +65,19 @@ ObjString* CopyString(const char* chars, int length) {
     return AllocateString(heapChars, length, hash);
 }
 
+static void PrintFunction(ObjFunction* function) {
+    if (function->name == NULL) {
+        printf("<script>");
+        return;
+    }
+    printf("<fn %s", function->name->chars);
+}
+
 void PrintObject(Value value, PrintType printType) {
     switch (OBJ_TYPE(value)) {
+        case OBJ_FUNCTION:
+            PrintFunction(AS_FUNCTION(value));
+            break;
         case OBJ_STRING: {
             if (printType == OPERAND_VALUE) {
                  printf("\t\t\t%s", AS_CSTRING(value));
@@ -77,6 +88,15 @@ void PrintObject(Value value, PrintType printType) {
             else if (printType == PROGRAM_OUTPUT) {
                 printf("%s\n", AS_CSTRING(value));
             }
+            break;
         }
     }
+}
+
+ObjFunction* NewFunction() {
+    ObjFunction* function = ALLOCATE_OBJ(ObjFunction, OBJ_FUNCTION);
+    function->arity = 0;
+    function->name = NULL;
+    InitBytecode(&function->bytecode);
+    return function;
 }

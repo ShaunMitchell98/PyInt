@@ -13,21 +13,36 @@
 #include "Local.h"
 #include "Helpers.h"
 #include "Memory.h"
+#include "Debug.h"
 
-static void InitCompiler(Bytecode* bytecode, const char* sourceCode, const char* path) {
-    compiler.bytecode = bytecode;
-    compiler.localCount = 0;
-    compiler.scopeDepth = 0;
-    InitScanner(sourceCode, path);
+static void InitCompiler(Compiler* compiler, FunctionType functionType) {
+    compiler->function = NULL;
+    compiler->functionType = functionType;
+    compiler->localCount = 0;
+    compiler->scopeDepth = 0;
+    compiler->function = NewFunction();
+    compiler->enclosing = currentCompiler;
+    currentCompiler = compiler;
     
-    Local* local = &compiler.locals[compiler.localCount++];
+    if (functionType != TYPE_SCRIPT) {
+        currentCompiler->function->name = CopyString(parser.previous.start, parser.previous.length);
+    }
+    
+    Local* local = &compiler->locals[compiler->localCount++];
     local->depth = 0;
     local->name.start = "";
     local->name.length = 0;
 }
 
-static void EndCompiler() {
+static ObjFunction* EndCompiler() {
     WriteReturn();
+    currentCompiler = currentCompiler->enclosing;
+#ifdef DEBUG_PRINT_CODE
+    if (!parser.hadError) {
+        DisassembleBytecode(compiler.function.bytecode, compiler.function->name != NULL ? compiler.function->name->chars : "<script>");
+    }
+#endif
+    return currentCompiler->function;
 }
 
 static void InitParser() {
@@ -180,7 +195,7 @@ static void VariableDeclaration() {
 }
 
 static uint8_t GetIdentifierAddress() {
-    if (compiler.scopeDepth > 0) {
+    if (currentCompiler->scopeDepth > 0) {
         return (uint8_t) ResolveLocal(&parser.previous);
     }
     else {
@@ -223,7 +238,7 @@ static void IfStatement() {
 }
 
 static void WhileStatement() {
-    int loopStart = compiler.bytecode->count;
+    int loopStart = currentCompiler->function->bytecode.count;
     
     NamedExpressionTest();
     ConsumeToken(COLON_TOKEN, ColonError);
@@ -244,12 +259,12 @@ static void ForStatement() {
     uint8_t identifierAddress = GetIdentifierAddress();
     ConsumeToken(COLON_TOKEN, ColonError);
     
-    int loopStart = compiler.bytecode->count;
+    int loopStart = currentCompiler->function->bytecode.count;
     WriteBytes(END_OF_ARRAY_OP, identifierAddress);
     
     int ifTrueOpcodeAddress = WriteJump(JUMP_IF_TRUE_OP);
     WriteBytes(GET_INDEX_OP, identifierAddress);
-    if (compiler.scopeDepth > 0) {
+    if (currentCompiler->scopeDepth > 0) {
         WriteBytes(SET_LOCAL_OP, (uint8_t) ResolveLocal(&loopVariable));
     }
     else {
@@ -275,8 +290,37 @@ static void WithStatement() {
     
 }
 
-static void FunctionDefinition() {
+static void Function(FunctionType functionType) {
+    Compiler compiler;
+    InitCompiler(&compiler, TYPE_FUNCTION);
+    BeginScope();
     
+    ConsumeToken(LEFT_PAREN_TOKEN, LeftParenError);
+    if (!CheckToken(RIGHT_PAREN_TOKEN)) {
+        do {
+            currentCompiler->function->arity++;
+            if (currentCompiler->function->arity > 255) {
+                Error("Cannot have more than 255 parameters");
+            }
+            
+            uint8_t paramConstant = ParseVariable();
+            DefineVariable(paramConstant);
+        } while(MatchToken(COMMA_TOKEN));
+    }
+    ConsumeToken(RIGHT_PAREN_TOKEN, RightParenError);
+    
+    ConsumeToken(COLON_TOKEN, ColonError);
+    Suite();
+    
+    ObjFunction* function = EndCompiler();
+    WriteBytes(CONSTANT_OP, StoreConstant(OBJ_VAL(function)));
+}
+
+static void FunctionDefinition() {
+    uint8_t global = ParseVariable();
+    MarkInitialised();
+    Function(TYPE_FUNCTION);
+    DefineVariable(global);
 }
 
 static void ClassDefinition() {
@@ -421,7 +465,7 @@ static void GlobalIdentifier(bool canAssign) {
 
 static void Identifier(bool canAssign) {
 
-    if (compiler.scopeDepth > 0) {
+    if (currentCompiler->scopeDepth > 0) {
         LocalIdentifier(canAssign);
     }
     else {
@@ -512,8 +556,10 @@ void ParsePrecedence(Precedence precedence) {
     }
 }
 
-bool Compile(Bytecode* bytecode, const char* sourceCode, const char* path) {
-    InitCompiler(bytecode, sourceCode, path);
+ObjFunction* Compile(Bytecode* bytecode, const char* sourceCode, const char* path) {
+    InitScanner(sourceCode, path);
+    Compiler compiler;
+    InitCompiler(&compiler, TYPE_SCRIPT);
     InitParser();
     
     GetNextToken();
@@ -528,6 +574,6 @@ bool Compile(Bytecode* bytecode, const char* sourceCode, const char* path) {
         }
     }
     
-    EndCompiler();
-    return parser.hadError;
+    ObjFunction* function = EndCompiler();
+    return parser.hadError ? NULL : function;
 }

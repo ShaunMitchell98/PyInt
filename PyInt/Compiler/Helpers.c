@@ -39,3 +39,8 @@ void TryConsumeToken(TokenType tokenType) {
         return;
     }
 }
+
+bool CheckToken(TokenType tokenType) {
+    if (parser.current.type == tokenType) return true;
+    return false;
+}

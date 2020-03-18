@@ -8,5 +8,5 @@ void GetNextToken(void);
 bool MatchToken(TokenType tokenType);
 void ConsumeToken(TokenType tokenType, const char* message);
 void TryConsumeToken(TokenType tokenType);
-
+bool CheckToken(TokenType tokenType);
 #endif

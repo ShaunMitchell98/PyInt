@@ -5,12 +5,15 @@
 #include "Bytecode.h"
 #include "Token.h"
 #include "Scanner.h"
+#include "Object.h"
 
 #define UINT8_COUNT 256
 struct Local;
 
 typedef struct {
-    Bytecode* bytecode;
+    struct Compiler* enclosing;
+    ObjFunction* function;
+    FunctionType functionType;
     Local locals[UINT8_COUNT];
     int localCount;
     int scopeDepth;
@@ -22,7 +25,7 @@ typedef struct {
     bool hadError;
 } Parser;
 
-Compiler compiler;
+Compiler* currentCompiler;
 Parser parser;
 
 typedef enum {
@@ -49,7 +52,7 @@ typedef struct {
     Precedence precedence;
 } ParseRule;
 
-bool Compile(Bytecode* bytecode, const char* sourceCode, const char* path);
+ObjFunction* Compile(Bytecode* bytecode, const char* sourceCode, const char* path);
 void ParsePrecedence(Precedence precedence);
 
 #endif

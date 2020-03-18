@@ -11,6 +11,7 @@ VM vm;
 
 static void ResetStack() {
     vm.stackTop = vm.stack;
+    vm.frameCount = 0;
 }
 
 static void Push(Value value) {
@@ -23,23 +24,23 @@ static Value Pop() {
     return * vm.stackTop;
 }
 
-static uint8_t ReadByte() {
-    vm.ip++;
-    return *(vm.ip-1);
+static uint8_t ReadByte(CallFrame* frame) {
+    frame->ip++;
+    return *(frame->ip-1);
 }
 
 static Value Peek(int i) {
     return *(vm.stackTop - i);
 }
 
-static Value ReadConstant() {
-    int address = ReadByte();
-    return vm.bytecode->constants.values[address];
+static Value ReadConstant(CallFrame* frame) {
+    int address = ReadByte(frame);
+    return frame->function->bytecode.constants.values[address];
 }
 
-static ObjString* ReadString() {
-    int address = ReadByte();
-    return AS_STRING(vm.bytecode->constants.values[address]);
+static ObjString* ReadString(CallFrame* frame) {
+    int address = ReadByte(frame);
+    return AS_STRING(frame->function->bytecode.constants.values[address]);
 }
 
 static bool Equal(Value a, Value b) {
@@ -55,19 +56,21 @@ static bool Equal(Value a, Value b) {
  }
 
 static bool Run() {
+    CallFrame* frame = &vm.frames[vm.frameCount-1];
+    
 #ifdef DEBUG_TRACE_EXECUTION
-    DisassembleBytecode(vm.bytecode);
+    DisassembleBytecode(&frame->function->bytecode);
     printf("Program execution \n");
     printf("Instruction Address   Line  Instruction   Operand address    Operand value   Stack      \n");
 #endif
     for (;;) {
         
 #ifdef DEBUG_TRACE_EXECUTION
-        DisassembleExecution(vm.bytecode, (int)(vm.ip-vm.bytecode->code), &vm.stack, vm.stackTop);
+        DisassembleExecution(&frame->function->bytecode, (int)(frame->ip-frame->function->bytecode.code), &vm.stack, vm.stackTop);
 #endif
-        switch(ReadByte()) {
+        switch(ReadByte(frame)) {
             case CONSTANT_OP: {
-                Push(ReadConstant());
+                Push(ReadConstant(frame));
                 break;
             }
             case ADD_OP: {
@@ -136,7 +139,7 @@ static bool Run() {
                 break;
             }
             case END_OF_ARRAY_OP: {
-                ObjString* name = ReadString();
+                ObjString* name = ReadString(frame);
                 Value value;
                 GetTableEntry(&vm.globals, name, &value);
                 ObjString* string = AS_STRING(value);
@@ -164,29 +167,29 @@ static bool Run() {
             }
             case JUMP_IF_FALSE_OP: {
                 bool doJump = !AS_BOOLEAN(Pop());
-                  vm.ip += 2;
+                  frame->ip += 2;
                 if (doJump) {
-                    vm.ip += (uint16_t)((vm.ip[-2] << 8) | vm.ip[-1]);
+                    frame->ip += (uint16_t)((frame->ip[-2] << 8) | frame->ip[-1]);
                 }
                 break;
             }
              case JUMP_IF_TRUE_OP: {
                  bool doJump = AS_BOOLEAN(Pop());
-                 vm.ip += 2;
+                 frame->ip += 2;
                  if (doJump) {
-                     vm.ip += (uint16_t)((vm.ip[-2] << 8) | vm.ip[-1]);
+                     frame->ip += (uint16_t)((frame->ip[-2] << 8) | frame->ip[-1]);
                  }
                  break;
              }
              case JUMP_OP: {
-                vm.ip += 2;
-                vm.ip += (uint16_t)((vm.ip[-2] << 8) | vm.ip[-1]);
+                frame->ip += 2;
+                frame->ip += (uint16_t)((frame->ip[-2] << 8) | frame->ip[-1]);
                 break;
             }
             case LOOP_OP: {
-                vm.ip += 2;
-                vm.ip -= (uint16_t)((vm.ip[-2] << 8)) |
-                vm.ip[-1];
+                frame->ip += 2;
+                frame->ip -= (uint16_t)((frame->ip[-2] << 8)) |
+                frame->ip[-1];
                 break;
             }
             case POP_OP: {
@@ -194,17 +197,17 @@ static bool Run() {
                 break;
             }
             case DEFINE_GLOBAL_OP: {
-                ObjString* name = ReadString();
+                ObjString* name = ReadString(frame);
                 SetTableEntry(&vm.globals, name, NONE_VAL);
                 break;
             }
             case SET_GLOBAL_OP: {
-                ObjString* name = ReadString();
+                ObjString* name = ReadString(frame);
                 SetTableEntry(&vm.globals, name, Pop());
                 break;
             }
             case GET_GLOBAL_OP: {
-                ObjString* name = ReadString();
+                ObjString* name = ReadString(frame);
                 Value value;
                 if (GetTableEntry(&vm.globals, name, &value)) {
                     Push(value);
@@ -212,22 +215,22 @@ static bool Run() {
                 break;
             }
             case SET_LOCAL_OP: {
-                uint8_t slot = ReadByte();
-                vm.stack[slot] = Peek(1);
+                uint8_t slot = ReadByte(frame);
+                frame->locals[slot] = Peek(1);
                 break;
             }
             case GET_LOCAL_OP: {
-                uint8_t slot = ReadByte();
-                Push(vm.stack[slot]);
+                uint8_t slot = ReadByte(frame);
+                Push(frame->locals[slot]);
                 break;
             }
             case DECLARE_LOCAL_OP: {
-                uint8_t slot = ReadByte();
+                uint8_t slot = ReadByte(frame);
                 vm.stack[slot] = NONE_VAL;
                 break;
             }
             case GET_INDEX_OP: {
-                ObjString* name = ReadString();
+                ObjString* name = ReadString(frame);
                 Value value;
                 GetTableEntry(&vm.globals, name, &value);
                 ObjString* string = AS_STRING(value);
@@ -267,14 +270,17 @@ InterpretResult Interpret(const char* sourceCode, const char* path) {
     InitVM();
     Bytecode bytecode;
     InitBytecode(&bytecode);
-    bool compileTimeError = Compile(&bytecode, sourceCode, path);
+    ObjFunction* function = Compile(&bytecode, sourceCode, path);
     
-    if (compileTimeError) {
+    if (function == NULL) {
         return INTERPRET_COMPILE_ERROR;
     }
     
-    vm.bytecode = &bytecode;
-    vm.ip = bytecode.code;
+    Push(OBJ_VAL(function));
+    CallFrame* frame = &vm.frames[vm.frameCount++];
+    frame->function = function;
+    frame->ip = function->bytecode.code;
+    frame->locals = vm.stack;
     
     bool RuntimeError = Run();
     FreeVM();

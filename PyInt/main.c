@@ -72,16 +72,16 @@ static void RunFile(const char* path) {
 int main(int argc, const char* argv[]) {
     
     //if (argc == 0) {
-        //Repl();
-    //}
-    //else if (argc == 1) {
-     //   RunFile(argv[1]);
+      //  Repl();
    // }
-    //else {
-      //  fprintf(stderr, "Python: can't open file %s: [Errno 2] No such file or directory",
-                //argv[1]);
-       // return -1;
+ //   else if (argc == 1) {
+  //      RunFile(argv[1]);
+  //  }
+  //  else {
+    //    fprintf(stderr, "Python: can't open file %s: [Errno 2] No such file or directory",
+     //           argv[1]);
+      //  return -1;
     RunFile("/Users/shaunmitchell/Desktop/PyInt/PyInt/PyInt_Script");
-    //}
+   // }
 	return 0;
 }
