@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Source\Bytecode.c" />
+    <ClCompile Include="Source\Compiler.c" />
+    <ClCompile Include="Source\CompilerBytecode.c" />
+    <ClCompile Include="Source\CompilerErrors.c" />
+    <ClCompile Include="Source\Debug.c" />
+    <ClCompile Include="Source\HashTable.c" />
+    <ClCompile Include="Source\Helpers.c" />
+    <ClCompile Include="Source\Local.c" />
+    <ClCompile Include="Source\main.c" />
+    <ClCompile Include="Source\Memory.c" />
+    <ClCompile Include="Source\Object.c" />
+    <ClCompile Include="Source\Scanner.c" />
+    <ClCompile Include="Source\Value.c" />
+    <ClCompile Include="Source\VM.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Headers\Bytecode.h" />
+    <ClInclude Include="Headers\Common.h" />
+    <ClInclude Include="Headers\Compiler.h" />
+    <ClInclude Include="Headers\CompilerBytecode.h" />
+    <ClInclude Include="Headers\CompilerErrors.h" />
+    <ClInclude Include="Headers\Debug.h" />
+    <ClInclude Include="Headers\HashTable.h" />
+    <ClInclude Include="Headers\Helpers.h" />
+    <ClInclude Include="Headers\Local.h" />
+    <ClInclude Include="Headers\Memory.h" />
+    <ClInclude Include="Headers\Object.h" />
+    <ClInclude Include="Headers\PrintType.h" />
+    <ClInclude Include="Headers\Scanner.h" />
+    <ClInclude Include="Headers\Token.h" />
+    <ClInclude Include="Headers\Value.h" />
+    <ClInclude Include="Headers\VM.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PyInt_Script" />
+    <None Include="README.md" />
+  </ItemGroup>
+</Project>
