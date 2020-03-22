@@ -1,5 +1,7 @@
 #include "CppUnitTest.h"
+extern "C" {
 #include "Bytecode.h"
+}
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -8,7 +10,7 @@ namespace PyIntUnitTests
 	TEST_CLASS(BytecodeUnitTests)
 	{
 	public:
-		
+
 		TEST_METHOD(InitBytecode_GivenBytecodePointer_InitialisesBytecode)
 		{
 			Bytecode bytecode;

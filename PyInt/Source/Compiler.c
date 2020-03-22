@@ -21,7 +21,7 @@ static void InitCompiler(Compiler* compiler, FunctionType functionType) {
     compiler->localCount = 0;
     compiler->scopeDepth = 0;
     compiler->function = NewFunction();
-    compiler->enclosing = currentCompiler;
+    compiler->enclosing = (struct Compiler*) currentCompiler;
     currentCompiler = compiler;
     
     if (functionType != TYPE_SCRIPT) {
@@ -36,7 +36,7 @@ static void InitCompiler(Compiler* compiler, FunctionType functionType) {
 
 static ObjFunction* EndCompiler() {
     WriteReturn();
-    currentCompiler = currentCompiler->enclosing;
+    currentCompiler = (Compiler*) currentCompiler->enclosing;
 #ifdef DEBUG_PRINT_CODE
     if (!parser.hadError) {
         DisassembleBytecode(compiler.function.bytecode, compiler.function->name != NULL ? compiler.function->name->chars : "<script>");
@@ -56,7 +56,7 @@ static void GlobalStatement() {
     do {
         uint8_t address = StoreConstant(OBJ_VAL(CopyString(parser.current.start, parser.current.length)));
         WriteBytes(DEFINE_GLOBAL_OP, address);
-        GetNextToken();
+        GetNextToken(currentCompiler->scanner);
     } while (MatchToken(COMMA_TOKEN));
 }
 
@@ -251,11 +251,11 @@ static void WhileStatement() {
 }
 
 static void ForStatement() {
-    GetNextToken();
+    GetNextToken(currentCompiler->scanner);
     Token loopVariable = parser.previous;
     VariableDeclaration();
     ConsumeToken(IN_TOKEN, InError);
-    GetNextToken();
+    GetNextToken(currentCompiler->scanner);
     uint8_t identifierAddress = GetIdentifierAddress();
     ConsumeToken(COLON_TOKEN, ColonError);
     
@@ -432,7 +432,7 @@ static void String(bool canAssign) {
     string[parser.previous.length] = '\0';
     uint8_t address = StoreConstant(OBJ_VAL(CopyString(parser.previous.start, parser.previous.length+1)));
     WriteBytes(CONSTANT_OP, address);
-    GetNextToken();
+    GetNextToken(currentCompiler->scanner);
 }
 
 static void Boolean(bool canAssign) {
@@ -533,7 +533,7 @@ static ParseRule* GetRule(TokenType type) {
 }
 
 void ParsePrecedence(Precedence precedence) {
-    GetNextToken();
+    GetNextToken(currentCompiler->scanner);
     ParseFn prefixRule = GetRule(parser.previous.type)->prefix;
     
     if (prefixRule == NULL) {
@@ -545,7 +545,7 @@ void ParsePrecedence(Precedence precedence) {
     prefixRule(canAssign);
     
     while (precedence <= GetRule(parser.current.type)->precedence) {
-        GetNextToken();
+        GetNextToken(currentCompiler->scanner);
         ParseFn infixRule = GetRule(parser.previous.type)->infix;
         infixRule(canAssign);
     }
@@ -557,12 +557,15 @@ void ParsePrecedence(Precedence precedence) {
 }
 
 ObjFunction* Compile(Bytecode* bytecode, const char* sourceCode, const char* path) {
-    InitScanner(sourceCode, path);
     Compiler compiler;
     InitCompiler(&compiler, TYPE_SCRIPT);
     InitParser();
     
-    GetNextToken();
+    Scanner scanner;
+    InitScanner(&scanner, sourceCode, path);
+    currentCompiler->scanner = &scanner;
+
+    GetNextToken(currentCompiler->scanner);
     if (strncmp(path, "<stdin>", 7) == 0) {
         TestList();
     }

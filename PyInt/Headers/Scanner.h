@@ -25,7 +25,7 @@ typedef enum {
     DEDENT_ERROR
 } SpaceType;
 
-void InitScanner(const char* sourceCode, const char* fileName);
-Token GetToken(void);
+void InitScanner(Scanner* scanner, const char* sourceCode, const char* fileName);
+Token GetToken(Scanner* scanner);
 
 #endif

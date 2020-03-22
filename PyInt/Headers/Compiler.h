@@ -14,6 +14,7 @@ typedef struct {
     Local locals[UINT8_COUNT];
     int localCount;
     int scopeDepth;
+    Scanner* scanner;
 } Compiler;
 
 typedef struct {

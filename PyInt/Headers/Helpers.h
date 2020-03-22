@@ -3,8 +3,9 @@
 
 #include "Token.h"
 #include "Common.h"
+#include "Scanner.h"
 
-void GetNextToken(void);
+void GetNextToken(Scanner* scanner);
 bool MatchToken(TokenType tokenType);
 void ConsumeToken(TokenType tokenType, const char* message);
 void TryConsumeToken(TokenType tokenType);

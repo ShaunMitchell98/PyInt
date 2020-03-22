@@ -3,7 +3,7 @@
 #include "../Headers/Compiler.h"
 #include "../Headers/CompilerErrors.h"
 
-void GetNextToken() {
+void GetNextToken(Scanner* scanner) {
     
     if (parser.current.type == EOF_TOKEN) {
         return;
@@ -11,7 +11,7 @@ void GetNextToken() {
     
     parser.previous = parser.current;
     
-    parser.current = GetToken();
+    parser.current = GetToken(scanner);
     
     if (parser.current.type == ERROR_TOKEN) {
         SyntaxError(&parser.current);
@@ -20,13 +20,13 @@ void GetNextToken() {
 }
 bool MatchToken(TokenType tokenType) {
     if (parser.current.type != tokenType) return false;
-    GetNextToken();
+    GetNextToken(currentCompiler->scanner);
     return true;
 }
 
 void ConsumeToken(TokenType tokenType, const char* message) {
     if (parser.current.type == tokenType) {
-        GetNextToken();
+        GetNextToken(currentCompiler->scanner);
         return;
     }
     Error(message);
@@ -35,7 +35,7 @@ void ConsumeToken(TokenType tokenType, const char* message) {
 
 void TryConsumeToken(TokenType tokenType) {
     if (parser.current.type == tokenType) {
-        GetNextToken();
+        GetNextToken(currentCompiler->scanner);
         return;
     }
 }
