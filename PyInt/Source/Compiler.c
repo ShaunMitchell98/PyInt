@@ -36,7 +36,10 @@ static void InitCompiler(Compiler* compiler, FunctionType functionType) {
 
 static ObjFunction* EndCompiler() {
     WriteReturn();
-    currentCompiler = (Compiler*) currentCompiler->enclosing;
+
+    if (currentCompiler->enclosing != NULL) {
+        currentCompiler = (Compiler*)currentCompiler->enclosing;
+    }
 #ifdef DEBUG_PRINT_CODE
     if (!parser.hadError) {
         DisassembleBytecode(compiler.function.bytecode, compiler.function->name != NULL ? compiler.function->name->chars : "<script>");

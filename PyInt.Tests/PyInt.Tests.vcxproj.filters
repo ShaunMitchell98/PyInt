@@ -1,25 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
+    <Filter Include="UnitTests">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="Functional Tests">
+      <UniqueIdentifier>{07b12a60-d537-45fb-9751-ac51ecf06e97}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Functional Tests\Source Code">
+      <UniqueIdentifier>{68a53cfc-25a9-49ed-a4b8-1524b0a83e24}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BytecodeUnitTests.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Unit Tests\BytecodeUnitTests.cpp">
+      <Filter>UnitTests</Filter>
     </ClCompile>
-    <ClCompile Include="ScannerUnitTests.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Unit Tests\ScannerUnitTests.cpp">
+      <Filter>UnitTests</Filter>
     </ClCompile>
+    <ClCompile Include="Functional Tests\ArithmeticFunctionalTests.cpp">
+      <Filter>Functional Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="FunctionalTestUtilities.c">
+      <Filter>Functional Tests</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Functional Tests\Source Code\CanAddTwoIntegers.txt">
+      <Filter>Functional Tests\Source Code</Filter>
+    </Text>
+    <Text Include="CanSubtractTwoIntegers.txt">
+      <Filter>Functional Tests\Source Code</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FunctionalTestUtilities.h">
+      <Filter>Functional Tests</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

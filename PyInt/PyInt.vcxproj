@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\RunFile.c" />
+    <ClCompile Include="Source\Repl.c" />
     <ClCompile Include="Source\Bytecode.c" />
     <ClCompile Include="Source\Compiler.c" />
     <ClCompile Include="Source\CompilerBytecode.c" />
@@ -46,14 +48,17 @@
     <ClInclude Include="Headers\HashTable.h" />
     <ClInclude Include="Headers\Memory.h" />
     <ClInclude Include="Headers\Object.h" />
+    <ClInclude Include="Headers\PrintInfo.h" />
     <ClInclude Include="Headers\PrintType.h" />
     <ClInclude Include="Headers\Scanner.h" />
     <ClInclude Include="Headers\Token.h" />
     <ClInclude Include="Headers\Value.h" />
     <ClInclude Include="Headers\VM.h" />
+    <ClInclude Include="Headers\Repl.h" />
+    <ClInclude Include="Headers\RunFile.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="PyInt_Script" />
+    <None Include="PyInt_Script.txt" />
     <None Include="README.md" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

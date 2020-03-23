@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 #include "../Headers/VM.h"
@@ -21,12 +23,12 @@ static void Push(Value value) {
 
 static Value Pop() {
     vm.stackTop--;
-    return * vm.stackTop;
+    return *vm.stackTop;
 }
 
 static uint8_t ReadByte(CallFrame* frame) {
     frame->ip++;
-    return *(frame->ip-1);
+    return *(frame->ip - 1);
 }
 
 static Value Peek(int i) {
@@ -53,7 +55,63 @@ static bool Equal(Value a, Value b) {
     else {
         return false;
     }
- }
+}
+
+static bool PrintValueToTerminal(Value a) {
+    if (IS_NUMBER(a)) {
+        printf("%f\n", AS_NUMBER(a));
+    }
+    else if (IS_BOOLEAN(a)) {
+        printf(AS_BOOLEAN(a) ? "True\n" : "False\n");
+    }
+    else if (IS_CHAR(a)) {
+        printf("%c", AS_CHAR(a));
+    }
+    else if (IS_OBJ(a)) {
+        PrintObject(a, PROGRAM_OUTPUT);
+    }
+    else {
+        return false;
+    }
+    return true;
+}
+
+
+static bool WriteToFile(const char* text, const char* filePath) {
+    FILE file;
+    FILE* fp = &file;
+    errno_t err = fopen_s(&fp, filePath, "wb");
+
+    if (err != 0) {
+        fprintf(stderr, "Cannot write to file %s", filePath);
+        return false;
+    }
+
+    fputs(text, fp);
+    fclose(fp);
+    return true;
+}
+
+static bool PrintValueToFile(Value a) {
+    char text[10];
+    if (IS_NUMBER(a)) {
+        _itoa_s(AS_NUMBER(a), text, 10, 10);
+    }
+    else if (IS_BOOLEAN(a)) {
+        AS_BOOLEAN(a) == true ? strcpy_s(text, 10, "true") : strcpy_s(text, 10, "false");
+    }
+    else if (IS_CHAR(a)) {
+        strcpy_s(text, 10, &AS_CHAR(a));
+    }
+    else if (IS_OBJ(a)) {
+        PrintObject(a, PROGRAM_OUTPUT);
+    }
+    else {
+        return false;
+    }
+    WriteToFile(text, vm.printInfo.filePath);
+    return true;
+}
 
 static bool Run() {
     CallFrame* frame = &vm.frames[vm.frameCount-1];
@@ -148,20 +206,13 @@ static bool Run() {
             }
             case PRINT_OP: {
                 Value a = Pop();
-                if (IS_NUMBER(a)) {
-                    printf("%f\n", AS_NUMBER(a));
+                if (vm.printInfo.printLocation == PRINT_TERMINAL) {
+                    bool success = PrintValueToTerminal(a);
+                    if (!success) return true;
                 }
-                else if (IS_BOOLEAN(a)) {
-                    printf(AS_BOOLEAN(a) ? "True\n" : "False\n");
-                }
-                else if (IS_CHAR(a)) {
-                    printf("%c", AS_CHAR(a));
-                }
-                else if (IS_OBJ(a)) {
-                    PrintObject(a, PROGRAM_OUTPUT);
-                }
-                else {
-                    return false;
+                else if (vm.printInfo.printLocation == PRINT_FILE) {
+                    bool success = PrintValueToFile(a);
+                    if (!success) return true;
                 }
                 break;
             }
@@ -241,7 +292,7 @@ static bool Run() {
             }
             case RETURN_OP: {
                 //Do nothing;
-                return true;
+                return false;
             }
             case NONE_OP:
                 break;
@@ -252,10 +303,10 @@ static bool Run() {
       return true;
 }
 
-
-void InitVM() {
+void InitVM(PrintInfo printInfo) {
     ResetStack();
     vm.arrayIndex = 0;
+    vm.printInfo = printInfo;
     InitTable(&vm.strings);
     InitTable(&vm.globals);
 }
@@ -266,8 +317,8 @@ void FreeVM() {
     FreeTable(&vm.globals);
 }
 
-InterpretResult Interpret(const char* sourceCode, const char* path) {
-    InitVM();
+InterpretResult Interpret(const char* sourceCode, const char* path, PrintInfo printInfo) {
+    InitVM(printInfo);
     Bytecode bytecode;
     InitBytecode(&bytecode);
     ObjFunction* function = Compile(&bytecode, sourceCode, path);

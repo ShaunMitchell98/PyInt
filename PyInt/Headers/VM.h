@@ -8,6 +8,7 @@
 #include "Value.h"
 #include "Bytecode.h"
 #include "HashTable.h"
+#include "PrintInfo.h"
 
 typedef struct {
     ObjFunction* function;
@@ -24,6 +25,7 @@ typedef struct {
     Table strings;
     Table globals;
     int arrayIndex;
+    PrintInfo printInfo;
 } VM;
 
 typedef enum {
@@ -34,8 +36,8 @@ typedef enum {
 
 extern VM vm;
 
-void InitVM(void);
-InterpretResult Interpret(const char* sourceCode, const char* path);
+void InitVM(PrintInfo printInfo);
+InterpretResult Interpret(const char* sourceCode, const char* path, PrintInfo printInfo);
 void FreeVM(void);
 
 #endif

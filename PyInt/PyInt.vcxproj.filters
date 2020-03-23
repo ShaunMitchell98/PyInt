@@ -12,9 +12,11 @@
     <ClCompile Include="Source\main.c" />
     <ClCompile Include="Source\Memory.c" />
     <ClCompile Include="Source\Object.c" />
-    <ClCompile Include="Source\Scanner.c" />
     <ClCompile Include="Source\Value.c" />
     <ClCompile Include="Source\VM.c" />
+    <ClCompile Include="Source\Scanner.c" />
+    <ClCompile Include="Source\Repl.c" />
+    <ClCompile Include="Source\RunFile.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Bytecode.h" />
@@ -33,9 +35,12 @@
     <ClInclude Include="Headers\Token.h" />
     <ClInclude Include="Headers\Value.h" />
     <ClInclude Include="Headers\VM.h" />
+    <ClInclude Include="Headers\Repl.h" />
+    <ClInclude Include="Headers\RunFile.h" />
+    <ClInclude Include="Headers\PrintInfo.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="PyInt_Script" />
     <None Include="README.md" />
+    <None Include="PyInt_Script.txt" />
   </ItemGroup>
 </Project>
