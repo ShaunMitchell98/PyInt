@@ -285,6 +285,11 @@ Token GetToken(Scanner* scanner) {
             return MakeToken(scanner, COLON_TOKEN);
         case ',':
             return MakeToken(scanner, COMMA_TOKEN);
+        case '!':
+            if (CheckKeyword(scanner, "=", 1)) {
+                scanner->current++;
+                return MakeToken(scanner, NOT_EQUAL_TOKEN);
+            }
         case '\'':
             return String(scanner, '\'');
         case '"':

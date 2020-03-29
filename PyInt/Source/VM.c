@@ -205,7 +205,7 @@ static bool Run() {
             case AND_OP: {
                 Value b = Pop();
                 Value a = Pop();
-                Push(BOOLEAN_VAL(AS_BOOLEAN(a) || AS_BOOLEAN(b)));
+                Push(BOOLEAN_VAL(AS_BOOLEAN(a) && AS_BOOLEAN(b)));
                 break;
             }
             case EQUAL_OP: {

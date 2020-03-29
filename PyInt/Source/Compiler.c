@@ -387,7 +387,7 @@ static void Unary(Compiler* compiler, bool canAssign) {
     ParsePrecedence(compiler, PREC_UNARY);
     
     switch(operatorType) {
-        case BANG_TOKEN: WriteByte(compiler, NOT_OP); break;
+        case NOT_TOKEN: WriteByte(compiler, NOT_OP); break;
         case MINUS_TOKEN: WriteByte(compiler, NEGATE_OP); break;
         default: return;
     }
@@ -401,7 +401,7 @@ static void Binary(Compiler* compiler, bool canAssign) {
     ParsePrecedence(compiler, (Precedence)rule->precedence+1);
     
     switch(operatorType) {
-        case BANG_EQUAL_TOKEN: WriteBytes(compiler, EQUAL_OP, NOT_OP); break;
+        case NOT_EQUAL_TOKEN: WriteBytes(compiler, EQUAL_OP, NOT_OP); break;
         case EQUAL_EQUAL_TOKEN: WriteByte(compiler, EQUAL_OP); break;
         case GREATER_TOKEN: WriteByte(compiler, GREATER_OP); break;
         case GREATER_EQUAL_TOKEN: WriteBytes(compiler, LESSER_OP, NOT_OP); break;
@@ -483,7 +483,6 @@ ParseRule rules[] = {
     {NULL,       NULL,      PREC_NONE},         //      LEFT_BRACE_TOKEN
     {NULL,       NULL,      PREC_NONE},         //      RIGHT_BRACE_TOKEN
     {NULL,       NULL,      PREC_NONE},         //      EQUAL_TOKEN
-    {Unary,      NULL,      PREC_NONE},         //      BANG_TOKEN
     {NULL,       Binary,    PREC_EQUALITY},     //      BANG_EQUAL_TOKEN
     {NULL,       Binary,    PREC_EQUALITY},     //      EQUAL_EQUAL_TOKEN
     {NULL,       Binary,    PREC_EQUALITY},     //      GREATER_TOKEN
