@@ -4,7 +4,8 @@
 typedef enum {
     STACK,
     OPERAND_VALUE,
-    PROGRAM_OUTPUT
+    PROGRAM_OUTPUT,
+    TEST_OUTPUT
 } PrintType;
 
 #endif

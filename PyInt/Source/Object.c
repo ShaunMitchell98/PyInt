@@ -88,6 +88,9 @@ void PrintObject(Value value, PrintType printType) {
             else if (printType == PROGRAM_OUTPUT) {
                 printf("%s\n", AS_CSTRING(value));
             }
+            else if (printType == TEST_OUTPUT) {
+                strcat_s(vm.printInfo.output, 100, AS_CSTRING(value));
+            }
             break;
         }
     }

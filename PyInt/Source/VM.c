@@ -124,7 +124,12 @@ static bool PrintValueToString(Value a) {
         strcat_s(vm.printInfo.output, 100, &AS_CHAR(a));
     }
     else if (IS_OBJ(a)) {
-        PrintObject(a, PROGRAM_OUTPUT);
+        if (vm.printInfo.printLocation == PRINT_TERMINAL) {
+            PrintObject(a, PROGRAM_OUTPUT);
+        }
+        else if (vm.printInfo.printLocation == PRINT_STRING) {
+            PrintObject(a, TEST_OUTPUT);
+        }
     }
     else {
         return false;

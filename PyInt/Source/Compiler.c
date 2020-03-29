@@ -433,14 +433,13 @@ static void Number(Compiler* compiler, bool canAssign) {
 static void String(Compiler* compiler, bool canAssign) {
     char* string = ALLOCATE(char, compiler->parser->previous.length);
     string = memcpy(string, compiler->parser->previous.start, compiler->parser->previous.length);
-    string[compiler->parser->previous.length] = '\0';
-    uint8_t address = StoreConstant(compiler, OBJ_VAL(CopyString(compiler->parser->previous.start, compiler->parser->previous.length+1)));
+    uint8_t address = StoreConstant(compiler, OBJ_VAL(CopyString(compiler->parser->previous.start, compiler->parser->previous.length)));
     WriteBytes(compiler, CONSTANT_OP, address);
     GetNextToken(compiler);
 }
 
 static void Boolean(Compiler* compiler, bool canAssign) {
-    bool boolean = compiler->parser->previous.start;
+    bool boolean = compiler->parser->previous.type == TRUE_TOKEN;
     WriteConstantOperation(compiler, BOOLEAN_VAL(boolean));
 }
 
