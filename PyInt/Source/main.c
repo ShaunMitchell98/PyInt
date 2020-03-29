@@ -20,17 +20,17 @@ int main(int argc, const char* argv[]) {
         RunFile(argv[1], printInfo);
     }
     else {
-        //fprintf(stderr, "Python: can't open file %s: [Errno 2] No such file or directory",
-        //        argv[1]);
-        //return -1;
         for (int i = 0; i < argc; i++) {
             if (argv[i] == "-o") {
                 PrintInfo printInfo;
                 printInfo.printLocation = PRINT_FILE;
                 printInfo.filePath = argv[i + 1];
                 RunFile(argv[1], printInfo);
+                return 0;
             }
         }
+        fprintf(stderr, "Python: can't open file %s: [Errno 2] No such file or directory",
+            argv[1]);
+        return -1;
     }
-	return 0;
 }

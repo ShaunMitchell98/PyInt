@@ -167,17 +167,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="CanSubtractTwoIntegers.txt" />
-    <Text Include="Functional Tests\Source Code\CanAddTwoIntegers.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="Functional Tests\ArithmeticFunctionalTests.cpp" />
     <ClCompile Include="Functional Tests\FunctionalTestUtilities.c" />
+    <ClCompile Include="Functional Tests\LogicFunctionalTests.cpp" />
     <ClCompile Include="Unit Tests\BytecodeUnitTests.cpp" />
     <ClCompile Include="Unit Tests\ScannerUnitTests.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FunctionalTestUtilities.h" />
+    <ClInclude Include="Functional Tests\FunctionalTestUtilities.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

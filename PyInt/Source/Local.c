@@ -9,8 +9,8 @@
 #include "../Headers/Helpers.h"
 #include "../Headers/Compiler.h"
 
-uint8_t IdentifierConstant(Token* name) {
-    return StoreConstant(OBJ_VAL(CopyString(name->start, name->length)));
+uint8_t IdentifierConstant(Compiler* compiler, Token* name) {
+    return StoreConstant(compiler, OBJ_VAL(CopyString(name->start, name->length)));
 }
 
 static bool IdentifiersEqual(Token* a, Token* b) {
@@ -18,9 +18,9 @@ static bool IdentifiersEqual(Token* a, Token* b) {
         return memcmp(a->start, b->start, a->length) == 0;
 }
 
-int ResolveLocal(Token* name) {
-    for (int i = currentCompiler->localCount-1; i >= 0; i--) {
-        Local* local = &currentCompiler->locals[i];
+int ResolveLocal(Compiler* compiler, Token* name) {
+    for (int i = compiler->localCount-1; i >= 0; i--) {
+        Local* local = &compiler->locals[i];
         if (IdentifiersEqual(name, &local->name)) {
             if(local->depth == -1) {
                 Error("Cannot read local variable in its own initializer.");
@@ -32,22 +32,22 @@ int ResolveLocal(Token* name) {
     return -1;
 }
 
-static int AddLocal(Token* token) {
-    if (currentCompiler->localCount == UINT8_COUNT) {
+static int AddLocal(Compiler* compiler, Token* token) {
+    if (compiler->localCount == UINT8_COUNT) {
         Error("Too many local variables in function.");
         return -1;
     }
 
-    Local* local = &currentCompiler->locals[currentCompiler->localCount++];
+    Local* local = &compiler->locals[compiler->localCount++];
     local->name = *token;
     local->depth = -1;
-    return currentCompiler->localCount-1;
+    return compiler->localCount-1;
 }
 
-bool LocalDeclared(Token* token) {
-    for (int i = currentCompiler->localCount-1; i >=0; i--) {
-        Local* local = &currentCompiler->locals[i];
-        if (local->depth != -1 && local->depth < currentCompiler->scopeDepth) {
+static bool LocalDeclared(Compiler* compiler, Token* token) {
+    for (int i = compiler->localCount-1; i >=0; i--) {
+        Local* local = &compiler->locals[i];
+        if (local->depth != -1 && local->depth < compiler->scopeDepth) {
             return false;
         }
 
@@ -60,51 +60,51 @@ bool LocalDeclared(Token* token) {
     return false;
 }
 
- int DeclareVariable() {
+ int DeclareVariable(Compiler* compiler) {
     //Global variables are implicitly declared.
-     if (currentCompiler->scopeDepth == 0) return -1;
+     if (compiler->scopeDepth == 0) return -1;
     
-    Token* token = &parser.previous;
-    if (!LocalDeclared(token)) {
-        return AddLocal(token);
+    Token* token = &compiler->parser->previous;
+    if (!LocalDeclared(compiler, token)) {
+        return AddLocal(compiler, token);
     }
      return -1;
 }
 
-uint8_t ParseVariable() {
-    int address = DeclareVariable();
+uint8_t ParseVariable(Compiler* compiler) {
+    int address = DeclareVariable(compiler);
     
     if (address != -1){
-        WriteBytes(DECLARE_LOCAL_OP, address);
+        WriteBytes(compiler, DECLARE_LOCAL_OP, address);
     }
     
-    if (currentCompiler->scopeDepth > 0) return 0;
-    return IdentifierConstant(&parser.previous);
+    if (compiler->scopeDepth > 0) return 0;
+    return IdentifierConstant(compiler, &compiler->parser->previous);
 }
 
-void BeginScope() {
-    currentCompiler->scopeDepth++;
+void BeginScope(Compiler* compiler) {
+    compiler->scopeDepth++;
 }
 
-void EndScope() {
-    currentCompiler->scopeDepth--;
+void EndScope(Compiler* compiler) {
+    compiler->scopeDepth--;
     
-    while (currentCompiler->localCount > 0 && currentCompiler->locals[currentCompiler->localCount-1].depth > currentCompiler->scopeDepth) {
-        WriteByte(POP_OP);
-        currentCompiler->localCount--;
+    while (compiler->localCount > 0 && compiler->locals[compiler->localCount-1].depth > compiler->scopeDepth) {
+        WriteByte(compiler, POP_OP);
+        compiler->localCount--;
     }
 }
 
-void MarkInitialised() {
-    if (currentCompiler->scopeDepth == 0) return;
-    currentCompiler->locals[currentCompiler->localCount-1].depth = currentCompiler->scopeDepth;
+void MarkInitialised(Compiler* compiler) {
+    if (compiler->scopeDepth == 0) return;
+    compiler->locals[compiler->localCount-1].depth = compiler->scopeDepth;
 }
 
-void DefineVariable(uint8_t global) {
-    if (currentCompiler->scopeDepth > 0) {
-        MarkInitialised();
-        WriteBytes(SET_LOCAL_OP, (uint8_t)currentCompiler->localCount-1);
+void DefineVariable(Compiler* compiler, uint8_t global) {
+    if (compiler->scopeDepth > 0) {
+        MarkInitialised(compiler);
+        WriteBytes(compiler, SET_LOCAL_OP, (uint8_t)compiler->localCount-1);
         return;
     }
-    WriteBytes(DEFINE_GLOBAL_OP, global);
+    WriteBytes(compiler, DEFINE_GLOBAL_OP, global);
 }

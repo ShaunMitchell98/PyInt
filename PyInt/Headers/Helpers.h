@@ -3,11 +3,12 @@
 
 #include "Token.h"
 #include "Common.h"
+#include "Compiler.h"
 #include "Scanner.h"
 
-void GetNextToken(Scanner* scanner);
-bool MatchToken(TokenType tokenType);
-void ConsumeToken(TokenType tokenType, const char* message);
-void TryConsumeToken(TokenType tokenType);
-bool CheckToken(TokenType tokenType);
+void GetNextToken(Compiler* compiler);
+bool MatchToken(Compiler* compiler, Token token, TokenType tokenType);
+void ConsumeToken(Compiler* compiler, TokenType tokenType, const char* message);
+void TryConsumeToken(Compiler* compiler, TokenType tokenType);
+bool CheckToken(Compiler* compiler, TokenType tokenType);
 #endif

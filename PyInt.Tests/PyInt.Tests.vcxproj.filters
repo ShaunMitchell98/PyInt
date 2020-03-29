@@ -22,21 +22,14 @@
     <ClCompile Include="Functional Tests\ArithmeticFunctionalTests.cpp">
       <Filter>Functional Tests</Filter>
     </ClCompile>
-    <ClCompile Include="FunctionalTestUtilities.c">
-      <Filter>Functional Tests</Filter>
+    <ClCompile Include="Functional Tests\FunctionalTestUtilities.c">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="Functional Tests\LogicFunctionalTests.cpp">
+      <Filter>UnitTests</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Functional Tests\Source Code\CanAddTwoIntegers.txt">
-      <Filter>Functional Tests\Source Code</Filter>
-    </Text>
-    <Text Include="CanSubtractTwoIntegers.txt">
-      <Filter>Functional Tests\Source Code</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="FunctionalTestUtilities.h">
-      <Filter>Functional Tests</Filter>
-    </ClInclude>
+    <ClInclude Include="Functional Tests\FunctionalTestUtilities.h" />
   </ItemGroup>
 </Project>

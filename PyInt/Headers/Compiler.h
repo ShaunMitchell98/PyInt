@@ -1,21 +1,11 @@
 #ifndef PyInt_Compiler_h
 #define PyInt_Compiler_h
 
-#include "Local.h"
 #include "Bytecode.h"
 #include "Token.h"
 #include "Scanner.h"
 #include "Object.h"
-
-typedef struct {
-    struct Compiler* enclosing;
-    ObjFunction* function;
-    FunctionType functionType;
-    Local locals[UINT8_COUNT];
-    int localCount;
-    int scopeDepth;
-    Scanner* scanner;
-} Compiler;
+#include "Local.h"
 
 typedef struct {
     Token previous;
@@ -23,8 +13,16 @@ typedef struct {
     bool hadError;
 } Parser;
 
-Compiler* currentCompiler;
-Parser parser;
+struct sCompiler {
+    struct sCompiler* enclosing;
+    ObjFunction* function;
+    FunctionType functionType;
+    Local locals[UINT8_COUNT];
+    int localCount;
+    int scopeDepth;
+    Scanner* scanner;
+    Parser* parser;
+};
 
 typedef enum {
     PREC_NONE,
@@ -42,7 +40,7 @@ typedef enum {
     PREC_PRIMARY
 } Precedence;
 
-typedef void (*ParseFn)(bool canAssign);
+typedef void (*ParseFn)(Compiler* compiler, bool canAssign);
 
 typedef struct {
     ParseFn prefix;
@@ -51,6 +49,6 @@ typedef struct {
 } ParseRule;
 
 ObjFunction* Compile(Bytecode* bytecode, const char* sourceCode, const char* path);
-void ParsePrecedence(Precedence precedence);
+void ParsePrecedence(Compiler* compiler, Precedence precedence);
 
 #endif

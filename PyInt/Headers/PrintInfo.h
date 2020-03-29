@@ -3,16 +3,14 @@
 
 typedef enum {
     PRINT_TERMINAL,
-    PRINT_FILE
+    PRINT_FILE,
+    PRINT_STRING
 } PrintLocation;
-
-typedef struct {
-    const char* filePath;
-} PrintFile;
 
 typedef struct {
     PrintLocation printLocation;
     const char* filePath;
+    char* output;
 } PrintInfo;
 
 #endif

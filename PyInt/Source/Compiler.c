@@ -15,357 +15,357 @@
 #include "../Headers/Memory.h"
 #include "../Headers/Debug.h"
 
-static void InitCompiler(Compiler* compiler, FunctionType functionType) {
+static void InitParser(Parser* parser) {
+    parser->hadError = false;
+}
+
+static void InitCompiler(Compiler* currentCompiler, Compiler* compiler, FunctionType functionType) {
     compiler->function = NULL;
     compiler->functionType = functionType;
     compiler->localCount = 0;
     compiler->scopeDepth = 0;
     compiler->function = NewFunction();
     compiler->enclosing = (struct Compiler*) currentCompiler;
-    currentCompiler = compiler;
     
     if (functionType != TYPE_SCRIPT) {
-        currentCompiler->function->name = CopyString(parser.previous.start, parser.previous.length);
+        compiler->function->name = CopyString(currentCompiler->parser->previous.start, currentCompiler->parser->previous.length);
+        compiler->parser = currentCompiler->parser;
     }
-    
+
     Local* local = &compiler->locals[compiler->localCount++];
     local->depth = 0;
     local->name.start = "";
     local->name.length = 0;
 }
 
-static ObjFunction* EndCompiler() {
-    WriteReturn();
+static ObjFunction* EndCompiler(Compiler* compiler) {
+    WriteReturn(compiler);
 
-    if (currentCompiler->enclosing != NULL) {
-        currentCompiler = (Compiler*)currentCompiler->enclosing;
+    if (compiler->enclosing != NULL) {
+        compiler = compiler->enclosing;
     }
 #ifdef DEBUG_PRINT_CODE
     if (!parser.hadError) {
         DisassembleBytecode(compiler.function.bytecode, compiler.function->name != NULL ? compiler.function->name->chars : "<script>");
     }
 #endif
-    return currentCompiler->function;
-}
-
-static void InitParser() {
-    parser.hadError = false;
+    return compiler->function;
 }
 
 static ParseRule* GetRule(TokenType type);
 
 
-static void GlobalStatement() {
+static void GlobalStatement(Compiler* compiler) {
     do {
-        uint8_t address = StoreConstant(OBJ_VAL(CopyString(parser.current.start, parser.current.length)));
-        WriteBytes(DEFINE_GLOBAL_OP, address);
-        GetNextToken(currentCompiler->scanner);
-    } while (MatchToken(COMMA_TOKEN));
+        uint8_t address = StoreConstant(compiler, OBJ_VAL(CopyString(compiler->parser->current.start, compiler->parser->current.length)));
+        WriteBytes(compiler, DEFINE_GLOBAL_OP, address);
+        GetNextToken(compiler);
+    } while (MatchToken(compiler, compiler->parser->current, COMMA_TOKEN));
 }
 
-static void Expression() {
-    ParsePrecedence(PREC_ASSIGNMENT);
+static void Expression(Compiler* compiler) {
+    ParsePrecedence(compiler, PREC_ASSIGNMENT);
 }
 
-static void StarExpression() {
-    Expression();
+static void StarExpression(Compiler* compiler) {
+    Expression(compiler);
 }
 
 static void LambdaDef() {
     
 }
 
-static void Test() {
-    if (MatchToken(LAMBDA_TOKEN)) {
+static void Test(Compiler* compiler) {
+    if (MatchToken(compiler, compiler->parser->current, LAMBDA_TOKEN)) {
         LambdaDef();
     } else {
-        ParsePrecedence(PREC_ASSIGNMENT);
+        ParsePrecedence(compiler, PREC_ASSIGNMENT);
     }
-    if (MatchToken(IF_TOKEN)) {
-        ParsePrecedence(PREC_OR);
-        if (MatchToken(IF_TOKEN)) {
-            Test();
+    if (MatchToken(compiler, compiler->parser->current, IF_TOKEN)) {
+        ParsePrecedence(compiler, PREC_OR);
+        if (MatchToken(compiler, compiler->parser->current, IF_TOKEN)) {
+            Test(compiler);
         }
     }
 }
 
-static void TestListStarExpression() {
+static void TestListStarExpression(Compiler* compiler) {
     do {
-        if (MatchToken(STAR_TOKEN)) {
-            StarExpression();
+        if (MatchToken(compiler, compiler->parser->current, STAR_TOKEN)) {
+            StarExpression(compiler);
         }
         else {
-            Test();
+            Test(compiler);
         }
     }
-    while (MatchToken(COMMA_TOKEN));
+    while (MatchToken(compiler, compiler->parser->current, COMMA_TOKEN));
 }
 
-static void ExpressionStatement() {
-    TestListStarExpression();
+static void ExpressionStatement(Compiler* compiler) {
+    TestListStarExpression(compiler);
     
-    if(MatchToken(COLON_TOKEN)) {
-        Test();
+    if(MatchToken(compiler, compiler->parser->current, COLON_TOKEN)) {
+        Test(compiler);
     }
-    if(MatchToken(EQUAL_TOKEN)) {
-        ParsePrecedence(PREC_ASSIGNMENT);
+    if(MatchToken(compiler, compiler->parser->current, EQUAL_TOKEN)) {
+        ParsePrecedence(compiler, PREC_ASSIGNMENT);
     }
 }
 
-static void SmallStatement() {
+static void SmallStatement(Compiler* compiler) {
   
     //DelStatement();
     //PassStatement();
     //FlowStatement();
     //ImportStatement();
-    if (MatchToken(GLOBAL_TOKEN)) {
-        GlobalStatement();
+    if (MatchToken(compiler, compiler->parser->current, GLOBAL_TOKEN)) {
+        GlobalStatement(compiler);
     }
     else {
-        ExpressionStatement();
+        ExpressionStatement(compiler);
     }
     //NonlocalStatement();
     //AssertStatement();
 }
 
-static void SimpleStatement() {
+static void SimpleStatement(Compiler* compiler) {
     do {
-        SmallStatement();
-    } while (MatchToken(SEMICOLON_TOKEN));
+        SmallStatement(compiler);
+    } while (MatchToken(compiler, compiler->parser->current, SEMICOLON_TOKEN));
 }
 
-static void Comparison() {
-    Expression();
+static void Comparison(Compiler* compiler) {
+    Expression(compiler);
 }
 
-static void TestList() {
+static void TestList(Compiler* compiler) {
     do {
-        Test();
-    } while (MatchToken(COMMA_TOKEN));
+        Test(compiler);
+    } while (MatchToken(compiler, compiler->parser->current, COMMA_TOKEN));
 }
 
-static void NamedExpressionTest() {
-    Test();
-    if (MatchToken(COLON_EQUAL_TOKEN)) {
-        Test();
+static void NamedExpressionTest(Compiler* compiler) {
+    Test(compiler);
+    if (MatchToken(compiler, compiler->parser->current, COLON_EQUAL_TOKEN)) {
+        Test(compiler);
     }
 }
 
-static void Statement(void);
+static void Statement(Compiler* compiler);
 
-static void Suite() {
-    if (MatchToken(NEWLINE_TOKEN)) {
-        ConsumeToken(INDENT_TOKEN, IndentError);
+static void Suite(Compiler* compiler) {
+    if (MatchToken(compiler, compiler->parser->current, NEWLINE_TOKEN)) {
+        ConsumeToken(compiler, INDENT_TOKEN, IndentError);
         do {
-            Statement();
-            TryConsumeToken(NEWLINE_TOKEN);
-        } while(!MatchToken(DEDENT_TOKEN) && !MatchToken(EOF_TOKEN));
+            Statement(compiler);
+            TryConsumeToken(compiler, NEWLINE_TOKEN);
+        } while(!MatchToken(compiler, compiler->parser->current, DEDENT_TOKEN) && !MatchToken(compiler, compiler->parser->current, EOF_TOKEN));
     }
     else {
-        SimpleStatement();
+        SimpleStatement(compiler);
     }
 }
 
-static void ExpressionList() {
+static void ExpressionList(Compiler* compiler) {
     do {
-        if (MatchToken(STAR_TOKEN)) {
-            StarExpression();
+        if (MatchToken(compiler, compiler->parser->current, STAR_TOKEN)) {
+            StarExpression(compiler);
         }
         else {
-            Expression();
+            Expression(compiler);
         }
-    } while (MatchToken(COMMA_TOKEN));
+    } while (MatchToken(compiler, compiler->parser->current, COMMA_TOKEN));
 }
 
-static void ExceptClause() {
-    Test();
-    if (MatchToken(AS_TOKEN)) {
-        ConsumeToken(NAME_TOKEN, NameError);
+static void ExceptClause(Compiler* compiler) {
+    Test(compiler);
+    if (MatchToken(compiler, compiler->parser->current, AS_TOKEN)) {
+        ConsumeToken(compiler, NAME_TOKEN, NameError);
     }
 }
 
-static void VariableDeclaration() {
-    uint8_t global = ParseVariable();
+static void VariableDeclaration(Compiler* compiler) {
+    uint8_t global = ParseVariable(compiler);
 
-    if (MatchToken(EQUAL_TOKEN)) {
-        Expression();
+    if (MatchToken(compiler, compiler->parser->current, EQUAL_TOKEN)) {
+        Expression(compiler);
     }
     else {
-        WriteByte(NONE_OP);
+        WriteByte(compiler, NONE_OP);
     }
 
-    DefineVariable(global);
+    DefineVariable(compiler, global);
 }
 
-static uint8_t GetIdentifierAddress() {
-    if (currentCompiler->scopeDepth > 0) {
-        return (uint8_t) ResolveLocal(&parser.previous);
+static uint8_t GetIdentifierAddress(Compiler* compiler) {
+    if (compiler->scopeDepth > 0) {
+        return (uint8_t) ResolveLocal(compiler, &compiler->parser->previous);
     }
     else {
-        return IdentifierConstant(&parser.previous);
+        return IdentifierConstant(compiler, &compiler->parser->previous);
     }
 }
 
-static void IfStatement() {
-    NamedExpressionTest();
-    ConsumeToken(COLON_TOKEN, ColonError);
+static void IfStatement(Compiler* compiler) {
+    NamedExpressionTest(compiler);
+    ConsumeToken(compiler, COLON_TOKEN, ColonError);
     
-    int ifFalseOpcodeAddress = WriteJump(JUMP_IF_FALSE_OP);
+    int ifFalseOpcodeAddress = WriteJump(compiler, JUMP_IF_FALSE_OP);
     int elifTrueOpcodeAddress = 0;
     int elifFalseOpcodeAddress = 0;
     
-    Suite();
+    Suite(compiler);
     
-    int ifTrueOpcodeAddress = WriteJump(JUMP_OP);
-    PatchJump(ifFalseOpcodeAddress);
+    int ifTrueOpcodeAddress = WriteJump(compiler, JUMP_OP);
+    PatchJump(compiler, ifFalseOpcodeAddress);
     
-    while (MatchToken(ELIF_TOKEN)) {
-        NamedExpressionTest();
-        ConsumeToken(COLON_TOKEN, ColonError);
-        elifFalseOpcodeAddress = WriteJump(JUMP_IF_FALSE_OP);
-        Suite();
+    while (MatchToken(compiler, compiler->parser->current, ELIF_TOKEN)) {
+        NamedExpressionTest(compiler);
+        ConsumeToken(compiler, COLON_TOKEN, ColonError);
+        elifFalseOpcodeAddress = WriteJump(compiler, JUMP_IF_FALSE_OP);
+        Suite(compiler);
         
-        elifTrueOpcodeAddress = WriteJump(JUMP_OP);
-        PatchJump(elifFalseOpcodeAddress);
+        elifTrueOpcodeAddress = WriteJump(compiler, JUMP_OP);
+        PatchJump(compiler, elifFalseOpcodeAddress);
     }
     
-    if (MatchToken(ELSE_TOKEN)) {
-        ConsumeToken(COLON_TOKEN, ColonError);
-        Suite();
+    if (MatchToken(compiler, compiler->parser->current, ELSE_TOKEN)) {
+        ConsumeToken(compiler, COLON_TOKEN, ColonError);
+        Suite(compiler);
     }
     
-    PatchJump(ifTrueOpcodeAddress);
+    PatchJump(compiler, ifTrueOpcodeAddress);
     if (elifTrueOpcodeAddress != 0) {
-        PatchJump(elifTrueOpcodeAddress);
+        PatchJump(compiler, elifTrueOpcodeAddress);
     }
 }
 
-static void WhileStatement() {
-    int loopStart = currentCompiler->function->bytecode.count;
+static void WhileStatement(Compiler* compiler) {
+    int loopStart = compiler->function->bytecode.count;
     
-    NamedExpressionTest();
-    ConsumeToken(COLON_TOKEN, ColonError);
+    NamedExpressionTest(compiler);
+    ConsumeToken(compiler, COLON_TOKEN, ColonError);
     
-    int ifFalseOpcodeAddress = WriteJump(JUMP_IF_FALSE_OP);
+    int ifFalseOpcodeAddress = WriteJump(compiler, JUMP_IF_FALSE_OP);
     
-    Suite();
-    WriteLoop(loopStart);
-    PatchJump(ifFalseOpcodeAddress);
+    Suite(compiler);
+    WriteLoop(compiler, loopStart);
+    PatchJump(compiler, ifFalseOpcodeAddress);
 }
 
-static void ForStatement() {
-    GetNextToken(currentCompiler->scanner);
-    Token loopVariable = parser.previous;
-    VariableDeclaration();
-    ConsumeToken(IN_TOKEN, InError);
-    GetNextToken(currentCompiler->scanner);
-    uint8_t identifierAddress = GetIdentifierAddress();
-    ConsumeToken(COLON_TOKEN, ColonError);
+static void ForStatement(Compiler* compiler) {
+    GetNextToken(compiler);
+    Token loopVariable = compiler->parser->previous;
+    VariableDeclaration(compiler);
+    ConsumeToken(compiler, IN_TOKEN, InError);
+    GetNextToken(compiler);
+    uint8_t identifierAddress = GetIdentifierAddress(compiler);
+    ConsumeToken(compiler, COLON_TOKEN, ColonError);
     
-    int loopStart = currentCompiler->function->bytecode.count;
-    WriteBytes(END_OF_ARRAY_OP, identifierAddress);
+    int loopStart = compiler->function->bytecode.count;
+    WriteBytes(compiler, END_OF_ARRAY_OP, identifierAddress);
     
-    int ifTrueOpcodeAddress = WriteJump(JUMP_IF_TRUE_OP);
-    WriteBytes(GET_INDEX_OP, identifierAddress);
-    if (currentCompiler->scopeDepth > 0) {
-        WriteBytes(SET_LOCAL_OP, (uint8_t) ResolveLocal(&loopVariable));
+    int ifTrueOpcodeAddress = WriteJump(compiler, JUMP_IF_TRUE_OP);
+    WriteBytes(compiler, GET_INDEX_OP, identifierAddress);
+    if (compiler->scopeDepth > 0) {
+        WriteBytes(compiler, SET_LOCAL_OP, (uint8_t) ResolveLocal(compiler, &loopVariable));
     }
     else {
-        WriteBytes(SET_GLOBAL_OP, IdentifierConstant(&loopVariable));
+        WriteBytes(compiler, SET_GLOBAL_OP, IdentifierConstant(compiler, &loopVariable));
     }
-    Suite();
-    WriteLoop(loopStart);
-    PatchJump(ifTrueOpcodeAddress);
+    Suite(compiler);
+    WriteLoop(compiler, loopStart);
+    PatchJump(compiler, ifTrueOpcodeAddress);
 }
 
-static void TryStatement() {
-    ConsumeToken(COLON_TOKEN, ColonError);
-    Suite();
+static void TryStatement(Compiler* compiler) {
+    ConsumeToken(compiler, COLON_TOKEN, ColonError);
+    Suite(compiler);
     do {
-        ConsumeToken(EXCEPT_TOKEN, ExceptError);
-        ExceptClause();
-        ConsumeToken(COLON_TOKEN, ColonError);
-        Suite();
-    } while (MatchToken(EXCEPT_TOKEN));
+        ConsumeToken(compiler, EXCEPT_TOKEN, ExceptError);
+        ExceptClause(compiler);
+        ConsumeToken(compiler, COLON_TOKEN, ColonError);
+        Suite(compiler);
+    } while (MatchToken(compiler, compiler->parser->current, EXCEPT_TOKEN));
 }
 
 static void WithStatement() {
     
 }
 
-static void Function(FunctionType functionType) {
-    Compiler compiler;
-    InitCompiler(&compiler, TYPE_FUNCTION);
-    BeginScope();
+static void Function(Compiler* compiler, FunctionType functionType) {
+    Compiler newCompiler;
+    InitCompiler(compiler, &newCompiler, TYPE_FUNCTION);
+    BeginScope(compiler);
     
-    ConsumeToken(LEFT_PAREN_TOKEN, LeftParenError);
-    if (!CheckToken(RIGHT_PAREN_TOKEN)) {
+    ConsumeToken(compiler, LEFT_PAREN_TOKEN, LeftParenError);
+    if (!CheckToken(compiler, RIGHT_PAREN_TOKEN)) {
         do {
-            currentCompiler->function->arity++;
-            if (currentCompiler->function->arity > 255) {
+            newCompiler.function->arity++;
+            if (newCompiler.function->arity > 255) {
                 Error("Cannot have more than 255 parameters");
             }
             
-            uint8_t paramConstant = ParseVariable();
-            DefineVariable(paramConstant);
-        } while(MatchToken(COMMA_TOKEN));
+            uint8_t paramConstant = ParseVariable(compiler);
+            DefineVariable(compiler, paramConstant);
+        } while(MatchToken(compiler, compiler->parser->current, COMMA_TOKEN));
     }
-    ConsumeToken(RIGHT_PAREN_TOKEN, RightParenError);
+    ConsumeToken(compiler, RIGHT_PAREN_TOKEN, RightParenError);
     
-    ConsumeToken(COLON_TOKEN, ColonError);
-    Suite();
+    ConsumeToken(compiler, COLON_TOKEN, ColonError);
+    Suite(&newCompiler);
     
-    ObjFunction* function = EndCompiler();
-    WriteBytes(CONSTANT_OP, StoreConstant(OBJ_VAL(function)));
+    ObjFunction* function = EndCompiler(&newCompiler);
+    WriteBytes(compiler, CONSTANT_OP, StoreConstant(compiler, OBJ_VAL(function)));
 }
 
-static void FunctionDefinition() {
-    uint8_t global = ParseVariable();
-    MarkInitialised();
-    Function(TYPE_FUNCTION);
-    DefineVariable(global);
+static void FunctionDefinition(Compiler* compiler) {
+    uint8_t global = ParseVariable(compiler);
+    MarkInitialised(compiler);
+    Function(compiler, TYPE_FUNCTION);
+    DefineVariable(compiler, global);
 }
 
 static void ClassDefinition() {
     
 }
 
-static void PrintStatement() {
-    NamedExpressionTest();
-    WriteByte(PRINT_OP);
+static void PrintStatement(Compiler* compiler) {
+    NamedExpressionTest(compiler);
+    WriteByte(compiler, PRINT_OP);
 }
 
-static bool CompoundStatement() {
-    if (MatchToken(IF_TOKEN)) {
-        IfStatement();
+static bool CompoundStatement(Compiler* compiler) {
+    if (MatchToken(compiler, compiler->parser->current, IF_TOKEN)) {
+        IfStatement(compiler);
         return true;
     }
-    else if (MatchToken(WHILE_TOKEN)) {
-        WhileStatement();
+    else if (MatchToken(compiler, compiler->parser->current, WHILE_TOKEN)) {
+        WhileStatement(compiler);
         return true;
     }
-    else if (MatchToken(FOR_TOKEN)) {
-        ForStatement();
+    else if (MatchToken(compiler, compiler->parser->current, FOR_TOKEN)) {
+        ForStatement(compiler);
         return true;
     }
-    else if (MatchToken(TRY_TOKEN)) {
-        TryStatement();
+    else if (MatchToken(compiler, compiler->parser->current, TRY_TOKEN)) {
+        TryStatement(compiler);
         return true;
     }
-    else if (MatchToken(WITH_TOKEN)) {
+    else if (MatchToken(compiler, compiler->parser->current, WITH_TOKEN)) {
         WithStatement();
         return true;
     }
-    else if (MatchToken(DEF_TOKEN)) {
-        FunctionDefinition();
+    else if (MatchToken(compiler, compiler->parser->current, DEF_TOKEN)) {
+        FunctionDefinition(compiler);
         return true;
     }
-    else if (MatchToken(CLASS_TOKEN)) {
+    else if (MatchToken(compiler, compiler->parser->current, CLASS_TOKEN)) {
         ClassDefinition();
         return true;
     }
-    else if (MatchToken(PRINT_TOKEN)) {
-        PrintStatement();
+    else if (MatchToken(compiler, compiler->parser->current, PRINT_TOKEN)) {
+        PrintStatement(compiler);
         return true;
     }
     else {
@@ -373,106 +373,107 @@ static bool CompoundStatement() {
     }
 }
 
-static void Statement() {
-    if (parser.current.type == NEWLINE_TOKEN) return;
-    bool valid = CompoundStatement();
+static void Statement(Compiler* compiler) {
+    if (compiler->parser->current.type == NEWLINE_TOKEN) return;
+    bool valid = CompoundStatement(compiler);
     if (!valid) {
-        SimpleStatement();
+        SimpleStatement(compiler);
     }
 }
 
-static void Unary(bool canAssign) {
-    TokenType operatorType = parser.previous.type;
+static void Unary(Compiler* compiler, bool canAssign) {
+    TokenType operatorType = compiler->parser->previous.type;
     
-    ParsePrecedence(PREC_UNARY);
+    ParsePrecedence(compiler, PREC_UNARY);
     
     switch(operatorType) {
-        case BANG_TOKEN: WriteByte(NOT_OP); break;
-        case MINUS_TOKEN: WriteByte(NEGATE_OP); break;
+        case BANG_TOKEN: WriteByte(compiler, NOT_OP); break;
+        case MINUS_TOKEN: WriteByte(compiler, NEGATE_OP); break;
         default: return;
     }
 }
 
-static void Binary(bool canAssign) {
-    TokenType operatorType = parser.previous.type;
+static void Binary(Compiler* compiler, bool canAssign) {
+    TokenType operatorType = compiler->parser->previous.type;
     
     //Compile the right operand
     ParseRule* rule = GetRule(operatorType);
-    ParsePrecedence((Precedence)rule->precedence+1);
+    ParsePrecedence(compiler, (Precedence)rule->precedence+1);
     
     switch(operatorType) {
-        case BANG_EQUAL_TOKEN: WriteBytes(EQUAL_OP, NOT_OP); break;
-        case EQUAL_EQUAL_TOKEN: WriteByte(EQUAL_OP); break;
-        case GREATER_TOKEN: WriteByte(GREATER_OP); break;
-        case GREATER_EQUAL_TOKEN: WriteBytes(LESSER_OP, NOT_OP); break;
-        case LESSER_TOKEN: WriteByte(LESSER_OP); break;
-        case PLUS_TOKEN: WriteByte(ADD_OP); break;
-        case MINUS_TOKEN: WriteByte(SUBTRACT_OP); break;
-        case STAR_TOKEN: WriteByte(MULTIPLY_OP); break;
-        case SLASH_TOKEN: WriteByte(DIVIDE_OP); break;
-        case POWER_TOKEN: WriteByte(POWER_OP); break;
-        case AND_TOKEN: WriteByte(AND_OP); break;
-        case OR_TOKEN: WriteByte(OR_OP); break;
-        case NOT_TOKEN: WriteByte(NOT_OP); break;
+        case BANG_EQUAL_TOKEN: WriteBytes(compiler, EQUAL_OP, NOT_OP); break;
+        case EQUAL_EQUAL_TOKEN: WriteByte(compiler, EQUAL_OP); break;
+        case GREATER_TOKEN: WriteByte(compiler, GREATER_OP); break;
+        case GREATER_EQUAL_TOKEN: WriteBytes(compiler, LESSER_OP, NOT_OP); break;
+        case LESSER_TOKEN: WriteByte(compiler, LESSER_OP); break;
+        case LESSER_EQUAL_TOKEN: WriteBytes(compiler, GREATER_OP, NOT_OP); break;
+        case PLUS_TOKEN: WriteByte(compiler, ADD_OP); break;
+        case MINUS_TOKEN: WriteByte(compiler, SUBTRACT_OP); break;
+        case STAR_TOKEN: WriteByte(compiler, MULTIPLY_OP); break;
+        case SLASH_TOKEN: WriteByte(compiler, DIVIDE_OP); break;
+        case POWER_TOKEN: WriteByte(compiler, POWER_OP); break;
+        case AND_TOKEN: WriteByte(compiler, AND_OP); break;
+        case OR_TOKEN: WriteByte(compiler, OR_OP); break;
+        case NOT_TOKEN: WriteByte(compiler, NOT_OP); break;
         default: return;
     }
     
 }
 
-static void Grouping(bool canAssign) {
-    Expression();
-    ConsumeToken(RIGHT_PAREN_TOKEN, RightParenError);
+static void Grouping(Compiler* compiler, bool canAssign) {
+    Expression(compiler);
+    ConsumeToken(compiler, RIGHT_PAREN_TOKEN, RightParenError);
 }
 
-static void Number(bool canAssign) {
-    double number = strtod(parser.previous.start, NULL);
-    WriteConstantOperation(NUMBER_VAL(number));
+static void Number(Compiler* compiler, bool canAssign) {
+    double number = strtod(compiler->parser->previous.start, NULL);
+    WriteConstantOperation(compiler, NUMBER_VAL(number));
 }
 
-static void String(bool canAssign) {
-    char* string = ALLOCATE(char, parser.previous.length);
-    string = memcpy(string, parser.previous.start, parser.previous.length);
-    string[parser.previous.length] = '\0';
-    uint8_t address = StoreConstant(OBJ_VAL(CopyString(parser.previous.start, parser.previous.length+1)));
-    WriteBytes(CONSTANT_OP, address);
-    GetNextToken(currentCompiler->scanner);
+static void String(Compiler* compiler, bool canAssign) {
+    char* string = ALLOCATE(char, compiler->parser->previous.length);
+    string = memcpy(string, compiler->parser->previous.start, compiler->parser->previous.length);
+    string[compiler->parser->previous.length] = '\0';
+    uint8_t address = StoreConstant(compiler, OBJ_VAL(CopyString(compiler->parser->previous.start, compiler->parser->previous.length+1)));
+    WriteBytes(compiler, CONSTANT_OP, address);
+    GetNextToken(compiler);
 }
 
-static void Boolean(bool canAssign) {
-    bool boolean = parser.previous.start;
-    WriteConstantOperation(BOOLEAN_VAL(boolean));
+static void Boolean(Compiler* compiler, bool canAssign) {
+    bool boolean = compiler->parser->previous.start;
+    WriteConstantOperation(compiler, BOOLEAN_VAL(boolean));
 }
 
-static void LocalIdentifier(bool canAssign) {
-    int arg = ResolveLocal(&parser.previous);
+static void LocalIdentifier(Compiler* compiler, bool canAssign) {
+    int arg = ResolveLocal(compiler, &compiler->parser->previous);
     
     if (arg == -1) {
-        VariableDeclaration();
+        VariableDeclaration(compiler);
     }
     else {
-        WriteBytes(GET_LOCAL_OP, (uint8_t)arg);
+        WriteBytes(compiler, GET_LOCAL_OP, (uint8_t)arg);
     }
 }
 
-static void GlobalIdentifier(bool canAssign) {
-    int arg = IdentifierConstant(&parser.previous);
+static void GlobalIdentifier(Compiler* compiler, bool canAssign) {
+    int arg = IdentifierConstant(compiler, &compiler->parser->previous);
     
-     if (canAssign && MatchToken(EQUAL_TOKEN)) {
-           Expression();
-           WriteBytes(SET_GLOBAL_OP, (uint8_t)arg);
+     if (canAssign && MatchToken(compiler, compiler->parser->current, EQUAL_TOKEN)) {
+           Expression(compiler);
+           WriteBytes(compiler, SET_GLOBAL_OP, (uint8_t)arg);
        }
        else {
-           WriteBytes(GET_GLOBAL_OP, (uint8_t)arg);
+           WriteBytes(compiler, GET_GLOBAL_OP, (uint8_t)arg);
        }
 }
 
-static void Identifier(bool canAssign) {
+static void Identifier(Compiler* compiler, bool canAssign) {
 
-    if (currentCompiler->scopeDepth > 0) {
-        LocalIdentifier(canAssign);
+    if (compiler->scopeDepth > 0) {
+        LocalIdentifier(compiler, canAssign);
     }
     else {
-        GlobalIdentifier(canAssign);
+        GlobalIdentifier(compiler, canAssign);
     }
 }
 
@@ -535,9 +536,9 @@ static ParseRule* GetRule(TokenType type) {
     return &rules[type];
 }
 
-void ParsePrecedence(Precedence precedence) {
-    GetNextToken(currentCompiler->scanner);
-    ParseFn prefixRule = GetRule(parser.previous.type)->prefix;
+void ParsePrecedence(Compiler* compiler, Precedence precedence) {
+    GetNextToken(compiler);
+    ParseFn prefixRule = GetRule(compiler->parser->previous.type)->prefix;
     
     if (prefixRule == NULL) {
         Error("Expect expression \n");
@@ -545,41 +546,45 @@ void ParsePrecedence(Precedence precedence) {
     }
     
     bool canAssign = precedence <= PREC_ASSIGNMENT;
-    prefixRule(canAssign);
+    prefixRule(compiler, canAssign);
     
-    while (precedence <= GetRule(parser.current.type)->precedence) {
-        GetNextToken(currentCompiler->scanner);
-        ParseFn infixRule = GetRule(parser.previous.type)->infix;
-        infixRule(canAssign);
+    while (precedence <= GetRule(compiler->parser->current.type)->precedence) {
+        GetNextToken(compiler);
+        ParseFn infixRule = GetRule(compiler->parser->previous.type)->infix;
+        infixRule(compiler, canAssign);
     }
     
-    if (canAssign && MatchToken(EQUAL_TOKEN)) {
+    if (canAssign && MatchToken(compiler, compiler->parser->current, EQUAL_TOKEN)) {
         Error("Invalid assignment target");
-        Expression();
+        Expression(compiler);
     }
 }
 
 ObjFunction* Compile(Bytecode* bytecode, const char* sourceCode, const char* path) {
-    Compiler compiler;
-    InitCompiler(&compiler, TYPE_SCRIPT);
-    InitParser();
-    
     Scanner scanner;
     InitScanner(&scanner, sourceCode, path);
-    currentCompiler->scanner = &scanner;
 
-    GetNextToken(currentCompiler->scanner);
+    Parser parser;
+    InitParser(&parser);
+
+    Compiler compiler;
+    compiler.parser = &parser;
+    InitCompiler(NULL, &compiler, TYPE_SCRIPT);
+    
+    compiler.scanner = &scanner;
+
+    GetNextToken(&compiler);
     if (strncmp(path, "<stdin>", 7) == 0) {
-        TestList();
+        TestList(&compiler);
     }
     else {
-        while (parser.current.type != EOF_TOKEN) {
-            if (!MatchToken(NEWLINE_TOKEN) && !MatchToken(EOF_TOKEN)) {
-                Statement();
+        while (compiler.parser->current.type != EOF_TOKEN) {
+            if (!MatchToken(&compiler, compiler.parser->current, NEWLINE_TOKEN) && !MatchToken(&compiler, compiler.parser->current, EOF_TOKEN)) {
+                Statement(&compiler);
             }
         }
     }
     
-    ObjFunction* function = EndCompiler();
-    return parser.hadError ? NULL : function;
+    ObjFunction* function = EndCompiler(&compiler);
+    return compiler.parser->hadError ? NULL : function;
 }

@@ -113,6 +113,25 @@ static bool PrintValueToFile(Value a) {
     return true;
 }
 
+static bool PrintValueToString(Value a) {
+    if (IS_NUMBER(a)) {
+        _itoa_s(AS_NUMBER(a), vm.printInfo.output, 100, 10);
+    }
+    else if (IS_BOOLEAN(a)) {
+        AS_BOOLEAN(a) == true ? strcat_s(vm.printInfo.output, 100, "true") : strcat_s(vm.printInfo.output, 100, "false");
+    }
+    else if (IS_CHAR(a)) {
+        strcat_s(vm.printInfo.output, 100, &AS_CHAR(a));
+    }
+    else if (IS_OBJ(a)) {
+        PrintObject(a, PROGRAM_OUTPUT);
+    }
+    else {
+        return false;
+    }
+    return true;
+}
+
 static bool Run() {
     CallFrame* frame = &vm.frames[vm.frameCount-1];
     
@@ -212,6 +231,10 @@ static bool Run() {
                 }
                 else if (vm.printInfo.printLocation == PRINT_FILE) {
                     bool success = PrintValueToFile(a);
+                    if (!success) return true;
+                }
+                else if (vm.printInfo.printLocation == PRINT_STRING) {
+                    bool success = PrintValueToString(a);
                     if (!success) return true;
                 }
                 break;

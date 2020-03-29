@@ -3,44 +3,44 @@
 #include "../Headers/Compiler.h"
 #include "../Headers/CompilerErrors.h"
 
-void GetNextToken(Scanner* scanner) {
+void GetNextToken(Compiler* compiler) {
     
-    if (parser.current.type == EOF_TOKEN) {
+    if (compiler->parser->current.type == EOF_TOKEN) {
         return;
     }
     
-    parser.previous = parser.current;
+    compiler->parser->previous = compiler->parser->current;
     
-    parser.current = GetToken(scanner);
+    compiler->parser->current = GetToken(compiler->scanner);
     
-    if (parser.current.type == ERROR_TOKEN) {
-        SyntaxError(&parser.current);
-        parser.hadError = true;
+    if (compiler->parser->current.type == ERROR_TOKEN) {
+        SyntaxError(&compiler->parser->current);
+        compiler->parser->hadError = true;
     }
 }
-bool MatchToken(TokenType tokenType) {
-    if (parser.current.type != tokenType) return false;
-    GetNextToken(currentCompiler->scanner);
+bool MatchToken(Compiler* compiler, Token token, TokenType tokenType) {
+    if (token.type != tokenType) return false;
+    GetNextToken(compiler);
     return true;
 }
 
-void ConsumeToken(TokenType tokenType, const char* message) {
-    if (parser.current.type == tokenType) {
-        GetNextToken(currentCompiler->scanner);
+void ConsumeToken(Compiler* compiler, TokenType tokenType, const char* message) {
+    if (compiler->parser->current.type == tokenType) {
+        GetNextToken(compiler);
         return;
     }
     Error(message);
-    parser.hadError = true;
+    compiler->parser->hadError = true;
 }
 
-void TryConsumeToken(TokenType tokenType) {
-    if (parser.current.type == tokenType) {
-        GetNextToken(currentCompiler->scanner);
+void TryConsumeToken(Compiler* compiler, TokenType tokenType) {
+    if (compiler->parser->current.type == tokenType) {
+        GetNextToken(compiler);
         return;
     }
 }
 
-bool CheckToken(TokenType tokenType) {
-    if (parser.current.type == tokenType) return true;
+bool CheckToken(Compiler* compiler, TokenType tokenType) {
+    if (compiler->parser->current.type == tokenType) return true;
     return false;
 }
