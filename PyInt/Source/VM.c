@@ -115,7 +115,9 @@ static bool PrintValueToFile(Value a) {
 
 static bool PrintValueToString(Value a) {
     if (IS_NUMBER(a)) {
-        _itoa_s(AS_NUMBER(a), vm.printInfo.output, 100, 10);
+        char numOutput[10] = "";
+        _itoa_s(AS_NUMBER(a), numOutput, 10, 10);
+        strcat_s(vm.printInfo.output, 100, numOutput);
     }
     else if (IS_BOOLEAN(a)) {
         AS_BOOLEAN(a) == true ? strcat_s(vm.printInfo.output, 100, "true") : strcat_s(vm.printInfo.output, 100, "false");

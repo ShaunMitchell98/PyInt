@@ -172,6 +172,7 @@
     <ClCompile Include="Functional Tests\GlobalVariableFunctionalTests.cpp" />
     <ClCompile Include="Functional Tests\IfStatementFunctionalTests.cpp" />
     <ClCompile Include="Functional Tests\LogicFunctionalTests.cpp" />
+    <ClCompile Include="Functional Tests\WhileLoopFunctionalTests.cpp" />
     <ClCompile Include="Unit Tests\BytecodeUnitTests.cpp" />
     <ClCompile Include="Unit Tests\ScannerUnitTests.cpp" />
   </ItemGroup>
