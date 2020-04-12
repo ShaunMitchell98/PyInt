@@ -36,10 +36,10 @@ char* ReadFile(const char* path) {
     return buffer;
 }
 
-void RunFile(const char* path, PrintInfo printInfo) {
-    char* sourceCode = ReadFile(path);
+void RunFile(InterpreterSettings settings) {
+    char* sourceCode = ReadFile(settings.input.filePath);
 
-    InterpretResult result = Interpret(sourceCode, path, printInfo);
+    InterpretResult result = Interpret(sourceCode, settings);
     free(sourceCode);
 
     if (result == INTERPRET_COMPILE_ERROR) exit(65);

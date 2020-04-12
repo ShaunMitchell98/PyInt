@@ -7,6 +7,4 @@
 
 #define UINT8_COUNT (UINT8_MAX + 1)
 
-#define DEBUG_TRACE_EXECUTION
-
 #endif

@@ -4,18 +4,20 @@
 #include "RunFile.h"
 
 #include "FunctionalTestUtilities.h"
-#include "PrintInfo.h"
+#include "InterpreterSettings.h"
 
-static PrintInfo GetPrintInfo() {
-	PrintInfo printInfo;
-	printInfo.printLocation = PRINT_STRING;
-	printInfo.output = (char*)malloc(100);
-	printInfo.output[0] = '\0';
-	return printInfo;
+static InterpreterSettings InitialiseTestSettings() {
+	InterpreterSettings settings;
+	settings.output.location = LOCATION_STRING;
+	settings.bytecode.enabled = false;
+	settings.execution.enabled = false;
+	settings.output.string = (char*)malloc(100);
+	settings.output.string[0] = '\0';
+	return settings;
 }
 
 char* RunInterpreter(char* code) {
-	PrintInfo printInfo = GetPrintInfo();
-	Interpret(code, "string", printInfo);
-	return printInfo.output;
+	InterpreterSettings settings = InitialiseTestSettings();
+	Interpret(code, settings);
+	return settings.output.string;
 }

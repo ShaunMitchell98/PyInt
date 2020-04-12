@@ -1,6 +1,8 @@
 #ifndef PyInt_Compiler_Errors_h
 #define PyInt_Compiler_Errors_h
 
+#include "VM.h"
+
 #define ColonError "Colon expected"
 #define CommaError "Comma expected"
 #define SemicolonError "Semicolon expected"
@@ -14,5 +16,5 @@
 #define GlobalError "Global Error"
 
 void Error(const char* message);
-void SyntaxError(Token* token);
+void SyntaxError(VM* vm, Token* token);
 #endif

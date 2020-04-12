@@ -14,7 +14,7 @@ void GetNextToken(Compiler* compiler) {
     compiler->parser->current = GetToken(compiler->scanner);
     
     if (compiler->parser->current.type == ERROR_TOKEN) {
-        SyntaxError(&compiler->parser->current);
+        SyntaxError(compiler->vm, &compiler->parser->current);
         compiler->parser->hadError = true;
     }
 }

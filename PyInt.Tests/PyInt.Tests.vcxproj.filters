@@ -37,6 +37,9 @@
     <ClCompile Include="Functional Tests\WhileLoopFunctionalTests.cpp">
       <Filter>UnitTests</Filter>
     </ClCompile>
+    <ClCompile Include="Unit Tests\InterpreterSettingsUnitTests.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Functional Tests\FunctionalTestUtilities.h" />

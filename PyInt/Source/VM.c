@@ -8,22 +8,21 @@
 #include "../Headers/Compiler.h"
 #include "../Headers/Debug.h"
 #include "../Headers/Object.h"
+#include "../Headers/InterpreterSettings.h"
 
-VM vm;
-
-static void ResetStack() {
-    vm.stackTop = vm.stack;
-    vm.frameCount = 0;
+static void ResetStack(VM* vm) {
+    vm->stackTop = vm->stack;
+    vm->frameCount = 0;
 }
 
-static void Push(Value value) {
-    *vm.stackTop = value;
-    vm.stackTop++;
+static void Push(VM* vm, Value value) {
+    *vm->stackTop = value;
+    vm->stackTop++;
 }
 
-static Value Pop() {
-    vm.stackTop--;
-    return *vm.stackTop;
+static Value Pop(VM* vm) {
+    vm->stackTop--;
+    return *vm->stackTop;
 }
 
 static uint8_t ReadByte(CallFrame* frame) {
@@ -31,8 +30,8 @@ static uint8_t ReadByte(CallFrame* frame) {
     return *(frame->ip - 1);
 }
 
-static Value Peek(int i) {
-    return *(vm.stackTop - i);
+static Value Peek(VM* vm, int i) {
+    return *(vm->stackTop - i);
 }
 
 static Value ReadConstant(CallFrame* frame) {
@@ -57,7 +56,7 @@ static bool Equal(Value a, Value b) {
     }
 }
 
-static bool PrintValueToTerminal(Value a) {
+static bool PrintValueToTerminal(VM* vm, Value a) {
     if (IS_NUMBER(a)) {
         printf("%f\n", AS_NUMBER(a));
     }
@@ -68,7 +67,10 @@ static bool PrintValueToTerminal(Value a) {
         printf("%c", AS_CHAR(a));
     }
     else if (IS_OBJ(a)) {
-        PrintObject(a, PROGRAM_OUTPUT);
+        char* buffer = (char*)malloc(100 * sizeof(char));
+        PrintObject(&vm->settings.output, a, PROGRAM_OUTPUT, buffer, 100);
+        printf(buffer);
+        free(buffer);
     }
     else {
         return false;
@@ -92,7 +94,7 @@ static bool WriteToFile(const char* text, const char* filePath) {
     return true;
 }
 
-static bool PrintValueToFile(Value a) {
+static bool PrintValueToFile(VM* vm, Value a) {
     char text[10];
     if (IS_NUMBER(a)) {
         _itoa_s(AS_NUMBER(a), text, 10, 10);
@@ -104,34 +106,29 @@ static bool PrintValueToFile(Value a) {
         strcpy_s(text, 10, &AS_CHAR(a));
     }
     else if (IS_OBJ(a)) {
-        PrintObject(a, PROGRAM_OUTPUT);
+        PrintObject(&vm->settings.output, a, PROGRAM_OUTPUT, text, 10);
     }
     else {
         return false;
     }
-    WriteToFile(text, vm.printInfo.filePath);
+    WriteToFile(text, vm->settings.output.filePath);
     return true;
 }
 
-static bool PrintValueToString(Value a) {
+static bool PrintValueToString(VM* vm, Value a) {
     if (IS_NUMBER(a)) {
         char numOutput[10] = "";
         _itoa_s(AS_NUMBER(a), numOutput, 10, 10);
-        strcat_s(vm.printInfo.output, 100, numOutput);
+        strcat_s(vm->settings.output.string, 100, numOutput);
     }
     else if (IS_BOOLEAN(a)) {
-        AS_BOOLEAN(a) == true ? strcat_s(vm.printInfo.output, 100, "true") : strcat_s(vm.printInfo.output, 100, "false");
+        AS_BOOLEAN(a) == true ? strcat_s(vm->settings.output.string, 100, "true") : strcat_s(vm->settings.output.string, 100, "false");
     }
     else if (IS_CHAR(a)) {
-        strcat_s(vm.printInfo.output, 100, &AS_CHAR(a));
+        strcat_s(vm->settings.output.string, 100, &AS_CHAR(a));
     }
     else if (IS_OBJ(a)) {
-        if (vm.printInfo.printLocation == PRINT_TERMINAL) {
-            PrintObject(a, PROGRAM_OUTPUT);
-        }
-        else if (vm.printInfo.printLocation == PRINT_STRING) {
-            PrintObject(a, TEST_OUTPUT);
-        }
+        PrintObject(&vm->settings.output, a, TEST_OUTPUT, vm->settings.output.string, 100);
     }
     else {
         return false;
@@ -139,115 +136,119 @@ static bool PrintValueToString(Value a) {
     return true;
 }
 
-static bool Run() {
-    CallFrame* frame = &vm.frames[vm.frameCount-1];
+static bool Run(VM* vm) {
+    CallFrame* frame = &vm->frames[vm->frameCount-1];
     
-#ifdef DEBUG_TRACE_EXECUTION
-    DisassembleBytecode(&frame->function->bytecode);
-    printf("Program execution \n");
-    printf("Instruction Address   Line  Instruction   Operand address    Operand value   Stack      \n");
-#endif
+    if (vm->settings.bytecode.enabled) {
+        DisassembleBytecode(vm, &frame->function->bytecode, &vm->settings.bytecode);
+    }
+
+    if (vm->settings.execution.enabled) {
+        InitialiseExecutionDisassembly(&vm->settings.execution);
+    }
+
     for (;;) {
         
-#ifdef DEBUG_TRACE_EXECUTION
-        DisassembleExecution(&frame->function->bytecode, (int)(frame->ip-frame->function->bytecode.code), vm.stack, vm.stackTop);
-#endif
+        if (vm->settings.execution.enabled) {
+            DisassembleExecution(vm, &frame->function->bytecode, (int)(frame->ip - frame->function->bytecode.code), vm->stack, vm->stackTop, &vm->settings.execution);
+        }
+
         switch(ReadByte(frame)) {
             case CONSTANT_OP: {
-                Push(ReadConstant(frame));
+                Push(vm, ReadConstant(frame));
                 break;
             }
             case ADD_OP: {
-                Value b = Pop();
-                Value a = Pop();
-                Push(NUMBER_VAL(AS_NUMBER(a) + AS_NUMBER(b)));
+                Value b = Pop(vm);
+                Value a = Pop(vm);
+                Push(vm, NUMBER_VAL(AS_NUMBER(a) + AS_NUMBER(b)));
                 break;
             }
             case SUBTRACT_OP: {
-                Value b = Pop();
-                Value a = Pop();
-                Push(NUMBER_VAL(AS_NUMBER(a) - AS_NUMBER(b)));
+                Value b = Pop(vm);
+                Value a = Pop(vm);
+                Push(vm, NUMBER_VAL(AS_NUMBER(a) - AS_NUMBER(b)));
                 break;
             }
             case MULTIPLY_OP: {
-                Value b = Pop();
-                Value a = Pop();
-                Push(NUMBER_VAL(AS_NUMBER(a) * AS_NUMBER(b)));
+                Value b = Pop(vm);
+                Value a = Pop(vm);
+                Push(vm, NUMBER_VAL(AS_NUMBER(a) * AS_NUMBER(b)));
                 break;
             }
             case DIVIDE_OP: {
-                Value b = Pop();
-                Value a = Pop();
-                Push(NUMBER_VAL(AS_NUMBER(a) / AS_NUMBER(b)));
+                Value b = Pop(vm);
+                Value a = Pop(vm);
+                Push(vm, NUMBER_VAL(AS_NUMBER(a) / AS_NUMBER(b)));
                 break;
             }
             case POWER_OP: {
-                Value b = Pop();
-                Value a = Pop();
-                Push(NUMBER_VAL(pow(AS_NUMBER(a), AS_NUMBER(b))));
+                Value b = Pop(vm);
+                Value a = Pop(vm);
+                Push(vm, NUMBER_VAL(pow(AS_NUMBER(a), AS_NUMBER(b))));
                 break;
             }
             case GREATER_OP: {
-                Value b = Pop();
-                Value a = Pop();
-                Push(BOOLEAN_VAL(AS_NUMBER(a) > AS_NUMBER(b)));
+                Value b = Pop(vm);
+                Value a = Pop(vm);
+                Push(vm, BOOLEAN_VAL(AS_NUMBER(a) > AS_NUMBER(b)));
                 break;
             }
             case LESSER_OP: {
-                Value b = Pop();
-                Value a = Pop();
-                Push(BOOLEAN_VAL(AS_NUMBER(a) < AS_NUMBER(b)));
+                Value b = Pop(vm);
+                Value a = Pop(vm);
+                Push(vm, BOOLEAN_VAL(AS_NUMBER(a) < AS_NUMBER(b)));
                 break;
             }
             case NOT_OP: {
-                Push(BOOLEAN_VAL(!AS_BOOLEAN(Pop())));
+                Push(vm, BOOLEAN_VAL(!AS_BOOLEAN(Pop(vm))));
                 break;
             }
             case OR_OP: {
-                Value b = Pop();
-                Value a = Pop();
-                Push(BOOLEAN_VAL(AS_BOOLEAN(a) || AS_BOOLEAN(b)));
+                Value b = Pop(vm);
+                Value a = Pop(vm);
+                Push(vm,BOOLEAN_VAL(AS_BOOLEAN(a) || AS_BOOLEAN(b)));
                 break;
             }
             case AND_OP: {
-                Value b = Pop();
-                Value a = Pop();
-                Push(BOOLEAN_VAL(AS_BOOLEAN(a) && AS_BOOLEAN(b)));
+                Value b = Pop(vm);
+                Value a = Pop(vm);
+                Push(vm, BOOLEAN_VAL(AS_BOOLEAN(a) && AS_BOOLEAN(b)));
                 break;
             }
             case EQUAL_OP: {
-                Value b = Pop();
-                Value a = Pop();
+                Value b = Pop(vm);
+                Value a = Pop(vm);
                 bool equal = Equal(a, b);
-                Push(BOOLEAN_VAL(equal));
+                Push(vm, BOOLEAN_VAL(equal));
                 break;
             }
             case END_OF_ARRAY_OP: {
                 ObjString* name = ReadString(frame);
                 Value value;
-                GetTableEntry(&vm.globals, name, &value);
+                GetTableEntry(&vm->globals, name, &value);
                 ObjString* string = AS_STRING(value);
-                Push(BOOLEAN_VAL(vm.arrayIndex == string->length-1));
+                Push(vm, BOOLEAN_VAL(vm->arrayIndex == string->length-1));
                 break;
             }
             case PRINT_OP: {
-                Value a = Pop();
-                if (vm.printInfo.printLocation == PRINT_TERMINAL) {
-                    bool success = PrintValueToTerminal(a);
+                Value a = Pop(vm);
+                if (vm->settings.output.location == LOCATION_TERMINAL) {
+                    bool success = PrintValueToTerminal(vm, a);
                     if (!success) return true;
                 }
-                else if (vm.printInfo.printLocation == PRINT_FILE) {
-                    bool success = PrintValueToFile(a);
+                else if (vm->settings.output.location == LOCATION_FILE) {
+                    bool success = PrintValueToFile(vm, a);
                     if (!success) return true;
                 }
-                else if (vm.printInfo.printLocation == PRINT_STRING) {
-                    bool success = PrintValueToString(a);
+                else if (vm->settings.output.location == LOCATION_STRING) {
+                    bool success = PrintValueToString(vm, a);
                     if (!success) return true;
                 }
                 break;
             }
             case JUMP_IF_FALSE_OP: {
-                bool doJump = !AS_BOOLEAN(Pop());
+                bool doJump = !AS_BOOLEAN(Pop(vm));
                   frame->ip += 2;
                 if (doJump) {
                     frame->ip += (uint16_t)((frame->ip[-2] << 8) | frame->ip[-1]);
@@ -255,7 +256,7 @@ static bool Run() {
                 break;
             }
              case JUMP_IF_TRUE_OP: {
-                 bool doJump = AS_BOOLEAN(Pop());
+                 bool doJump = AS_BOOLEAN(Pop(vm));
                  frame->ip += 2;
                  if (doJump) {
                      frame->ip += (uint16_t)((frame->ip[-2] << 8) | frame->ip[-1]);
@@ -274,50 +275,50 @@ static bool Run() {
                 break;
             }
             case POP_OP: {
-                Pop();
+                Pop(vm);
                 break;
             }
             case DEFINE_GLOBAL_OP: {
                 ObjString* name = ReadString(frame);
-                SetTableEntry(&vm.globals, name, NONE_VAL);
+                SetTableEntry(&vm->globals, name, NONE_VAL);
                 break;
             }
             case SET_GLOBAL_OP: {
                 ObjString* name = ReadString(frame);
-                SetTableEntry(&vm.globals, name, Pop());
+                SetTableEntry(&vm->globals, name, Pop(vm));
                 break;
             }
             case GET_GLOBAL_OP: {
                 ObjString* name = ReadString(frame);
                 Value value;
-                if (GetTableEntry(&vm.globals, name, &value)) {
-                    Push(value);
+                if (GetTableEntry(&vm->globals, name, &value)) {
+                    Push(vm, value);
                 }
                 break;
             }
             case SET_LOCAL_OP: {
                 uint8_t slot = ReadByte(frame);
-                frame->locals[slot] = Peek(1);
+                frame->locals[slot] = Peek(vm, 1);
                 break;
             }
             case GET_LOCAL_OP: {
                 uint8_t slot = ReadByte(frame);
-                Push(frame->locals[slot]);
+                Push(vm, frame->locals[slot]);
                 break;
             }
             case DECLARE_LOCAL_OP: {
                 uint8_t slot = ReadByte(frame);
-                vm.stack[slot] = NONE_VAL;
+                vm->stack[slot] = NONE_VAL;
                 break;
             }
             case GET_INDEX_OP: {
                 ObjString* name = ReadString(frame);
                 Value value;
-                GetTableEntry(&vm.globals, name, &value);
+                GetTableEntry(&vm->globals, name, &value);
                 ObjString* string = AS_STRING(value);
-                char currentChar = *(string->chars+vm.arrayIndex);
-                Push(CHAR_VAL(currentChar));
-                vm.arrayIndex++;
+                char currentChar = *(string->chars+vm->arrayIndex);
+                Push(vm, CHAR_VAL(currentChar));
+                vm->arrayIndex++;
                 break;
             }
             case RETURN_OP: {
@@ -333,38 +334,39 @@ static bool Run() {
       return true;
 }
 
-void InitVM(PrintInfo printInfo) {
-    ResetStack();
-    vm.arrayIndex = 0;
-    vm.printInfo = printInfo;
-    InitTable(&vm.strings);
-    InitTable(&vm.globals);
+void InitVM(VM* vm, InterpreterSettings settings) {
+    ResetStack(vm);
+    vm->arrayIndex = 0;
+    vm->settings = settings;
+    InitTable(&vm->strings);
+    InitTable(&vm->globals);
 }
 
-void FreeVM() {
-    ResetStack();
-    FreeTable(&vm.strings);
-    FreeTable(&vm.globals);
+void FreeVM(VM* vm) {
+    ResetStack(vm);
+    FreeTable(&vm->strings);
+    FreeTable(&vm->globals);
 }
 
-InterpretResult Interpret(const char* sourceCode, const char* path, PrintInfo printInfo) {
-    InitVM(printInfo);
+InterpretResult Interpret(const char* sourceCode, InterpreterSettings settings) {
+    VM vm;
+    InitVM(&vm, settings);
     Bytecode bytecode;
     InitBytecode(&bytecode);
-    ObjFunction* function = Compile(&bytecode, sourceCode, path);
+    ObjFunction* function = Compile(&vm, &bytecode, sourceCode, settings.output.filePath);
     
     if (function == NULL) {
         return INTERPRET_COMPILE_ERROR;
     }
     
-    Push(OBJ_VAL(function));
+    Push(&vm, OBJ_VAL(function));
     CallFrame* frame = &vm.frames[vm.frameCount++];
     frame->function = function;
     frame->ip = function->bytecode.code;
     frame->locals = vm.stack;
     
-    bool RuntimeError = Run();
-    FreeVM();
+    bool RuntimeError = Run(&vm);
+    FreeVM(&vm);
     if (RuntimeError) {
         return INTERPRET_RUNTIME_ERROR;
     }

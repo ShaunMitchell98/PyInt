@@ -35,8 +35,7 @@ static int PeekIndent(Scanner* scanner) {
     return scanner->indentStack[scanner->stackIndex-1];
 }
 
-void InitScanner(Scanner* scanner, const char* sourceCode, const char* path) {
-    scanner->path = path;
+void InitScanner(Scanner* scanner, const char* sourceCode) {
     scanner->start = sourceCode;
     scanner->current = sourceCode;
     scanner->stackIndex = 0;
@@ -48,7 +47,6 @@ void InitScanner(Scanner* scanner, const char* sourceCode, const char* path) {
 
 static Token MakeToken(Scanner* scanner, TokenType tokenType) {
     Token token;
-    token.tokenPath = scanner->path;
     token.start = scanner->start;
     token.length = (int) (scanner->current - scanner->start);
     token.type = tokenType;

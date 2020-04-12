@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "../Headers/Memory.h"
@@ -27,7 +28,7 @@ void FreeValueArray(ValueArray* array) {
 	InitValueArray(array);
 }
 
-void PrintValue(Value value, PrintType printType) {
+void WriteValue(IOSettings* settings, Value value, PrintType printType, char* buffer, int bufferSize) {
     char* formatString;
     if (printType == OPERAND_VALUE) {
         formatString = "\t\t\t\t";
@@ -38,29 +39,39 @@ void PrintValue(Value value, PrintType printType) {
     
     if (IS_NUMBER(value)) {
         if (printType == OPERAND_VALUE) {
-            printf("\t\t\t\t%g", AS_NUMBER(value));
+            char text[10] = "\0";
+            _itoa_s(AS_NUMBER(value), text, 10, 10);
+            strcat_s(buffer, bufferSize, text);
         }
         else if (printType == STACK) {
-            printf("%g", AS_NUMBER(value));
+            char text[10] = "\0";
+            _itoa_s(AS_NUMBER(value), text, 10, 10);
+            strcat_s(buffer, bufferSize, text);
         }
     }
     else if (IS_BOOLEAN(value)) {
         if (printType == OPERAND_VALUE) {
-            printf("\t\t\t\t%s", AS_BOOLEAN(value) ? "True" : "False");
+            strcat_s(buffer, bufferSize, "\t\t\t\t");
+            char text[10] = "\0";
+            AS_BOOLEAN(value) ? strcpy_s(text, 10, "True") : strcpy_s(text, 10, "False");
+            strcat_s(buffer, bufferSize, text);
         }
         else if (printType == STACK) {
-            printf("%s", AS_BOOLEAN(value) ? "True" : "False");
+            char text[10] = "\0";
+            AS_BOOLEAN(value) ? strcpy_s(text, 10, "True") : strcpy_s(text, 10, "False");
+            strcat_s(buffer, bufferSize, text);
         }
     }
     else if (IS_CHAR(value)) {
         if (printType == OPERAND_VALUE) {
-            printf("\t\t\t\t%c", AS_CHAR(value));
+            strcat_s(buffer, bufferSize, "\t\t\t\t");
+            strcat_s(buffer, bufferSize, &AS_CHAR(value));
         }
         else if (printType == STACK) {
-              printf("%c", AS_CHAR(value));
+              strcat_s(buffer, bufferSize, &AS_CHAR(value));
         }
     }
     else if (IS_OBJ(value)) {
-        PrintObject(value, printType);
+        PrintObject(settings, value, printType, buffer, bufferSize);
     }
 }

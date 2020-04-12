@@ -16,10 +16,8 @@ namespace PyIntUnitTests
 		{
 			Scanner scanner;
 			const char* sourceCode = "Source code";
-			const char* path = "path";
-			InitScanner(&scanner, sourceCode, path);
+			InitScanner(&scanner, sourceCode);
 
-			Assert::AreEqual("path", scanner.path);
 			Assert::AreEqual("Source code", scanner.start);
 			Assert::AreEqual("Source code", scanner.current);
 			Assert::AreEqual(1, scanner.stackIndex);

@@ -3,6 +3,7 @@
 
 #include "Common.h"
 #include "PrintType.h"
+#include "InterpreterSettings.h"
 
 typedef struct sObj Obj;
 typedef struct sObjString ObjString;
@@ -55,7 +56,7 @@ typedef struct {
 void InitValueArray(ValueArray* array);
 void WriteValueArray(ValueArray* array, Value value);
 void FreeValueArray(ValueArray* array);
-void PrintValue(Value value, PrintType printType);
+void WriteValue(IOSettings* settings, Value value, PrintType printType, char* buffer, int bufferSize);
 
 #endif
 

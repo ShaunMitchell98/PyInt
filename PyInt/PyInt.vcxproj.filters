@@ -17,6 +17,7 @@
     <ClCompile Include="Source\Scanner.c" />
     <ClCompile Include="Source\Repl.c" />
     <ClCompile Include="Source\RunFile.c" />
+    <ClCompile Include="Source\InterpreterSettings.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Bytecode.h" />
@@ -37,10 +38,10 @@
     <ClInclude Include="Headers\VM.h" />
     <ClInclude Include="Headers\Repl.h" />
     <ClInclude Include="Headers\RunFile.h" />
-    <ClInclude Include="Headers\PrintInfo.h" />
+    <ClInclude Include="Headers\InterpreterSettings.h" />
+    <ClInclude Include="Headers\RunMode.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
-    <None Include="PyInt_Script.txt" />
   </ItemGroup>
 </Project>

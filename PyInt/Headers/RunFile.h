@@ -3,6 +3,6 @@
 
 #include "VM.h"
 char* ReadFile(const char* path);
-void RunFile(const char* path, PrintInfo printInfo);
+void RunFile(InterpreterSettings settings);
 
 #endif

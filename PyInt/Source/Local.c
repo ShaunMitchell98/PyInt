@@ -10,7 +10,7 @@
 #include "../Headers/Compiler.h"
 
 uint8_t IdentifierConstant(Compiler* compiler, Token* name) {
-    return StoreConstant(compiler, OBJ_VAL(CopyString(name->start, name->length)));
+    return StoreConstant(compiler, OBJ_VAL(CopyString(compiler->vm, &compiler->vm->strings, name->start, name->length)));
 }
 
 static bool IdentifiersEqual(Token* a, Token* b) {

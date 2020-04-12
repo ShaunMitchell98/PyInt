@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../Headers/Repl.h"
 #include "../Headers/Common.h"
+#include "../Headers/Repl.h"
 #include "../Headers/VM.h"
 
-void Repl(PrintLocation printLocation) {
+void Repl(InterpreterSettings settings) {
     char line[1024];
     while (true) {
         printf("\n");
@@ -19,17 +19,13 @@ void Repl(PrintLocation printLocation) {
 
         if (strcmp(line, "quit\n") == 0) {
             printf("Use quit() or Ctrl-D (i.e. EOF) to exit");
-            Repl(printLocation);
+            Repl(settings);
             return;
         }
         else if (strcmp(line, "quit()\n") == 0 || strcmp(line, "Ctrl-D") == 0) {
             exit(0);
         }
 
-        char* filePath = "Output.txt";
-        PrintInfo printInfo;
-        printInfo.filePath = filePath;
-
-        Interpret(line, "<stdin>", printInfo);
+        Interpret(line, settings);
     }
 }

@@ -6,6 +6,7 @@
 #include "Scanner.h"
 #include "Object.h"
 #include "Local.h"
+#include "VM.h"
 
 typedef struct {
     Token previous;
@@ -22,6 +23,7 @@ struct sCompiler {
     int scopeDepth;
     Scanner* scanner;
     Parser* parser;
+    VM* vm;
 };
 
 typedef enum {
@@ -48,7 +50,7 @@ typedef struct {
     Precedence precedence;
 } ParseRule;
 
-ObjFunction* Compile(Bytecode* bytecode, const char* sourceCode, const char* path);
+ObjFunction* Compile(VM* vm, Bytecode* bytecode, const char* sourceCode, const char* path);
 void ParsePrecedence(Compiler* compiler, Precedence precedence);
 
 #endif

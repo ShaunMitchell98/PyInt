@@ -1,9 +1,9 @@
 #ifndef PyInt_Repl_h
 #define PyInt_Repl_h
 
-#include "VM.h"
+#include "InterpreterSettings.h"
 
-void Repl(PrintLocation printLocation);
+void Repl(InterpreterSettings settings);
 
 #endif
 

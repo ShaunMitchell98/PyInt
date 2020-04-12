@@ -3,7 +3,10 @@
 
 #include "Common.h"
 #include "Value.h"
-#include "Debug.h"    
+#include "Debug.h"   
+#include "HashTable.h"
+#include "InterpreterSettings.h"
+#include "VM.h"
 
 #define OBJ_TYPE(value) (AS_OBJ(value)->type)
 
@@ -42,10 +45,10 @@ typedef enum {
     TYPE_SCRIPT
 } FunctionType;
 
-ObjString* TakeString(char* chars, int length);
-ObjString* CopyString(const char* chars, int length);
-void PrintObject(Value value, PrintType printType);
-ObjFunction* NewFunction(void);
+ObjString* TakeString(VM* vm, Table* table, char* chars, int length);
+ObjString* CopyString(VM* vm, Table* table, const char* chars, int length);
+void PrintObject(IOSettings* settings, Value value, PrintType printType, char* buffer, int bufferSize);
+ObjFunction* NewFunction(VM* vm);
 
 static inline bool IsObjType(Value value, ObjType type) {
 return IS_OBJ(value) && AS_OBJ(value)->type == type;

@@ -14,6 +14,8 @@
 #include "../Headers/Helpers.h"
 #include "../Headers/Memory.h"
 #include "../Headers/Debug.h"
+#include "../Headers/RunMode.h"
+#include "../Headers/VM.h"
 
 static void InitParser(Parser* parser) {
     parser->hadError = false;
@@ -24,11 +26,11 @@ static void InitCompiler(Compiler* currentCompiler, Compiler* compiler, Function
     compiler->functionType = functionType;
     compiler->localCount = 0;
     compiler->scopeDepth = 0;
-    compiler->function = NewFunction();
+    compiler->function = NewFunction(compiler->vm);
     compiler->enclosing = (struct Compiler*) currentCompiler;
     
     if (functionType != TYPE_SCRIPT) {
-        compiler->function->name = CopyString(currentCompiler->parser->previous.start, currentCompiler->parser->previous.length);
+        compiler->function->name = CopyString(compiler->vm, &compiler->vm->strings, currentCompiler->parser->previous.start, currentCompiler->parser->previous.length);
         compiler->parser = currentCompiler->parser;
     }
 
@@ -57,7 +59,7 @@ static ParseRule* GetRule(TokenType type);
 
 static void GlobalStatement(Compiler* compiler) {
     do {
-        uint8_t address = StoreConstant(compiler, OBJ_VAL(CopyString(compiler->parser->current.start, compiler->parser->current.length)));
+        uint8_t address = StoreConstant(compiler, OBJ_VAL(CopyString(compiler->vm, &compiler->vm->strings, compiler->parser->current.start, compiler->parser->current.length)));
         WriteBytes(compiler, DEFINE_GLOBAL_OP, address);
         GetNextToken(compiler);
     } while (MatchToken(compiler, compiler->parser->current, COMMA_TOKEN));
@@ -433,7 +435,7 @@ static void Number(Compiler* compiler, bool canAssign) {
 static void String(Compiler* compiler, bool canAssign) {
     char* string = ALLOCATE(char, compiler->parser->previous.length);
     string = memcpy(string, compiler->parser->previous.start, compiler->parser->previous.length);
-    uint8_t address = StoreConstant(compiler, OBJ_VAL(CopyString(compiler->parser->previous.start, compiler->parser->previous.length)));
+    uint8_t address = StoreConstant(compiler, OBJ_VAL(CopyString(compiler->vm, &compiler->vm->strings, compiler->parser->previous.start, compiler->parser->previous.length)));
     WriteBytes(compiler, CONSTANT_OP, address);
     GetNextToken(compiler);
 }
@@ -558,21 +560,22 @@ void ParsePrecedence(Compiler* compiler, Precedence precedence) {
     }
 }
 
-ObjFunction* Compile(Bytecode* bytecode, const char* sourceCode, const char* path) {
+ObjFunction* Compile(VM* vm, Bytecode* bytecode, const char* sourceCode, RunMode runMode) {
     Scanner scanner;
-    InitScanner(&scanner, sourceCode, path);
+    InitScanner(&scanner, sourceCode);
 
     Parser parser;
     InitParser(&parser);
 
     Compiler compiler;
     compiler.parser = &parser;
+    compiler.vm = vm;
     InitCompiler(NULL, &compiler, TYPE_SCRIPT);
     
     compiler.scanner = &scanner;
 
     GetNextToken(&compiler);
-    if (strncmp(path, "<stdin>", 7) == 0) {
+    if (runMode == RUN_REPL) {
         TestList(&compiler);
     }
     else {

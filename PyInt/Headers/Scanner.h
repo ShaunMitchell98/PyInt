@@ -9,7 +9,6 @@
 #define INDENT_STACK_MAX 10
 
 typedef struct {
-    const char* path;
     const char* start;
     const char* current;
     int line;
@@ -25,7 +24,7 @@ typedef enum {
     DEDENT_ERROR
 } SpaceType;
 
-void InitScanner(Scanner* scanner, const char* sourceCode, const char* fileName);
+void InitScanner(Scanner* scanner, const char* sourceCode);
 Token GetToken(Scanner* scanner);
 
 #endif
