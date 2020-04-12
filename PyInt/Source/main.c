@@ -17,8 +17,7 @@ int main(int argc, const char* argv[]) {
         RunFile(settings);
     }
     else {
-        fprintf(stderr, "No run mode specified",
-            argv[1]);
+        fprintf(stderr, "No run mode specified");
         return -1;
     }
     return 0;
