@@ -10,7 +10,7 @@
 #include "../Headers/Bytecode.h"
 #include "../Headers/Object.h"
 #include "../Headers/CompilerBytecode.h"
-#include "../Headers/Local.h"
+#include "../Headers/Variable.h"
 #include "../Headers/Helpers.h"
 #include "../Headers/Memory.h"
 #include "../Headers/Debug.h"
@@ -26,12 +26,19 @@ static void InitCompiler(Compiler* currentCompiler, Compiler* compiler, Function
     compiler->functionType = functionType;
     compiler->localCount = 0;
     compiler->scopeDepth = 0;
-    compiler->function = NewFunction(compiler->vm);
     compiler->enclosing = (struct Compiler*) currentCompiler;
     
-    if (functionType != TYPE_SCRIPT) {
-        compiler->function->name = CopyString(compiler->vm, &compiler->vm->strings, currentCompiler->parser->previous.start, currentCompiler->parser->previous.length);
+    if (functionType == TYPE_FUNCTION) {
+        compiler->function = NewFunction(currentCompiler->vm);
+        compiler->vm = currentCompiler->vm;
+        compiler->scanner = currentCompiler->scanner;
         compiler->parser = currentCompiler->parser;
+        compiler->scopeDepth = currentCompiler->scopeDepth + 1;
+        compiler->function->name = CopyStringToTable(compiler->vm, &compiler->vm->strings, compiler->parser->previous.start, compiler->parser->previous.length);
+    }
+    else {
+        compiler->function = NewFunction(compiler->vm);
+        compiler->function->name = CopyStringToTable(compiler->vm, &compiler->vm->strings, "Script", 6);
     }
 
     Local* local = &compiler->locals[compiler->localCount++];
@@ -41,17 +48,23 @@ static void InitCompiler(Compiler* currentCompiler, Compiler* compiler, Function
 }
 
 static ObjFunction* EndCompiler(Compiler* compiler) {
-    WriteReturn(compiler);
+    if (!compiler->function->hasReturnStatement) {
+        WriteReturn(compiler);
+    }
 
-    if (compiler->enclosing != NULL) {
+    ObjFunction* function = compiler->function;
+
+    if (compiler->vm->settings.bytecode.enabled) {
+        if (!compiler->parser->hadError) {
+            DisassembleBytecode(compiler->vm, &compiler->function->bytecode, compiler->function->name->chars, &compiler->vm->settings.bytecode);
+        }
+    }
+
+    if (compiler->enclosing != NULL) {       
         compiler = compiler->enclosing;
     }
-#ifdef DEBUG_PRINT_CODE
-    if (!parser.hadError) {
-        DisassembleBytecode(compiler.function.bytecode, compiler.function->name != NULL ? compiler.function->name->chars : "<script>");
-    }
-#endif
-    return compiler->function;
+  
+    return function;
 }
 
 static ParseRule* GetRule(TokenType type);
@@ -59,13 +72,13 @@ static ParseRule* GetRule(TokenType type);
 
 static void GlobalStatement(Compiler* compiler) {
     do {
-        uint8_t address = StoreConstant(compiler, OBJ_VAL(CopyString(compiler->vm, &compiler->vm->strings, compiler->parser->current.start, compiler->parser->current.length)));
-        WriteBytes(compiler, DEFINE_GLOBAL_OP, address);
+        uint8_t bytecodeValueArrayAddress = StoreInBytecodeValueArray(compiler, OBJ_VAL(CopyStringToTable(compiler->vm, &compiler->vm->strings, compiler->parser->current.start, compiler->parser->current.length)));
+        WriteBytes(compiler, SET_GLOBAL_OP, bytecodeValueArrayAddress);
         GetNextToken(compiler);
     } while (MatchToken(compiler, compiler->parser->current, COMMA_TOKEN));
 }
 
-static void Expression(Compiler* compiler) {
+void Expression(Compiler* compiler) {
     ParsePrecedence(compiler, PREC_ASSIGNMENT);
 }
 
@@ -114,6 +127,16 @@ static void ExpressionStatement(Compiler* compiler) {
     }
 }
 
+static void ReturnStatement(Compiler* compiler) {
+    if (compiler->scopeDepth == 0) {
+        Error("Cannot return from top-level code.");
+    }
+
+    TestListStarExpression(compiler);
+    WriteByte(compiler, RETURN_OP);
+    compiler->function->hasReturnStatement = true;
+}
+
 static void SmallStatement(Compiler* compiler) {
   
     //DelStatement();
@@ -122,6 +145,9 @@ static void SmallStatement(Compiler* compiler) {
     //ImportStatement();
     if (MatchToken(compiler, compiler->parser->current, GLOBAL_TOKEN)) {
         GlobalStatement(compiler);
+    }
+    if (MatchToken(compiler, compiler->parser->current, RETURN_TOKEN)) {
+        ReturnStatement(compiler);
     }
     else {
         ExpressionStatement(compiler);
@@ -187,8 +213,6 @@ static void ExceptClause(Compiler* compiler) {
 }
 
 static void VariableDeclaration(Compiler* compiler) {
-    uint8_t global = ParseVariable(compiler);
-
     if (MatchToken(compiler, compiler->parser->current, EQUAL_TOKEN)) {
         Expression(compiler);
     }
@@ -196,15 +220,20 @@ static void VariableDeclaration(Compiler* compiler) {
         WriteByte(compiler, NONE_OP);
     }
 
-    DefineVariable(compiler, global);
+    if (compiler->scopeDepth == 0) {
+        SetGlobalVariable(compiler);
+    }
+    else {
+        SetLocalVariable(compiler);
+    }
 }
 
 static uint8_t GetIdentifierAddress(Compiler* compiler) {
     if (compiler->scopeDepth > 0) {
-        return (uint8_t) ResolveLocal(compiler, &compiler->parser->previous);
+        return (uint8_t) GetLocalStackOffset(compiler, &compiler->parser->previous);
     }
     else {
-        return IdentifierConstant(compiler, &compiler->parser->previous);
+        return StoreGlobalInBytecodeConstants(compiler, &compiler->parser->previous);
     }
 }
 
@@ -270,10 +299,10 @@ static void ForStatement(Compiler* compiler) {
     int ifTrueOpcodeAddress = WriteJump(compiler, JUMP_IF_TRUE_OP);
     WriteBytes(compiler, GET_INDEX_OP, identifierAddress);
     if (compiler->scopeDepth > 0) {
-        WriteBytes(compiler, SET_LOCAL_OP, (uint8_t) ResolveLocal(compiler, &loopVariable));
+        WriteBytes(compiler, SET_LOCAL_OP, (uint8_t) GetLocalStackOffset(compiler, &loopVariable));
     }
     else {
-        WriteBytes(compiler, SET_GLOBAL_OP, IdentifierConstant(compiler, &loopVariable));
+        WriteBytes(compiler, SET_GLOBAL_OP, StoreGlobalInBytecodeConstants(compiler, &loopVariable));
     }
     Suite(compiler);
     WriteLoop(compiler, loopStart);
@@ -298,7 +327,7 @@ static void WithStatement() {
 static void Function(Compiler* compiler, FunctionType functionType) {
     Compiler newCompiler;
     InitCompiler(compiler, &newCompiler, TYPE_FUNCTION);
-    BeginScope(compiler);
+    BeginScope(&newCompiler);
     
     ConsumeToken(compiler, LEFT_PAREN_TOKEN, LeftParenError);
     if (!CheckToken(compiler, RIGHT_PAREN_TOKEN)) {
@@ -308,24 +337,24 @@ static void Function(Compiler* compiler, FunctionType functionType) {
                 Error("Cannot have more than 255 parameters");
             }
             
-            uint8_t paramConstant = ParseVariable(compiler);
-            DefineVariable(compiler, paramConstant);
-        } while(MatchToken(compiler, compiler->parser->current, COMMA_TOKEN));
+            SetLocalVariable(&newCompiler);
+            GetNextToken(&newCompiler);
+        } while(MatchToken(&newCompiler, newCompiler.parser->current, COMMA_TOKEN));
     }
-    ConsumeToken(compiler, RIGHT_PAREN_TOKEN, RightParenError);
+    ConsumeToken(&newCompiler, RIGHT_PAREN_TOKEN, RightParenError);
     
-    ConsumeToken(compiler, COLON_TOKEN, ColonError);
+    ConsumeToken(&newCompiler, COLON_TOKEN, ColonError);
     Suite(&newCompiler);
-    
+
     ObjFunction* function = EndCompiler(&newCompiler);
-    WriteBytes(compiler, CONSTANT_OP, StoreConstant(compiler, OBJ_VAL(function)));
+    WriteBytes(compiler, CONSTANT_OP, StoreInBytecodeValueArray(compiler, OBJ_VAL(function)));
 }
 
 static void FunctionDefinition(Compiler* compiler) {
-    uint8_t global = ParseVariable(compiler);
-    MarkInitialised(compiler);
+    int bytecodeConstantAddress = StoreGlobalInBytecodeConstants(compiler, &compiler->parser->current);
+    GetNextToken(compiler);
     Function(compiler, TYPE_FUNCTION);
-    DefineVariable(compiler, global);
+    WriteBytes(compiler, SET_GLOBAL_OP, bytecodeConstantAddress);
 }
 
 static void ClassDefinition() {
@@ -419,7 +448,11 @@ static void Binary(Compiler* compiler, bool canAssign) {
         case NOT_TOKEN: WriteByte(compiler, NOT_OP); break;
         default: return;
     }
-    
+}
+
+static void Call(Compiler* compiler, bool canAssign) {
+    uint8_t argCount = ArguementList(compiler);
+    WriteBytes(compiler, CALL_OP, argCount);
 }
 
 static void Grouping(Compiler* compiler, bool canAssign) {
@@ -435,7 +468,7 @@ static void Number(Compiler* compiler, bool canAssign) {
 static void String(Compiler* compiler, bool canAssign) {
     char* string = ALLOCATE(char, compiler->parser->previous.length);
     string = memcpy(string, compiler->parser->previous.start, compiler->parser->previous.length);
-    uint8_t address = StoreConstant(compiler, OBJ_VAL(CopyString(compiler->vm, &compiler->vm->strings, compiler->parser->previous.start, compiler->parser->previous.length)));
+    uint8_t address = StoreInBytecodeValueArray(compiler, OBJ_VAL(CopyStringToTable(compiler->vm, &compiler->vm->strings, compiler->parser->previous.start, compiler->parser->previous.length)));
     WriteBytes(compiler, CONSTANT_OP, address);
     GetNextToken(compiler);
 }
@@ -446,18 +479,18 @@ static void Boolean(Compiler* compiler, bool canAssign) {
 }
 
 static void LocalIdentifier(Compiler* compiler, bool canAssign) {
-    int arg = ResolveLocal(compiler, &compiler->parser->previous);
+    int localStackOffset = GetLocalStackOffset(compiler, &compiler->parser->previous);
     
-    if (arg == -1) {
+    if (localStackOffset == -1) {
         VariableDeclaration(compiler);
     }
     else {
-        WriteBytes(compiler, GET_LOCAL_OP, (uint8_t)arg);
+        WriteBytes(compiler, GET_LOCAL_OP, (uint8_t)localStackOffset);
     }
 }
 
 static void GlobalIdentifier(Compiler* compiler, bool canAssign) {
-    int arg = IdentifierConstant(compiler, &compiler->parser->previous);
+    int arg = StoreGlobalInBytecodeConstants(compiler, &compiler->parser->previous);
     
      if (canAssign && MatchToken(compiler, compiler->parser->current, EQUAL_TOKEN)) {
            Expression(compiler);
@@ -479,7 +512,7 @@ static void Identifier(Compiler* compiler, bool canAssign) {
 }
 
 ParseRule rules[] = {
-    {Grouping,   NULL,      PREC_CALL},         //      LEFT_PAREN_TOKEN
+    {Grouping,   Call,      PREC_CALL},         //      LEFT_PAREN_TOKEN
     {NULL,       NULL,      PREC_NONE},         //      RIGHT_PAREN_TOKEN
     {NULL,       NULL,      PREC_NONE},         //      LEFT_BRACE_TOKEN
     {NULL,       NULL,      PREC_NONE},         //      RIGHT_BRACE_TOKEN
@@ -529,7 +562,8 @@ ParseRule rules[] = {
     {Boolean,    NULL,      PREC_NONE},         //      FALSE_TOKEN
     {NULL,       NULL,      PREC_NONE},         //      GLOBAL_TOKEN
     {Identifier, NULL,      PREC_NONE},         //      IDENTIFIER_TOKEN
-    {NULL,       Binary,    PREC_POWER}         //      POWER_TOKEN
+    {NULL,       Binary,    PREC_POWER},        //      POWER_TOKEN
+    {NULL,       NULL,      PREC_NONE},         //      RETURN_TOKEN
 };
 
 static ParseRule* GetRule(TokenType type) {

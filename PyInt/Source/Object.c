@@ -50,7 +50,7 @@ ObjString* TakeString(VM* vm, Table* table, char* chars, int length) {
     return AllocateString(vm, table, chars, length, hash);
 }
 
-ObjString* CopyString(VM* vm, Table* table, const char* chars, int length) {
+ObjString* CopyStringToTable(VM* vm, Table* table, const char* chars, int length) {
     uint32_t hash = HashString(chars, length);
     
     ObjString* interned = FindTableString(table, chars, length, hash);
@@ -99,6 +99,7 @@ ObjFunction* NewFunction(VM* vm) {
     ObjFunction* function = (ObjFunction*)AllocateObject(vm, sizeof(ObjFunction), OBJ_FUNCTION);
     function->arity = 0;
     function->name = NULL;
+    function->hasReturnStatement = false;
     InitBytecode(&function->bytecode);
     return function;
 }

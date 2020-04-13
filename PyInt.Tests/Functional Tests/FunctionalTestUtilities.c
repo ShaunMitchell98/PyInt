@@ -12,6 +12,9 @@ static InterpreterSettings InitialiseTestSettings() {
 	settings.bytecode.enabled = false;
 	settings.execution.enabled = false;
 	settings.output.string = (char*)malloc(100);
+	settings.execution.enabled = true;
+	settings.execution.location = LOCATION_FILE;
+	settings.execution.filePath = "C:\\Users\\User\\Documents\\Execution.txt";
 	settings.output.string[0] = '\0';
 	return settings;
 }

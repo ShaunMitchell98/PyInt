@@ -8,7 +8,6 @@
     <ClCompile Include="Source\Debug.c" />
     <ClCompile Include="Source\HashTable.c" />
     <ClCompile Include="Source\Helpers.c" />
-    <ClCompile Include="Source\Local.c" />
     <ClCompile Include="Source\main.c" />
     <ClCompile Include="Source\Memory.c" />
     <ClCompile Include="Source\Object.c" />
@@ -18,6 +17,7 @@
     <ClCompile Include="Source\Repl.c" />
     <ClCompile Include="Source\RunFile.c" />
     <ClCompile Include="Source\InterpreterSettings.c" />
+    <ClCompile Include="Source\Variable.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Bytecode.h" />
@@ -28,7 +28,6 @@
     <ClInclude Include="Headers\Debug.h" />
     <ClInclude Include="Headers\HashTable.h" />
     <ClInclude Include="Headers\Helpers.h" />
-    <ClInclude Include="Headers\Local.h" />
     <ClInclude Include="Headers\Memory.h" />
     <ClInclude Include="Headers\Object.h" />
     <ClInclude Include="Headers\PrintType.h" />
@@ -40,6 +39,7 @@
     <ClInclude Include="Headers\RunFile.h" />
     <ClInclude Include="Headers\InterpreterSettings.h" />
     <ClInclude Include="Headers\RunMode.h" />
+    <ClInclude Include="Headers\Variable.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

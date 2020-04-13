@@ -13,21 +13,22 @@ void WriteBytes(Compiler* compiler, uint8_t byte1, uint8_t byte2) {
 }
 
 void WriteReturn(Compiler* compiler) {
+    WriteBytes(compiler, CONSTANT_OP, StoreInBytecodeValueArray(compiler, NONE_VAL));
     WriteByte(compiler, RETURN_OP);
 }
 
-uint8_t StoreConstant(Compiler* compiler, Value value) {
-    int address = AddConstant(&compiler->function->bytecode, value);
-    if (address > UINT8_MAX) {
+uint8_t StoreInBytecodeValueArray(Compiler* compiler, Value value) {
+    int bytecodeValueArrayAddress = AddConstantToValueArray(&compiler->function->bytecode, value);
+    if (bytecodeValueArrayAddress > UINT8_MAX) {
         Error("Too many constants stored in bytecode constants");
         return 0;
     }
     
-    return (uint8_t) address;
+    return (uint8_t) bytecodeValueArrayAddress;
 }
 
 void WriteConstantOperation(Compiler* compiler, Value value) {
-    WriteBytes(compiler, CONSTANT_OP, StoreConstant(compiler, value));
+    WriteBytes(compiler, CONSTANT_OP, StoreInBytecodeValueArray(compiler, value));
 }
 
 int WriteJump(Compiler* compiler, uint8_t opcode) {

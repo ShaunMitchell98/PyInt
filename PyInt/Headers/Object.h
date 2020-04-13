@@ -36,6 +36,7 @@ struct sObjString {
 struct sObjFunction {
     Obj obj;
     int arity;
+    bool hasReturnStatement;
     Bytecode bytecode;
     ObjString* name;
 };
@@ -46,7 +47,7 @@ typedef enum {
 } FunctionType;
 
 ObjString* TakeString(VM* vm, Table* table, char* chars, int length);
-ObjString* CopyString(VM* vm, Table* table, const char* chars, int length);
+ObjString* CopyStringToTable(VM* vm, Table* table, const char* chars, int length);
 void PrintObject(IOSettings* settings, Value value, PrintType printType, char* buffer, int bufferSize);
 ObjFunction* NewFunction(VM* vm);
 

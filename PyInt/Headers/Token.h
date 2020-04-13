@@ -56,7 +56,8 @@ typedef enum {
     FALSE_TOKEN,
     GLOBAL_TOKEN,
     IDENTIFIER_TOKEN,
-    POWER_TOKEN
+    POWER_TOKEN,
+    RETURN_TOKEN
 } TokenType;
 
 typedef struct {    

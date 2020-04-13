@@ -21,19 +21,18 @@ typedef enum {
     LESSER_OP,
     GET_LOCAL_OP,
     SET_LOCAL_OP,
-    DECLARE_LOCAL_OP,
     JUMP_IF_FALSE_OP,
     JUMP_IF_TRUE_OP,
     POP_OP,
     JUMP_OP,
     PRINT_OP,
     LOOP_OP,
-    DEFINE_GLOBAL_OP,
     SET_GLOBAL_OP,
     GET_GLOBAL_OP,
     NONE_OP,
     GET_INDEX_OP,
-    END_OF_ARRAY_OP
+    END_OF_ARRAY_OP,
+    CALL_OP
 } Opcode;
 
 typedef struct {
@@ -48,6 +47,6 @@ typedef struct {
 void InitBytecode(Bytecode* bytecode);
 void FreeBytecode(Bytecode* bytecode);
 void WriteBytecode(Bytecode* bytecode, uint8_t byte, int line);
-int AddConstant(Bytecode* bytecode, Value value);
+int AddConstantToValueArray(Bytecode* bytecode, Value value);
 
 #endif

@@ -5,7 +5,8 @@
 #include "Token.h"
 #include "Scanner.h"
 #include "Object.h"
-#include "Local.h"
+#include "RunMode.h"
+#include "Variable.h"
 #include "VM.h"
 
 typedef struct {
@@ -50,7 +51,8 @@ typedef struct {
     Precedence precedence;
 } ParseRule;
 
-ObjFunction* Compile(VM* vm, Bytecode* bytecode, const char* sourceCode, const char* path);
+void Expression(Compiler* compiler);
+ObjFunction* Compile(VM* vm, Bytecode* bytecode, const char* sourceCode, RunMode runMode);
 void ParsePrecedence(Compiler* compiler, Precedence precedence);
 
 #endif

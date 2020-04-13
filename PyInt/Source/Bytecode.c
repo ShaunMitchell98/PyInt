@@ -30,7 +30,7 @@ void WriteBytecode(Bytecode* bytecode, uint8_t byte, int line) {
 	bytecode->count++;
 }
 
-int AddConstant(Bytecode* bytecode, Value value) {
+int AddConstantToValueArray(Bytecode* bytecode, Value value) {
 	WriteValueArray(&bytecode->constants, value);
 	return bytecode->constants.count-1;
 }

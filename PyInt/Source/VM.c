@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,6 +14,30 @@
 static void ResetStack(VM* vm) {
     vm->stackTop = vm->stack;
     vm->frameCount = 0;
+}
+
+static void RuntimeError(VM* vm, const char* format) {
+    va_list args;
+    va_start(args, format);
+    vfprintf(stderr, format, args);
+    va_end(args);
+    fputs("\n", stderr);
+
+    for (int i = 0; i <= vm->frameCount -1 ; i++) {
+        CallFrame* frame = &vm->frames[i];
+        ObjFunction* function = frame->function;
+        //-1 because the IP is sitting on the next instruction to be executed.
+        size_t instruction = frame->ip - function->bytecode.code - 1;
+        fprintf(stderr, "[line %d] in ", function->bytecode.lines[instruction]);
+        if (function->name == NULL) {
+            fprintf(stderr, "script\n");
+        }
+        else {
+            fprintf(stderr, "%s()\n", function->name->chars);
+        }
+    }
+
+    ResetStack(vm);
 }
 
 static void Push(VM* vm, Value value) {
@@ -31,7 +56,43 @@ static uint8_t ReadByte(CallFrame* frame) {
 }
 
 static Value Peek(VM* vm, int i) {
-    return *(vm->stackTop - i);
+    return *(vm->stackTop - i - 1);
+}
+
+static bool Call(VM* vm, ObjFunction* function, int argCount) {
+    if (argCount != function->arity) {
+        RuntimeError(vm, "Expected %d arguments but got %d.",
+            function->arity, argCount);
+        return false;
+    }
+
+    if (vm->frameCount == FRAMES_MAX) {
+        RuntimeError(vm, "Stack overflow.");
+        return false;
+    }
+    
+    CallFrame* frame = &vm->frames[vm->frameCount++];
+    frame->function = function;
+    frame->ip = function->bytecode.code;
+
+    frame->locals = vm->stackTop - argCount - 1;
+    return true;
+}
+
+static bool CallValue(VM* vm, Value callee, int argCount) {
+    if (IS_OBJ(callee)) {
+        switch (OBJ_TYPE(callee)) {
+        case OBJ_FUNCTION:
+            return Call(vm, AS_FUNCTION(callee), argCount);
+
+        default:
+            //Non-callable object type;
+            break;
+        }
+    }
+
+    RuntimeError(vm, "Can only call functions and classes.");
+    return false;
 }
 
 static Value ReadConstant(CallFrame* frame) {
@@ -138,10 +199,6 @@ static bool PrintValueToString(VM* vm, Value a) {
 
 static bool Run(VM* vm) {
     CallFrame* frame = &vm->frames[vm->frameCount-1];
-    
-    if (vm->settings.bytecode.enabled) {
-        DisassembleBytecode(vm, &frame->function->bytecode, &vm->settings.bytecode);
-    }
 
     if (vm->settings.execution.enabled) {
         InitialiseExecutionDisassembly(&vm->settings.execution);
@@ -231,6 +288,14 @@ static bool Run(VM* vm) {
                 Push(vm, BOOLEAN_VAL(vm->arrayIndex == string->length-1));
                 break;
             }
+            case CALL_OP: {
+                int argCount = ReadByte(frame);
+                if (!CallValue(vm, Peek(vm, argCount), argCount)) {
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+                frame = &vm->frames[vm->frameCount - 1];
+                break;
+            }
             case PRINT_OP: {
                 Value a = Pop(vm);
                 if (vm->settings.output.location == LOCATION_TERMINAL) {
@@ -278,14 +343,10 @@ static bool Run(VM* vm) {
                 Pop(vm);
                 break;
             }
-            case DEFINE_GLOBAL_OP: {
-                ObjString* name = ReadString(frame);
-                SetTableEntry(&vm->globals, name, NONE_VAL);
-                break;
-            }
             case SET_GLOBAL_OP: {
                 ObjString* name = ReadString(frame);
-                SetTableEntry(&vm->globals, name, Pop(vm));
+                SetTableEntry(&vm->globals, name, Peek(vm, 0));
+                Pop(vm);
                 break;
             }
             case GET_GLOBAL_OP: {
@@ -298,17 +359,12 @@ static bool Run(VM* vm) {
             }
             case SET_LOCAL_OP: {
                 uint8_t slot = ReadByte(frame);
-                frame->locals[slot] = Peek(vm, 1);
+                frame->locals[slot] = Peek(vm, 0);
                 break;
             }
             case GET_LOCAL_OP: {
                 uint8_t slot = ReadByte(frame);
                 Push(vm, frame->locals[slot]);
-                break;
-            }
-            case DECLARE_LOCAL_OP: {
-                uint8_t slot = ReadByte(frame);
-                vm->stack[slot] = NONE_VAL;
                 break;
             }
             case GET_INDEX_OP: {
@@ -322,8 +378,19 @@ static bool Run(VM* vm) {
                 break;
             }
             case RETURN_OP: {
-                //Do nothing;
-                return false;
+                Value result = Pop(vm);
+
+                vm->frameCount--;
+                if (vm->frameCount == 0) {
+                    Pop(vm);
+                    return false;
+                }
+
+                vm->stackTop = frame->locals;
+                Push(vm, result);
+
+                frame = &vm->frames[vm->frameCount - 1];
+                break;
             }
             case NONE_OP:
                 break;
@@ -338,6 +405,7 @@ void InitVM(VM* vm, InterpreterSettings settings) {
     ResetStack(vm);
     vm->arrayIndex = 0;
     vm->settings = settings;
+    vm->heap = NULL;
     InitTable(&vm->strings);
     InitTable(&vm->globals);
 }
@@ -353,17 +421,14 @@ InterpretResult Interpret(const char* sourceCode, InterpreterSettings settings) 
     InitVM(&vm, settings);
     Bytecode bytecode;
     InitBytecode(&bytecode);
-    ObjFunction* function = Compile(&vm, &bytecode, sourceCode, settings.output.filePath);
+    ObjFunction* function = Compile(&vm, &bytecode, sourceCode, settings.runMode);
     
     if (function == NULL) {
         return INTERPRET_COMPILE_ERROR;
     }
     
     Push(&vm, OBJ_VAL(function));
-    CallFrame* frame = &vm.frames[vm.frameCount++];
-    frame->function = function;
-    frame->ip = function->bytecode.code;
-    frame->locals = vm.stack;
+    CallValue(&vm, OBJ_VAL(function), 0);
     
     bool RuntimeError = Run(&vm);
     FreeVM(&vm);

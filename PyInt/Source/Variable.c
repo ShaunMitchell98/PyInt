@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include "../Headers/Local.h"
+#include "../Headers/Variable.h"
 #include "../Headers/CompilerErrors.h"
 #include "../Headers/Token.h"
 #include "../Headers/Bytecode.h"
@@ -9,8 +9,8 @@
 #include "../Headers/Helpers.h"
 #include "../Headers/Compiler.h"
 
-uint8_t IdentifierConstant(Compiler* compiler, Token* name) {
-    return StoreConstant(compiler, OBJ_VAL(CopyString(compiler->vm, &compiler->vm->strings, name->start, name->length)));
+uint8_t StoreGlobalInBytecodeConstants(Compiler* compiler, Token* name) {
+    return StoreInBytecodeValueArray(compiler, OBJ_VAL(CopyStringToTable(compiler->vm, &compiler->vm->strings, name->start, name->length)));
 }
 
 static bool IdentifiersEqual(Token* a, Token* b) {
@@ -18,7 +18,7 @@ static bool IdentifiersEqual(Token* a, Token* b) {
         return memcmp(a->start, b->start, a->length) == 0;
 }
 
-int ResolveLocal(Compiler* compiler, Token* name) {
+int GetLocalStackOffset(Compiler* compiler, Token* name) {
     for (int i = compiler->localCount-1; i >= 0; i--) {
         Local* local = &compiler->locals[i];
         if (IdentifiersEqual(name, &local->name)) {
@@ -32,7 +32,7 @@ int ResolveLocal(Compiler* compiler, Token* name) {
     return -1;
 }
 
-static int AddLocal(Compiler* compiler, Token* token) {
+static int AddLocalToCompilerStack(Compiler* compiler, Token* token) {
     if (compiler->localCount == UINT8_COUNT) {
         Error("Too many local variables in function.");
         return -1;
@@ -40,11 +40,11 @@ static int AddLocal(Compiler* compiler, Token* token) {
 
     Local* local = &compiler->locals[compiler->localCount++];
     local->name = *token;
-    local->depth = -1;
+    local->depth = compiler->scopeDepth;
     return compiler->localCount-1;
 }
 
-static bool LocalDeclared(Compiler* compiler, Token* token) {
+static bool IsLocalInCompilerStack(Compiler* compiler, Token* token) {
     for (int i = compiler->localCount-1; i >=0; i--) {
         Local* local = &compiler->locals[i];
         if (local->depth != -1 && local->depth < compiler->scopeDepth) {
@@ -60,27 +60,24 @@ static bool LocalDeclared(Compiler* compiler, Token* token) {
     return false;
 }
 
- int DeclareVariable(Compiler* compiler) {
-    //Global variables are implicitly declared.
-     if (compiler->scopeDepth == 0) return -1;
-    
-    Token* token = &compiler->parser->previous;
-    if (!LocalDeclared(compiler, token)) {
-        return AddLocal(compiler, token);
+ int PushLocalToCompilerStack(Compiler* compiler) {
+    Token* token = &compiler->parser->current;
+    if (!IsLocalInCompilerStack(compiler, token)) {
+        return AddLocalToCompilerStack(compiler, token);
     }
-     return -1;
+
+    return GetLocalStackOffset(compiler, token);
 }
 
-uint8_t ParseVariable(Compiler* compiler) {
-    int address = DeclareVariable(compiler);
-    
-    if (address != -1){
-        WriteBytes(compiler, DECLARE_LOCAL_OP, address);
-    }
-    
-    if (compiler->scopeDepth > 0) return 0;
-    return IdentifierConstant(compiler, &compiler->parser->previous);
-}
+ void SetLocalVariable(Compiler* compiler) {
+     int stackOffset = PushLocalToCompilerStack(compiler);
+     WriteBytes(compiler, SET_LOCAL_OP, stackOffset);
+ }
+
+ void SetGlobalVariable(Compiler* compiler) {
+     uint8_t bytecodeConstantAddress = StoreGlobalInBytecodeConstants(compiler, &compiler->parser->current);
+     WriteBytes(compiler, SET_GLOBAL_OP, bytecodeConstantAddress);
+ }
 
 void BeginScope(Compiler* compiler) {
     compiler->scopeDepth++;
@@ -95,16 +92,20 @@ void EndScope(Compiler* compiler) {
     }
 }
 
-void MarkInitialised(Compiler* compiler) {
-    if (compiler->scopeDepth == 0) return;
-    compiler->locals[compiler->localCount-1].depth = compiler->scopeDepth;
-}
+uint8_t ArguementList(Compiler* compiler) {
+    uint8_t argCount = 0;
+    if (!CheckToken(compiler, RIGHT_PAREN_TOKEN)) {
+        do {
+            Expression(compiler);
 
-void DefineVariable(Compiler* compiler, uint8_t global) {
-    if (compiler->scopeDepth > 0) {
-        MarkInitialised(compiler);
-        WriteBytes(compiler, SET_LOCAL_OP, (uint8_t)compiler->localCount-1);
-        return;
+            if (argCount == 255) {
+                Error("Cannot have more than 255 arguements");
+            }
+
+            argCount++;
+        } while (MatchToken(compiler, compiler->parser->current, COMMA_TOKEN));
     }
-    WriteBytes(compiler, DEFINE_GLOBAL_OP, global);
+
+    ConsumeToken(compiler, RIGHT_PAREN_TOKEN, "Expect ')' after arguements");
+    return argCount;
 }

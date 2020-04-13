@@ -130,9 +130,9 @@ static int WriteInstruction(IOSettings* settings, VM* vm, Bytecode *bytecode, ch
         case LOOP_OP:
             offset = WriteInstructionWithJump("LOOP_OP", buffer, bufferSize, bytecode, -1, offset);
             break;
-        case DEFINE_GLOBAL_OP:
-            constant = bytecode->code[offset+1];
-            offset = WriteInstructionWithConstant(settings, "DEFINE_GLOBAL_OP", buffer, bufferSize, constant, bytecode->constants.values[constant], offset);
+        case CALL_OP:
+            constant = bytecode->code[offset + 1];
+            offset = WriteInstructionWithConstant(settings, "CALL_OP", buffer, bufferSize, constant, bytecode->constants.values[constant], offset);
             break;
         case SET_GLOBAL_OP:
             constant = bytecode->code[offset+1];
@@ -149,10 +149,6 @@ static int WriteInstruction(IOSettings* settings, VM* vm, Bytecode *bytecode, ch
         case GET_LOCAL_OP:
             constant = bytecode->code[offset+1];
             offset = WriteInstructionWithConstant(settings, "GET_LOCAL_OP", buffer, bufferSize, constant, vm->stack[constant], offset);
-            break;
-        case DECLARE_LOCAL_OP:
-            constant = bytecode->code[offset+1];
-            offset = WriteInstructionWithConstant(settings, "DECLARE_LOCAL_OP", buffer, bufferSize, constant, vm->stack[constant], offset);
             break;
         case END_OF_ARRAY_OP:
             constant = bytecode->code[offset+1];
@@ -225,12 +221,14 @@ static void HandleOutput(char* buffer, IOSettings* settings) {
     }
 }
 
-void DisassembleBytecode(VM* vm, Bytecode* bytecode, IOSettings* bytecodeSettings) {
+void DisassembleBytecode(VM* vm, Bytecode* bytecode, const char* functionName, IOSettings* bytecodeSettings) {
     int bufferSize = 2000 * sizeof(char);
     char* buffer = (char*)malloc(bufferSize);
     *buffer = '\0';
 
-    strcat_s(buffer, bufferSize, "Bytecode Readout \n");
+    strcat_s(buffer, bufferSize, "Bytecode Readout - ");
+    strcat_s(buffer, bufferSize, functionName);
+    strcat_s(buffer, bufferSize, "\n");
     WriteBytecodeLineDivider(buffer, bufferSize);
     strcat_s(buffer, bufferSize, "Instruction Address   Line        Instruction         Operand address    Operand value");
     WriteBytecodeLineDivider(buffer, bufferSize);

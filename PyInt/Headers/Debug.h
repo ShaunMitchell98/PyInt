@@ -5,7 +5,7 @@
 #include "InterpreterSettings.h"
 #include "VM.h"
 
-void DisassembleBytecode(VM* vm, Bytecode* bytecode, IOSettings* settings);
+void DisassembleBytecode(VM* vm, Bytecode* bytecode, const char* fileName, IOSettings* settings);
 void InitialiseExecutionDisassembly(IOSettings* settings);
 void DisassembleExecution(VM* vm, Bytecode* bytecode, int offset, Value* stack, Value* stackTop, IOSettings* settings);
 

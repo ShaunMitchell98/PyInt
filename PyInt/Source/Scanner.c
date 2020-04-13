@@ -63,11 +63,17 @@ static bool IsAlpha (char _char) {
 }
     
 static bool CheckKeyword(Scanner* scanner, const char* letters, int length) {
+    int textLength = (int)(scanner->current - scanner->start);
+    if (textLength > (length + 1)) {
+        return false;
+    }
+
     for (int i = 1; i <= length; i++) {
         if (scanner->start[i] != letters[i-1]) {
             return false;
         }
     }
+
     return true;
 }
 
@@ -153,6 +159,14 @@ static Token Identifier(Scanner* scanner) {
             case 'p': {
                 if (CheckKeyword(scanner, "rint", 4)) {
                     return MakeToken(scanner, PRINT_TOKEN);
+                }
+                else {
+                    return MakeToken(scanner, IDENTIFIER_TOKEN);
+                }
+            }
+            case 'r': {
+                if (CheckKeyword(scanner, "eturn", 5)) {
+                    return MakeToken(scanner, RETURN_TOKEN);
                 }
                 else {
                     return MakeToken(scanner, IDENTIFIER_TOKEN);
@@ -258,6 +272,9 @@ Token GetToken(Scanner* scanner) {
                 return MakeToken(scanner, INDENT_TOKEN);
             case DEDENT:
                 return MakeToken(scanner, DEDENT_TOKEN);
+            case DEDENT_ERROR:
+                ScanError("Invalid whitespace.");
+                return MakeToken(scanner, ERROR_TOKEN);
             default:
                 break;
         }
