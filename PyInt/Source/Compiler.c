@@ -337,7 +337,7 @@ static void Function(Compiler* compiler, FunctionType functionType) {
                 Error("Cannot have more than 255 parameters");
             }
             
-            SetLocalVariable(&newCompiler);
+            PushLocalToCompilerStack(&newCompiler);
             GetNextToken(&newCompiler);
         } while(MatchToken(&newCompiler, newCompiler.parser->current, COMMA_TOKEN));
     }

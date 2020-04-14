@@ -64,11 +64,9 @@ ObjString* CopyStringToTable(VM* vm, Table* table, const char* chars, int length
 }
 
 static void PrintFunction(ObjFunction* function, char* buffer, int bufferSize) {
-    if (function->name == NULL) {
-        strcat_s(buffer, bufferSize, "<script>");
-        return;
-    }
-    printf("<fn %s", function->name->chars);
+    strcat_s(buffer, bufferSize, "<fn ");
+    strcat_s(buffer, bufferSize, function->name->chars);
+    strcat_s(buffer, bufferSize, ">");
 }
 
 void PrintObject(IOSettings* settings, Value value, PrintType printType, char* buffer, int bufferSize) {

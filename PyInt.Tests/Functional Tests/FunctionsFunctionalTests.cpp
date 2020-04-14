@@ -25,5 +25,12 @@ namespace PyIntFunctionalTests
 			Assert::AreEqual("35", output);
 			free(output);
 		}
+
+		TEST_METHOD(FunctionTakingMultipleInputs_ReturnsSum) {
+			char* input = "def Sum(int1, int2):\n\treturn int1 + int2\nprint Sum(5, 6)";
+			char* output = RunInterpreter(input);
+			Assert::AreEqual("11", output);
+			free(output);
+		}
 	};
 }
