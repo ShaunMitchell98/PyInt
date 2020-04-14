@@ -18,6 +18,8 @@
     <ClCompile Include="Source\RunFile.c" />
     <ClCompile Include="Source\InterpreterSettings.c" />
     <ClCompile Include="Source\Variable.c" />
+    <ClCompile Include="Source\VmPrint.c" />
+    <ClCompile Include="Source\NativeFunctions.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Bytecode.h" />
@@ -40,6 +42,8 @@
     <ClInclude Include="Headers\InterpreterSettings.h" />
     <ClInclude Include="Headers\RunMode.h" />
     <ClInclude Include="Headers\Variable.h" />
+    <ClInclude Include="Headers\VmPrint.h" />
+    <ClInclude Include="Headers\NativeFunctions.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

@@ -213,18 +213,13 @@ static void ExceptClause(Compiler* compiler) {
 }
 
 static void VariableDeclaration(Compiler* compiler) {
-    if (MatchToken(compiler, compiler->parser->current, EQUAL_TOKEN)) {
-        Expression(compiler);
-    }
-    else {
-        WriteByte(compiler, NONE_OP);
-    }
+    Expression(compiler);
 
     if (compiler->scopeDepth == 0) {
         SetGlobalVariable(compiler);
     }
     else {
-        SetLocalVariable(compiler);
+        PushLocalToCompilerStack(compiler);
     }
 }
 
@@ -287,7 +282,9 @@ static void WhileStatement(Compiler* compiler) {
 static void ForStatement(Compiler* compiler) {
     GetNextToken(compiler);
     Token loopVariable = compiler->parser->previous;
-    VariableDeclaration(compiler);
+    if (MatchToken(compiler, compiler->parser->current, EQUAL_TOKEN)) {
+        VariableDeclaration(compiler);
+    }
     ConsumeToken(compiler, IN_TOKEN, InError);
     GetNextToken(compiler);
     uint8_t identifierAddress = GetIdentifierAddress(compiler);
@@ -478,15 +475,21 @@ static void Boolean(Compiler* compiler, bool canAssign) {
     WriteConstantOperation(compiler, BOOLEAN_VAL(boolean));
 }
 
-static void LocalIdentifier(Compiler* compiler, bool canAssign) {
+static int LocalIdentifier(Compiler* compiler, bool canAssign) {
     int localStackOffset = GetLocalStackOffset(compiler, &compiler->parser->previous);
     
     if (localStackOffset == -1) {
-        VariableDeclaration(compiler);
+        if (MatchToken(compiler, compiler->parser->current, EQUAL_TOKEN)) {
+            VariableDeclaration(compiler);
+        }
+        else {
+            return localStackOffset;
+        }
     }
     else {
         WriteBytes(compiler, GET_LOCAL_OP, (uint8_t)localStackOffset);
     }
+    return localStackOffset;
 }
 
 static void GlobalIdentifier(Compiler* compiler, bool canAssign) {
@@ -504,7 +507,10 @@ static void GlobalIdentifier(Compiler* compiler, bool canAssign) {
 static void Identifier(Compiler* compiler, bool canAssign) {
 
     if (compiler->scopeDepth > 0) {
-        LocalIdentifier(compiler, canAssign);
+        int localStackOffset = LocalIdentifier(compiler, canAssign);
+        if (localStackOffset == -1) {
+            GlobalIdentifier(compiler, canAssign);
+        }
     }
     else {
         GlobalIdentifier(compiler, canAssign);

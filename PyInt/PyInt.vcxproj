@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\InterpreterSettings.c" />
+    <ClCompile Include="Source\NativeFunctions.c" />
     <ClCompile Include="Source\RunFile.c" />
     <ClCompile Include="Source\Repl.c" />
     <ClCompile Include="Source\Bytecode.c" />
@@ -36,6 +37,7 @@
     <ClCompile Include="Source\Scanner.c" />
     <ClCompile Include="Source\Value.c" />
     <ClCompile Include="Source\VM.c" />
+    <ClCompile Include="Source\VmPrint.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Bytecode.h" />
@@ -44,6 +46,7 @@
     <ClInclude Include="Headers\CompilerBytecode.h" />
     <ClInclude Include="Headers\CompilerErrors.h" />
     <ClInclude Include="Headers\Helpers.h" />
+    <ClInclude Include="Headers\NativeFunctions.h" />
     <ClInclude Include="Headers\Variable.h" />
     <ClInclude Include="Headers\Debug.h" />
     <ClInclude Include="Headers\HashTable.h" />
@@ -58,6 +61,7 @@
     <ClInclude Include="Headers\VM.h" />
     <ClInclude Include="Headers\Repl.h" />
     <ClInclude Include="Headers\RunFile.h" />
+    <ClInclude Include="Headers\VmPrint.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

@@ -9,6 +9,7 @@
 #include "Bytecode.h"
 #include "HashTable.h"
 #include "InterpreterSettings.h"
+#include "VmPrint.h"
 
 typedef struct {
     ObjFunction* function;
@@ -16,8 +17,8 @@ typedef struct {
     Value* locals;
 } CallFrame;
 
-typedef struct {
-    CallFrame frames [FRAMES_MAX];
+struct sVM {
+    CallFrame frames[FRAMES_MAX];
     int frameCount;
     Value stack[STACK_MAX];
     Value* stackTop;
@@ -26,7 +27,7 @@ typedef struct {
     Table globals;
     int arrayIndex;
     InterpreterSettings settings;
-} VM;
+};
 
 typedef enum {
     INTERPRET_COMPILE_ERROR,
@@ -34,6 +35,8 @@ typedef enum {
     INTERPRET_OK
 } InterpretResult;
 
+void Push(VM* vm, Value value);
+Value Pop(VM* vm);
 void InitVM(VM* vm, InterpreterSettings settings);
 InterpretResult Interpret(const char* sourceCode, InterpreterSettings settings);
 void FreeVM(VM* vm);

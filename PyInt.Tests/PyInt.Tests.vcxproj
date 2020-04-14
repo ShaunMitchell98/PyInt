@@ -104,7 +104,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>C:\Users\User\source\repos\PyInt\PyInt\Debug;$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Bytecode.obj;Compiler.obj;CompilerBytecode.obj;CompilerErrors.obj;Debug.obj;HashTable.obj;Helpers.obj;InterpreterSettings.obj;Memory.obj;Object.obj;Repl.obj;RunFile.obj;Scanner.obj;Value.obj;Variable.obj;VM.obj;main.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Bytecode.obj;Compiler.obj;CompilerBytecode.obj;CompilerErrors.obj;Debug.obj;HashTable.obj;Helpers.obj;InterpreterSettings.obj;Memory.obj;NativeFunctions.obj;Object.obj;Repl.obj;RunFile.obj;Scanner.obj;Value.obj;Variable.obj;VM.obj;VmPrint.obj;main.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -139,7 +139,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\Users\User\source\repos\PyInt\PyInt\Debug;$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Bytecode.obj;Compiler.obj;CompilerBytecode.obj;CompilerErrors.obj;Debug.obj;HashTable.obj;Helpers.obj;InterpreterSettings.obj;Memory.obj;Object.obj;Repl.obj;RunFile.obj;Scanner.obj;Value.obj;Variable.obj;VM.obj;main.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Bytecode.obj;Compiler.obj;CompilerBytecode.obj;CompilerErrors.obj;Debug.obj;HashTable.obj;Helpers.obj;InterpreterSettings.obj;Memory.obj;NativeFunctions.obj;Object.obj;Repl.obj;RunFile.obj;Scanner.obj;Value.obj;Variable.obj;VM.obj;VmPrint.obj;main.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -173,6 +173,7 @@
     <ClCompile Include="Functional Tests\GlobalVariableFunctionalTests.cpp" />
     <ClCompile Include="Functional Tests\IfStatementFunctionalTests.cpp" />
     <ClCompile Include="Functional Tests\LogicFunctionalTests.cpp" />
+    <ClCompile Include="Functional Tests\NativeFunctionsFunctionalTests.cpp" />
     <ClCompile Include="Functional Tests\WhileLoopFunctionalTests.cpp" />
     <ClCompile Include="Unit Tests\BytecodeUnitTests.cpp" />
     <ClCompile Include="Unit Tests\InterpreterSettingsUnitTests.cpp" />

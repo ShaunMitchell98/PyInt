@@ -74,6 +74,9 @@ void PrintObject(IOSettings* settings, Value value, PrintType printType, char* b
         case OBJ_FUNCTION:
             PrintFunction(AS_FUNCTION(value), buffer, bufferSize);
             break;
+        case OBJ_NATIVE:
+            //To do...
+            break;
         case OBJ_STRING: {
             if (printType == OPERAND_VALUE) {
                 strcat_s(buffer, bufferSize, AS_CSTRING(value));
@@ -100,4 +103,10 @@ ObjFunction* NewFunction(VM* vm) {
     function->hasReturnStatement = false;
     InitBytecode(&function->bytecode);
     return function;
+}
+
+ObjNative* NewNativeFunction(VM* vm, NativeFn function) {
+    ObjNative* native = (ObjNative*)AllocateObject(vm, sizeof(ObjNative), OBJ_NATIVE);
+    native->function = function;
+    return native;
 }
