@@ -25,7 +25,6 @@ typedef enum {
     JUMP_IF_TRUE_OP,
     POP_OP,
     JUMP_OP,
-    PRINT_OP,
     LOOP_OP,
     SET_GLOBAL_OP,
     GET_GLOBAL_OP,

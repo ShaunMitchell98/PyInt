@@ -124,9 +124,6 @@ static int WriteInstruction(IOSettings* settings, VM* vm, Bytecode *bytecode, ch
         case POP_OP:
             offset = WriteInstructionWithoutConstant("POP_OP", buffer, bufferSize, offset);
             break;
-        case PRINT_OP:
-            offset = WriteInstructionWithoutConstant("PRINT_OP", buffer, bufferSize, offset);
-            break;
         case LOOP_OP:
             offset = WriteInstructionWithJump("LOOP_OP", buffer, bufferSize, bytecode, -1, offset);
             break;

@@ -45,10 +45,11 @@ struct sObjFunction {
     ObjString* name;
 };
 
-typedef Value (*NativeFn)(int argCount, Value* args);
+typedef Value (*NativeFn)(VM* vm, int argCount, Value* args);
 
 typedef struct {
     Obj obj;
+    char* name;
     NativeFn function;
 } ObjNative;
 
@@ -61,7 +62,7 @@ ObjString* TakeString(VM* vm, Table* table, char* chars, int length);
 ObjString* CopyStringToTable(VM* vm, Table* table, const char* chars, int length);
 void PrintObject(IOSettings* settings, Value value, PrintType printType, char* buffer, int bufferSize);
 ObjFunction* NewFunction(VM* vm);
-ObjNative* NewNativeFunction(VM* vm, NativeFn function);
+ObjNative* NewNativeFunction(VM* vm, NativeFn function, const char* name);
 
 static inline bool IsObjType(Value value, ObjType type) {
 return IS_OBJ(value) && AS_OBJ(value)->type == type;

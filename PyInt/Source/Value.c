@@ -71,6 +71,15 @@ void WriteValue(IOSettings* settings, Value value, PrintType printType, char* bu
               strcat_s(buffer, bufferSize, &AS_CHAR(value));
         }
     }
+    else if (IS_NONE(value)) {
+        if (printType == OPERAND_VALUE) {
+            strcat_s(buffer, bufferSize, "\t\t\t\t");
+            strcat_s(buffer, bufferSize, "None");
+        }
+        else if (printType == STACK) {
+            strcat_s(buffer, bufferSize, "None");
+        }
+    }
     else if (IS_OBJ(value)) {
         PrintObject(settings, value, printType, buffer, bufferSize);
     }

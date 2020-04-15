@@ -156,14 +156,6 @@ static Token Identifier(Scanner* scanner) {
                     return MakeToken(scanner, IDENTIFIER_TOKEN);
                 }
             }
-            case 'p': {
-                if (CheckKeyword(scanner, "rint", 4)) {
-                    return MakeToken(scanner, PRINT_TOKEN);
-                }
-                else {
-                    return MakeToken(scanner, IDENTIFIER_TOKEN);
-                }
-            }
             case 'r': {
                 if (CheckKeyword(scanner, "eturn", 5)) {
                     return MakeToken(scanner, RETURN_TOKEN);

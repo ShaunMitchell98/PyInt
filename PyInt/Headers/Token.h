@@ -51,7 +51,6 @@ typedef enum {
     EXCEPT_TOKEN,
     AS_TOKEN,
     NAME_TOKEN,
-    PRINT_TOKEN,
     TRUE_TOKEN,
     FALSE_TOKEN,
     GLOBAL_TOKEN,

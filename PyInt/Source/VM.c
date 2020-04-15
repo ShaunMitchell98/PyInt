@@ -88,7 +88,7 @@ static bool CallValue(VM* vm, Value callee, int argCount) {
             return Call(vm, AS_FUNCTION(callee), argCount);
         case OBJ_NATIVE: {
             NativeFn native = AS_NATIVE(callee);
-            Value result = native(argCount, vm->stackTop - argCount);
+            Value result = native(vm, argCount, vm->stackTop - argCount);
             vm->stackTop -= argCount + 1;
             Push(vm, result);
             return true;
@@ -222,22 +222,6 @@ static bool Run(VM* vm) {
                     return INTERPRET_RUNTIME_ERROR;
                 }
                 frame = &vm->frames[vm->frameCount - 1];
-                break;
-            }
-            case PRINT_OP: {
-                Value a = Pop(vm);
-                if (vm->settings.output.location == LOCATION_TERMINAL) {
-                    bool success = PrintValueToTerminal(vm, a);
-                    if (!success) return true;
-                }
-                else if (vm->settings.output.location == LOCATION_FILE) {
-                    bool success = PrintValueToFile(vm, a);
-                    if (!success) return true;
-                }
-                else if (vm->settings.output.location == LOCATION_STRING) {
-                    bool success = PrintValueToString(vm, a);
-                    if (!success) return true;
-                }
                 break;
             }
             case JUMP_IF_FALSE_OP: {

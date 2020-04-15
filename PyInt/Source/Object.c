@@ -69,13 +69,19 @@ static void PrintFunction(ObjFunction* function, char* buffer, int bufferSize) {
     strcat_s(buffer, bufferSize, ">");
 }
 
+static void PrintNativeFunction(const char* name, char* buffer, int bufferSize) {
+    strcat_s(buffer, bufferSize, "<fn ");
+    strcat_s(buffer, bufferSize, name);
+    strcat_s(buffer, bufferSize, ">");
+}
+
 void PrintObject(IOSettings* settings, Value value, PrintType printType, char* buffer, int bufferSize) {
     switch (OBJ_TYPE(value)) {
         case OBJ_FUNCTION:
             PrintFunction(AS_FUNCTION(value), buffer, bufferSize);
             break;
         case OBJ_NATIVE:
-            //To do...
+            PrintNativeFunction(((ObjNative*)AS_OBJ(value))->name, buffer, bufferSize);
             break;
         case OBJ_STRING: {
             if (printType == OPERAND_VALUE) {
@@ -105,8 +111,9 @@ ObjFunction* NewFunction(VM* vm) {
     return function;
 }
 
-ObjNative* NewNativeFunction(VM* vm, NativeFn function) {
+ObjNative* NewNativeFunction(VM* vm, NativeFn function, const char* name) {
     ObjNative* native = (ObjNative*)AllocateObject(vm, sizeof(ObjNative), OBJ_NATIVE);
     native->function = function;
+    native->name = name;
     return native;
 }

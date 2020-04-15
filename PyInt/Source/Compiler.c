@@ -358,11 +358,6 @@ static void ClassDefinition() {
     
 }
 
-static void PrintStatement(Compiler* compiler) {
-    NamedExpressionTest(compiler);
-    WriteByte(compiler, PRINT_OP);
-}
-
 static bool CompoundStatement(Compiler* compiler) {
     if (MatchToken(compiler, compiler->parser->current, IF_TOKEN)) {
         IfStatement(compiler);
@@ -390,10 +385,6 @@ static bool CompoundStatement(Compiler* compiler) {
     }
     else if (MatchToken(compiler, compiler->parser->current, CLASS_TOKEN)) {
         ClassDefinition();
-        return true;
-    }
-    else if (MatchToken(compiler, compiler->parser->current, PRINT_TOKEN)) {
-        PrintStatement(compiler);
         return true;
     }
     else {
@@ -563,7 +554,6 @@ ParseRule rules[] = {
     {NULL,       NULL,      PREC_NONE},         //      EXCEPT_TOKEN
     {NULL,       NULL,      PREC_NONE},         //      AS_TOKEN
     {NULL,       NULL,      PREC_NONE},         //      NAME_TOKEN
-    {NULL,       NULL,      PREC_NONE},         //      PRINT_TOKEN
     {Boolean,    NULL,      PREC_NONE},         //      TRUE_TOKEN
     {Boolean,    NULL,      PREC_NONE},         //      FALSE_TOKEN
     {NULL,       NULL,      PREC_NONE},         //      GLOBAL_TOKEN
