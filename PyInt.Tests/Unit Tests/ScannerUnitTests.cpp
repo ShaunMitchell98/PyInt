@@ -1,7 +1,7 @@
 #include "CppUnitTest.h"
 
 extern "C" {
-#include "Scanner.h"
+#include "../../PyInt/src/Services/Scanner/Scanner.h"
 }
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

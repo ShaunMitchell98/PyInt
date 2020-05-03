@@ -1,6 +1,6 @@
 #include "CppUnitTest.h"
 extern "C" {
-#include "Bytecode.h"
+#include "../../PyInt/src/Services/Bytecode/Bytecode.h"
 }
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

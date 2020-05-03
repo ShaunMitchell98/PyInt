@@ -1,7 +1,6 @@
 #include "CppUnitTest.h"
 extern "C" {
-#include "RunFile.h"
-#include "VM.h"
+#include "../../PyInt/src/RunFile.h"
 #include "FunctionalTestUtilities.h"
 }
 

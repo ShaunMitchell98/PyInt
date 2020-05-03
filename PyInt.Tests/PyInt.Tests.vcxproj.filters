@@ -13,12 +13,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Unit Tests\BytecodeUnitTests.cpp">
-      <Filter>UnitTests</Filter>
-    </ClCompile>
-    <ClCompile Include="Unit Tests\ScannerUnitTests.cpp">
-      <Filter>UnitTests</Filter>
-    </ClCompile>
     <ClCompile Include="Functional Tests\ArithmeticFunctionalTests.cpp">
       <Filter>Functional Tests</Filter>
     </ClCompile>
@@ -35,9 +29,6 @@
       <Filter>UnitTests</Filter>
     </ClCompile>
     <ClCompile Include="Functional Tests\WhileLoopFunctionalTests.cpp">
-      <Filter>UnitTests</Filter>
-    </ClCompile>
-    <ClCompile Include="Unit Tests\InterpreterSettingsUnitTests.cpp">
       <Filter>UnitTests</Filter>
     </ClCompile>
     <ClCompile Include="Functional Tests\FunctionsFunctionalTests.cpp">

@@ -1,6 +1,6 @@
 #include "CppUnitTest.h"
 extern "C" {
-#include "InterpreterSettings.h"
+#include "../../PyInt/src/Virtual Machine/Settings/Settings.h"
 }
 
 namespace Microsoft {
@@ -36,7 +36,7 @@ namespace PyIntUnitTests
 		TEST_METHOD(Initialisation_GivenNoArguements_ReturnsDefaultSettings) {
 			int argc = 1;
 			const char* argv[1] = { "PyInt" };
-			InterpreterSettings settings;
+			Settings settings;
 			InitialiseSettings(&settings, argc, argv);
 			
 			Assert::AreEqual(LOCATION_TERMINAL, settings.output.location);
@@ -48,7 +48,7 @@ namespace PyIntUnitTests
 			int argc = 3;
 			char* outputFilePath = "Output.txt";
 			const char* argv[3] = { "PyInt", "-fo", outputFilePath };
-			InterpreterSettings settings;
+			Settings settings;
 			InitialiseSettings(&settings, argc, argv);
 
 
@@ -60,7 +60,7 @@ namespace PyIntUnitTests
 			int argc = 3;
 			char* outputFilePath = "Output.txt";
 			const char* argv[3] = { "PyInt", "-fb", outputFilePath };
-			InterpreterSettings settings;
+			Settings settings;
 			InitialiseSettings(&settings, argc, argv);
 
 			Assert::IsTrue(settings.bytecode.enabled);
@@ -72,7 +72,7 @@ namespace PyIntUnitTests
 			int argc = 3;
 			char* outputFilePath = "Output.txt";
 			const char* argv[3] = { "PyInt", "-fe", outputFilePath };
-			InterpreterSettings settings;
+			Settings settings;
 			InitialiseSettings(&settings, argc, argv);
 
 			Assert::IsTrue(settings.execution.enabled);
