@@ -23,7 +23,7 @@ void ForStatement(Compiler* compiler, Services* services, Bytecode* bytecode) {
     Token loopVariable = services->parser->previous;
     if (MatchToken(services, services->parser->current, EQUAL_TOKEN)) {
         ParsePrecedence(compiler, services, bytecode, PREC_ASSIGNMENT);
-        SetLocalVariable(compiler, bytecode, services);
+        SetNewLocalVariable(compiler, bytecode, services, &loopVariable);
     }
     ConsumeToken(services, IN_TOKEN, InError);
     GetNextToken(services);

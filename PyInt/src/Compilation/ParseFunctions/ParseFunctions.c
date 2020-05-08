@@ -79,18 +79,20 @@ static void UnaryToken(Compiler* compiler, Services* services, Bytecode* bytecod
     }
 }
 
-static int LocalIdentifier(Compiler* compiler, Services* services, Bytecode* bytecode) {
-    int localStackOffset = GetLocalStackOffset(compiler->locals, compiler->localCount, &services->parser->previous);
+static int NewLocalIdentifier(Compiler* compiler, Services* services, Bytecode* bytecode, Token* identifier) {
+    if (MatchToken(services, services->parser->current, EQUAL_TOKEN)) {
+        ParsePrecedence(compiler, services, bytecode, PREC_ASSIGNMENT);
+        return SetNewLocalVariable(compiler, bytecode, services, identifier);
+    }
+    else {
+        return -1;
+    }
+}
 
-    if (localStackOffset == -1) {
-        if (MatchToken(services, services->parser->current, EQUAL_TOKEN)) {
-            ParsePrecedence(compiler, services, bytecode, PREC_ASSIGNMENT);
-            SetLocalVariable(compiler, bytecode, services);
-            return 0;
-        }
-        else {
-            return -1;
-        }
+static int ExistingLocalIdentifier(Compiler* compiler, Services* services, Bytecode* bytecode, Token* identifier, int localStackOffset) {
+    if (MatchToken(services, services->parser->current, EQUAL_TOKEN)) {
+        ParsePrecedence(compiler, services, bytecode, PREC_ASSIGNMENT);
+        SetExistingLocalVariable(compiler, bytecode, services, identifier, localStackOffset);
     }
     else {
         WriteBytes(bytecode, services, GET_LOCAL_OP, (uint8_t)localStackOffset);
@@ -98,14 +100,31 @@ static int LocalIdentifier(Compiler* compiler, Services* services, Bytecode* byt
     return localStackOffset;
 }
 
+static int LocalIdentifier(Compiler* compiler, Services* services, Bytecode* bytecode) {
+    Token* identifier = (Token*)malloc(sizeof(Token));
+    *identifier = services->parser->previous;
+    int localStackOffset = GetLocalStackOffset(compiler->locals, compiler->localCount, identifier);
+
+    if (localStackOffset == -1) {
+        localStackOffset = NewLocalIdentifier(compiler, services, bytecode, identifier);
+    }
+    else {
+        localStackOffset = ExistingLocalIdentifier(compiler, services, bytecode, identifier, localStackOffset);
+    }
+
+    free(identifier);
+    return localStackOffset;
+}
+
 static int UpvalueIdentifier(Compiler* compiler, Bytecode* bytecode) {
     Services* services = compiler->services;
-    int upvalueIndex = ResolveUpvalue(compiler, &services->parser->previous);
+    Token identifier = services->parser->previous;
+    int upvalueIndex = ResolveUpvalue(compiler, &identifier);
 
     if (upvalueIndex != -1) {
         if (MatchToken(services, services->parser->current, EQUAL_TOKEN)) {
             ParsePrecedence(compiler, services, bytecode, PREC_ASSIGNMENT);
-            SetLocalVariable(compiler, bytecode, services);
+            SetNewLocalVariable(compiler, bytecode, services, &identifier);
         }
         else {
             WriteBytes(bytecode, services, GET_UPVALUE_OP, (uint8_t)upvalueIndex);

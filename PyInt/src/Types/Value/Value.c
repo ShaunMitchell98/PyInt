@@ -50,7 +50,6 @@ void WriteValue(IOSettings* settings, Value value, PrintType printType, char* bu
     }
     else if (IS_BOOLEAN(value)) {
         if (printType == OPERAND_VALUE) {
-            strcat_s(buffer, bufferSize, "\t\t\t\t");
             char text[10] = "\0";
             AS_BOOLEAN(value) ? strcpy_s(text, 10, "True") : strcpy_s(text, 10, "False");
             strcat_s(buffer, bufferSize, text);

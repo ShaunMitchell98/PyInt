@@ -175,7 +175,7 @@ void DisassembleExecution(Bytecode* bytecode, int offset, Value* stack, Value* s
 
     int newOffset = DisassembleExecutionInstruction(executionSettings, stack, bytecode, buffer, bufferSize, offset);
 
-    char stackWhitespace[10] = "\0";
+    char stackWhitespace[10] = "";
 
     if (newOffset == offset + 1) {
         strcpy_s(stackWhitespace, 10, "\t\t\t\t\t\t\t");

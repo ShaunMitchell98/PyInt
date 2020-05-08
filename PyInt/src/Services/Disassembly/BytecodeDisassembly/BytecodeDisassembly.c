@@ -100,7 +100,7 @@ static int WriteBytecodeInstruction(Compiler* compiler, IOSettings* settings, Lo
         offset = WriteInstructionWithoutConstant("POP_OP", buffer, bufferSize, offset);
         break;
     case LOOP_OP:
-        offset = WriteInstructionWithJump("LOOP_OP", buffer, bufferSize, bytecode, -1, offset);
+        offset = WriteInstructionWithJump("LOOP_OP        ", buffer, bufferSize, bytecode, -1, offset);
         break;
     case CALL_OP:
         constant = bytecode->code[offset + 1];

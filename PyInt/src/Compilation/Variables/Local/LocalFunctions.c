@@ -54,7 +54,14 @@ int PushLocalToCompilerStack(Compiler* compiler, Token* token) {
     return GetLocalStackOffset(compiler->locals, compiler->localCount, token);
 }
 
-void SetLocalVariable(Compiler* compiler, Bytecode* bytecode, Services* services) {
-    int stackOffset = PushLocalToCompilerStack(compiler, &services->parser->previous);
+int SetNewLocalVariable(Compiler* compiler, Bytecode* bytecode, Services* services, Token* identifier) {
+    int stackOffset = PushLocalToCompilerStack(compiler, identifier);
     WriteBytes(bytecode, services, SET_LOCAL_OP, stackOffset);
+    return stackOffset;
+}
+
+void SetExistingLocalVariable(Compiler* compiler, Bytecode* bytecode, Services* services, Token* identifier, int localStackOffset) {
+    Local* local = &compiler->locals[localStackOffset];
+    local->name = *identifier;
+    WriteBytes(bytecode, services, SET_LOCAL_OP, localStackOffset);
 }

@@ -9,6 +9,7 @@
 
 int GetLocalStackOffset(Local* locals, int localCount, Token* token);
 int PushLocalToCompilerStack(Compiler* compiler, Token* token);
-void SetLocalVariable(Compiler* compiler, Bytecode* bytecode, Services* services);
+int SetNewLocalVariable(Compiler* compiler, Bytecode* bytecode, Services* services, Token* identifier);
+void SetExistingLocalVariable(Compiler* compiler, Bytecode* bytecode, Services* services, Token* identifier, int localStackOffset);
 
 #endif

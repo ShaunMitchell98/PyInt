@@ -53,22 +53,20 @@ bool GetTableEntry(Table* table, String* key, Value* value) {
 }
 
 static void AdjustCapacity(Table* table, int capacity) {
-    table->count = 0;
-    for (int i = 0; i < table->capacity; i++) {
-        Entry* entry = &table->entries[i];
-        if (entry->key == NULL) continue;
-        
-        Entry* dest = FindEntry(entry, capacity, entry->key);
-        dest->key = entry->key;
-        dest->value = entry->value;
-        table->count++;
-    }
-    
     Entry* entries = ALLOCATE(Entry, capacity);
     
     for (int i = 0; i < capacity; i++) {
         entries[i].key = NULL;
         entries[i].value = NONE_VAL;    
+    }
+
+    for (int i = 0; i < table->capacity; i++) {
+        Entry* entry = &table->entries[i];
+        if (entry->key == NULL) continue;
+
+        Entry* dest = FindEntry(entries, capacity, entry->key);
+        dest->key = entry->key;
+        dest->value = entry->value;
     }
     
     FREE_ARRAY(Entry, table->entries, table->capacity);
