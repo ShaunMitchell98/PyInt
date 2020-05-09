@@ -1,4 +1,5 @@
 #include "Upvalues.h"
+#include "../../../Types/Upvalue/UpvalueFunctions.h"
 
 Upvalue* CaptureUpvalue(VM* vm, Value* local) {
     Upvalue* prevUpvalue = NULL;
@@ -11,7 +12,7 @@ Upvalue* CaptureUpvalue(VM* vm, Value* local) {
 
     if (upvalue != NULL && upvalue->location == local) return upvalue;
 
-    Upvalue* createdUpvalue = NewUpvalue(vm->heap, local);
+    Upvalue* createdUpvalue = NewUpvalue(vm->garbageCollector, local);
     createdUpvalue->next = (struct Upvalue*) upvalue;
 
     if (prevUpvalue == NULL) {

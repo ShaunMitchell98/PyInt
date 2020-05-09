@@ -38,21 +38,21 @@ Token* GetUpvalueToken(Compiler* compiler, int upvalueIndex, bool isLocal) {
         if (upvalue->isLocal) {
             return &compiler->locals[upvalue->index].name;
         }
-        return GetUpvalueToken(compiler->enclosing, upvalue->index, upvalue->isLocal);
+        return GetUpvalueToken((struct Compiler*)compiler->enclosing, upvalue->index, upvalue->isLocal);
     }
 }
 
-int ResolveUpvalue(Compiler* compiler, Token* token) {
+int ResolveUpvalue(Compiler* compiler, Services* services, Token* token) {
     if (compiler->enclosing == NULL) return -1;
 
-    int localStackOffset = GetLocalStackOffset(compiler->locals, compiler->localCount, &compiler->services->parser->previous);
+    int localStackOffset = GetLocalStackOffset(compiler->locals, compiler->localCount, &services->parser->previous);
     if (localStackOffset != -1) {
         Compiler* enclosing = (Compiler*) compiler->enclosing;
         enclosing->locals[localStackOffset].isCaptured = true;
         return CreateOrGetUpvalue(compiler, (uint8_t)localStackOffset, true);
     }
 
-    int upvalueIndex = ResolveUpvalue((Compiler*)compiler->enclosing, token);
+    int upvalueIndex = ResolveUpvalue((Compiler*)compiler->enclosing, services, token);
     if (upvalueIndex != -1) {
         return CreateOrGetUpvalue(compiler, (uint8_t)upvalueIndex, false);
     }

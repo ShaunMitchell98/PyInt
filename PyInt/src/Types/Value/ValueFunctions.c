@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "Value.h"
+#include "ValueFunctions.h"
 #include "../../Services/Memory/Memory.h"
 #include "../Printing/Printing.h"
 
@@ -12,18 +12,20 @@ void InitValueArray(ValueArray* array) {
 	array->count = 0;
 }
 
-void WriteValueArray(ValueArray* array, Value value) {
+void WriteValueArray(GarbageCollector* garbageCollector, ValueArray* array, Value value) {
 	if (array->capacity < array->count + 1) {
 		int oldCapacity = array->capacity;
 		array->capacity = GROW_CAPACITY(array->capacity);
-		array->values = GROW_ARRAY(array->values, Value, oldCapacity, array->capacity);
+        AddTemporary(garbageCollector, value);
+		array->values = GROW_ARRAY(garbageCollector, array->values, Value, oldCapacity, array->capacity);
+        FreeTemporaries(garbageCollector);
 	}
 		array->values[array->count] = value;
 		array->count++;
 }
 
-void FreeValueArray(ValueArray* array) {
-	FREE_ARRAY(Value, array->values, array->capacity);
+void FreeValueArray(GarbageCollector* garbageCollector, ValueArray* array) {
+	FREE_ARRAY(garbageCollector, Value, array->values, array->capacity);
 	InitValueArray(array);
 }
 

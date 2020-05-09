@@ -23,7 +23,7 @@ void EndScope(Local* locals, int localCount, Bytecode* bytecode, Services* servi
 static void CompileFunction(Compiler* compiler, Services* services) {
     Compiler newCompiler;
     Bytecode* bytecode = &compiler->function->bytecode;
-    InitFunctionCompiler(compiler, &newCompiler);
+    InitFunctionCompiler(compiler, &newCompiler, services);
 
     ConsumeToken(services, LEFT_PAREN_TOKEN, LeftParenError);
     if (!CheckToken(services, RIGHT_PAREN_TOKEN)) {
@@ -33,24 +33,24 @@ static void CompileFunction(Compiler* compiler, Services* services) {
                 Error("Cannot have more than 255 parameters");
             }
 
-            PushLocalToCompilerStack(&newCompiler, &newCompiler.services->parser->current);
-            GetNextToken(newCompiler.services);
-        } while (MatchToken(newCompiler.services, newCompiler.services->parser->current, COMMA_TOKEN));
+            PushLocalToCompilerStack(&newCompiler, &services->parser->current);
+            GetNextToken(services);
+        } while (MatchToken(services, services->parser->current, COMMA_TOKEN));
     }
-    ConsumeToken(newCompiler.services, RIGHT_PAREN_TOKEN, RightParenError);
+    ConsumeToken(services, RIGHT_PAREN_TOKEN, RightParenError);
 
-    ConsumeToken(newCompiler.services, COLON_TOKEN, ColonError);
-    Suite(&newCompiler, newCompiler.services, &newCompiler.function->bytecode);
+    ConsumeToken(services, COLON_TOKEN, ColonError);
+    Suite(&newCompiler, services, &newCompiler.function->bytecode);
 
-    Function* function = EndCompiler(&newCompiler);
-    WriteBytes(bytecode, services, CLOSURE_OP, StoreInBytecodeValueArray(bytecode, OBJ_VAL(function)));
+    Function* function = EndCompiler(&newCompiler, services);
+    WriteBytes(bytecode, services, CLOSURE_OP, StoreInBytecodeValueArray(bytecode, services, OBJ_VAL(function)));
 
     for (int i = 0; i < function->upvalueCount; i++) {
         WriteByte(bytecode, services, compiler->upvalues[i].isLocal ? 1 : 0);
         WriteByte(bytecode, services, compiler->upvalues[i].index);
     }
 
-    EndScope(newCompiler.locals, newCompiler.localCount, &newCompiler.function->bytecode, newCompiler.services);
+    EndScope(newCompiler.locals, newCompiler.localCount, &newCompiler.function->bytecode, services);
 }
 
 void FunctionDefinition(Compiler* compiler, Services* services, Bytecode* bytecode) {

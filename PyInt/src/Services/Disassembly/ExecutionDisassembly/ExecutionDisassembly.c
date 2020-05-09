@@ -2,6 +2,7 @@
 #include "../../../Types/String/String.h"
 #include "../InstructionWriters/InstructionWriters.h"
 #include "../Disassembly.h"
+#include "../../../Types/Value/ValueFunctions.h"
 
 static int WriteLocalInstruction(IOSettings* settings, const char* instructionName, char* buffer, int bufferSize, uint8_t constant, Value local, int offset) {
     strcat_s(buffer, bufferSize, instructionName);

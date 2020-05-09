@@ -11,18 +11,19 @@
 #include "../Settings/Settings.h"
 #include "../CallFrame/CallFrame.h"
 #include "../../Types/Upvalue/Upvalue.h"
+#include "../../Services/GarbageCollection/GarbageCollector/GarbageCollector.h"
 
 typedef struct {
     CallFrame frames[FRAMES_MAX];
     int frameCount;
     Value stack[STACK_MAX];
     Value* stackTop;
-    Object* heap;
     Table strings;
     Table globals;
     Upvalue* openUpvalues;
     int arrayIndex;
     Settings settings;
+    GarbageCollector* garbageCollector;
 } VM;
 
 typedef enum {
@@ -34,7 +35,7 @@ typedef enum {
 
 void Push(VM* vm, Value value);
 Value Pop(VM* vm);
-void InitVM(VM* vm, Settings* settings);
+void InitVM(VM* vm, GarbageCollector* garbageCollector, Settings* settings);
 InterpretResult Interpret(const char* sourceCode, Settings* settings);
 void FreeVM(VM* vm);
 

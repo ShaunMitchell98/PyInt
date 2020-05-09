@@ -24,7 +24,4 @@ typedef struct {
 #define IS_FUNCTION(value) IsObjType(value, FUNCTION)
 #define AS_FUNCTION(value) ((Function*)AS_OBJ(value))
 
-Function* NewFunction(Object* heap);
-void PrintFunction(Function* function, char* buffer, int bufferSize);
-
 #endif

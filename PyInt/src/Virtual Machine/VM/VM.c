@@ -8,29 +8,39 @@
 #include "../NativeFunctions/NativeFunctions.h"
 #include "../Services/Call/Call.h"
 #include "../Run/Run.h"
+#include "../../Services/GarbageCollection/GarbageCollection.h"
+#include "../../Services/Table/TableFunctions.h"
+#include "../../Types/Closure/ClosureFunctions.h"
 
-void InitVM(VM* vm, Settings* settings) {
+void InitVM(VM* vm, GarbageCollector* garbageCollector, Settings* settings) {
     ResetStack(vm);
     vm->arrayIndex = 0;
     vm->settings = *settings;
-    vm->heap = NULL;
     vm->frameCount = 0;
     vm->openUpvalues = NULL;
     InitTable(&vm->strings);
     InitTable(&vm->globals);
+
+    InitGarbageCollector(garbageCollector, &settings->garbage);
+    vm->garbageCollector = garbageCollector;
+    garbageCollector->globalsTable = &vm->globals;
+    garbageCollector->stringsTable = &vm->strings;
+    garbageCollector->stack = vm->stack;
+    garbageCollector->stackTop = vm->stackTop;
     DefineStandardFunctions(vm);
 }
 
 void FreeVM(VM* vm) {
     ResetStack(vm);
-    FreeObjects(vm->heap);
-    FreeTable(&vm->strings);
-    FreeTable(&vm->globals);
+    FreeObjects(vm->garbageCollector);
+    FreeTable(vm->garbageCollector, &vm->strings);
+    FreeTable(vm->garbageCollector, &vm->globals);
 }
 
 InterpretResult Interpret(const char* sourceCode, Settings* settings) {
     VM vm;
-    InitVM(&vm, settings);
+    GarbageCollector garbageCollector;
+    InitVM(&vm, &garbageCollector, settings);
 
     Scanner scanner;
     InitScanner(&scanner, sourceCode);
@@ -39,7 +49,7 @@ InterpretResult Interpret(const char* sourceCode, Settings* settings) {
     InitParser(&parser);
 
     Services services;
-    InitServices(&services, &scanner, &parser, &settings->bytecode, &settings->output, vm.heap, &vm.strings);
+    InitServices(&services, &scanner, &parser, &settings->bytecode, &settings->output, &garbageCollector, &vm.strings);
 
     Function* function = Compile(settings->runMode, &services);
     
@@ -48,7 +58,7 @@ InterpretResult Interpret(const char* sourceCode, Settings* settings) {
     }
     
     Push(&vm, OBJ_VAL(function));
-    Closure* closure = NewClosure(vm.heap, function);
+    Closure* closure = NewClosure(vm.garbageCollector, function);
     Pop(&vm);
     Push(&vm, OBJ_VAL(closure));
     CallValue(&vm, OBJ_VAL(closure), 0);

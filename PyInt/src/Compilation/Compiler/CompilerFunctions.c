@@ -3,53 +3,57 @@
 
 #include "Compiler.h"
 #include "../../Services/Disassembly/BytecodeDisassembly/BytecodeDisassembly.h"
-#include "../../Services/Table/Table.h"
+#include "../../Services/Table/TableFunctions.h"
 #include "../Expressions/Expressions.h"
 #include "../Bytecode/CompilerBytecode.h"
 #include "../Helpers/Helpers.h"
 #include "../Statements/Statement/Statement.h"
+#include "../../Types/Function/FunctionFunctions.h"
 
 static void InitScriptCompiler(Compiler* compiler, Services* services) {
-    compiler->function = NewFunction(services->heap);
+    compiler->function = NewFunction(services->garbageCollector);
     compiler->localCount = 0;
     compiler->enclosing = NULL;
-    compiler->function->name = CopyStringToTable(services->heap, services->stringsTable, "Script", 6);
-    compiler->services = services;
+    compiler->function->name = CopyStringToTable(services->garbageCollector, services->stringsTable, "Script", 6);
 
     compiler->locals->isCaptured = false;
     compiler->locals->name.start = "";
     compiler->locals->name.length = 0;
     compiler->localCount++;
+
+    services->garbageCollector->compiler = compiler;
 }
 
-void InitFunctionCompiler(Compiler* currentCompiler, Compiler* compiler) {
-    compiler->function = NewFunction(currentCompiler->services->heap);
+void InitFunctionCompiler(Compiler* currentCompiler, Compiler* compiler, Services* services) {
+    compiler->function = NewFunction(services->garbageCollector);
     compiler->localCount = 0;
     compiler->enclosing = (struct Compiler*) currentCompiler;
-    compiler->services = currentCompiler->services;
-    compiler->function->name = CopyStringToTable(compiler->services->heap, compiler->services->stringsTable, compiler->services->parser->previous.start, compiler->services->parser->previous.length);
+    compiler->function->name = CopyStringToTable(services->garbageCollector, services->stringsTable, services->parser->previous.start, services->parser->previous.length);
     
     compiler->locals->isCaptured = false;
     compiler->locals->name.start = "";
     compiler->locals->name.length = 0;
     compiler->localCount++;
+
+    services->garbageCollector->compiler = compiler;
 }
 
-Function* EndCompiler(Compiler* compiler) {
+Function* EndCompiler(Compiler* compiler, Services* services) {
     if (!compiler->function->hasReturnStatement) {
-        WriteReturn(&compiler->function->bytecode, compiler->services);
+        WriteReturn(&compiler->function->bytecode, services);
     }
 
     Function* function = compiler->function;
 
-    if (compiler->services->bytecodeSettings->enabled) {
-        if (!compiler->services->parser->hadError) {
-            DisassembleBytecode(compiler, compiler->locals, compiler->upvalues, &compiler->function->bytecode, compiler->function->name->chars, compiler->services->bytecodeSettings);
+    if (services->bytecodeSettings->enabled) {
+        if (!services->parser->hadError) {
+            DisassembleBytecode(compiler, compiler->locals, compiler->upvalues, &compiler->function->bytecode, compiler->function->name->chars, services->bytecodeSettings);
         }
     }
 
     if (compiler->enclosing != NULL) {       
         compiler = (Compiler*) compiler->enclosing;
+        services->garbageCollector->compiler = compiler;
     }
   
     return function;
@@ -71,6 +75,6 @@ Function* Compile(RunMode runMode, Services* services) {
         }
     }
     
-    Function* function = EndCompiler(&compiler);
+    Function* function = EndCompiler(&compiler, services);
     return services->parser->hadError ? NULL : function;
 }

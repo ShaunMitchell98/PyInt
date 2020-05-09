@@ -5,6 +5,8 @@
 #include "../../Services/Disassembly/ExecutionDisassembly/ExecutionDisassembly.h"
 #include "../Services/Call/Call.h"
 #include "../Services/Upvalues/Upvalues.h"
+#include "../../Services/Table/TableFunctions.h"
+#include "../../Types/Closure/ClosureFunctions.h"
 
 static bool Equal(Value a, Value b) {
     if (IS_CHAR(a) && IS_CHAR(b)) {
@@ -119,7 +121,7 @@ bool Run(VM* vm) {
         }
         case CLOSURE_OP: {
             Function* function = AS_FUNCTION(ReadConstant(frame));
-            Closure* closure = NewClosure(vm->heap, function);
+            Closure* closure = NewClosure(vm->garbageCollector, function);
             Push(vm, OBJ_VAL(closure));
             for (int i = 0; i < closure->upvalueCount; i++) {
                 uint8_t isLocal = ReadByte(frame);
@@ -166,7 +168,7 @@ bool Run(VM* vm) {
         }
         case SET_GLOBAL_OP: {
             String* name = ReadString(frame);
-            SetTableEntry(&vm->globals, name, Peek(vm, 0));
+            SetTableEntry(vm->garbageCollector, &vm->globals, name, Peek(vm, 0));
             Pop(vm);
             break;
         }

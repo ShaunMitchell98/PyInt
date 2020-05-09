@@ -5,6 +5,7 @@
 #include "../Function/Function.h"
 #include "../Upvalue/Upvalue.h"
 #include "../Value/Value.h"
+#include "../../Virtual Machine/Settings/Settings.h"
 
 typedef struct {
     Object obj;
@@ -15,7 +16,5 @@ typedef struct {
 
 #define IS_CLOSURE(value) IsObjType(value, CLOSURE)
 #define AS_CLOSURE(value) ((Closure*)AS_OBJ(value))
-
-Closure* NewClosure(Object* heap, Function* function);
 
 #endif

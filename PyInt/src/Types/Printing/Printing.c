@@ -2,18 +2,19 @@
 
 #include "Printing.h"
 #include "../Object/Object.h"
-#include "../Function/Function.h"
+#include "../Function/FunctionFunctions.h"
 #include "../NativeFunction/NativeFunction.h"
+#include "../NativeFunction/NativeFunctionFunctions.h"
 #include "../String/String.h"
 #include "../Closure/Closure.h"
 
 void PrintObject(IOSettings* settings, Value value, PrintType printType, char* buffer, int bufferSize) {
     switch (OBJ_TYPE(value)) {
     case CLOSURE:
-        PrintFunction(AS_CLOSURE(value)->function, buffer, bufferSize);
+        PrintFunction(AS_CLOSURE(value)->function, buffer, bufferSize, printType);
         break;
     case FUNCTION:
-        PrintFunction(AS_FUNCTION(value), buffer, bufferSize);
+        PrintFunction(AS_FUNCTION(value), buffer, bufferSize, printType);
         break;
     case NATIVE:
         PrintNativeFunction(((NativeFunction*)AS_OBJ(value))->name, buffer, bufferSize);

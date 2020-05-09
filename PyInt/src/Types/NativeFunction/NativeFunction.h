@@ -16,7 +16,4 @@ typedef struct {
 #define IS_NATIVE(value) IsObjType(value, NATIVE)
 #define AS_NATIVE(value) (((NativeFunction*)AS_OBJ(value))->function)
 
-NativeFunction* NewNativeFunction(Object* heap, NativeFn function, const char* name);
-void PrintNativeFunction(const char* name, char* buffer, int bufferSize);
-
 #endif

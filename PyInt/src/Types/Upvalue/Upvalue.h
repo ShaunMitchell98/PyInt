@@ -11,5 +11,4 @@ typedef struct {
     struct Upvalue* next;
 } Upvalue;
 
-Upvalue* NewUpvalue(Object* heap, Value* slot);
 #endif

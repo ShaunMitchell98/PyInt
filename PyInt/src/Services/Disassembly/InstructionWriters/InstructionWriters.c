@@ -1,4 +1,5 @@
 #include "InstructionWriters.h"
+#include "../../../Types/Value/ValueFunctions.h"
 
 int WriteInstructionWithoutConstant(const char* instructionName, char* buffer, int bufferSize, int offset) {
     strcat_s(buffer, bufferSize, instructionName);

@@ -9,12 +9,12 @@
 #include "../../Compiler/Compiler.h"
 #include "../../Variables/Global/Global.h"
 
-static uint8_t GetIdentifierAddress(Compiler* compiler) {
+static uint8_t GetIdentifierAddress(Compiler* compiler, Services* services) {
     if (compiler->enclosing != NULL) {
-        return (uint8_t)GetLocalStackOffset(compiler->locals, compiler->localCount, &compiler->services->parser->previous);
+        return (uint8_t)GetLocalStackOffset(compiler->locals, compiler->localCount, &services->parser->previous);
     }
     else {
-        return StoreGlobalInBytecodeConstantTable(&compiler->function->bytecode, compiler->services, &compiler->services->parser->previous);
+        return StoreGlobalInBytecodeConstantTable(&compiler->function->bytecode, services, &services->parser->previous);
     }
 }
 
@@ -27,7 +27,7 @@ void ForStatement(Compiler* compiler, Services* services, Bytecode* bytecode) {
     }
     ConsumeToken(services, IN_TOKEN, InError);
     GetNextToken(services);
-    uint8_t identifierAddress = GetIdentifierAddress(compiler);
+    uint8_t identifierAddress = GetIdentifierAddress(compiler, services);
     ConsumeToken(services, COLON_TOKEN, ColonError);
 
     int loopStart = bytecode->count;

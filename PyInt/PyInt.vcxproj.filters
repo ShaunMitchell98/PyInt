@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\Services\Bytecode\Bytecode.c" />
     <ClCompile Include="src\Services\Memory\Memory.c" />
     <ClCompile Include="src\Services\Scanner\Scanner.c" />
     <ClCompile Include="src\main.c" />
@@ -13,20 +12,13 @@
     <ClCompile Include="src\Compilation\Statements\IfStatement\IfStatement.c" />
     <ClCompile Include="src\Compilation\Statements\ReturnStatement\ReturnStatement.c" />
     <ClCompile Include="src\Compilation\Statements\WhileStatement\WhileStatement.c" />
-    <ClCompile Include="src\Compilation\Services\Services.c" />
     <ClCompile Include="src\Compilation\Helpers\Helpers.c" />
-    <ClCompile Include="src\Types\Value\Value.c" />
     <ClCompile Include="src\Virtual Machine\NativeFunctions\NativeFunctions.c" />
     <ClCompile Include="src\Virtual Machine\VM\VM.c" />
     <ClCompile Include="src\Compilation\Errors\Errors.c" />
-    <ClCompile Include="src\Types\Function\Function.c" />
     <ClCompile Include="src\Types\String\String.c" />
-    <ClCompile Include="src\Types\Closure\Closure.c" />
-    <ClCompile Include="src\Types\Upvalue\Upvalue.c" />
-    <ClCompile Include="src\Types\NativeFunction\NativeFunction.c" />
     <ClCompile Include="src\Types\Printing\Printing.c" />
     <ClCompile Include="src\Virtual Machine\Settings\Settings.c" />
-    <ClCompile Include="src\Services\Table\Table.c" />
     <ClCompile Include="src\Compilation\ParseFunctions\ParseFunctions.c" />
     <ClCompile Include="src\Compilation\Statements\ExpressionStatement\ExpressionStatement.c" />
     <ClCompile Include="src\Compilation\Expressions\Expressions.c" />
@@ -41,7 +33,6 @@
     <ClCompile Include="src\Services\Disassembly\Disassembly.c" />
     <ClCompile Include="src\Services\Disassembly\BytecodeDisassembly\BytecodeDisassembly.c" />
     <ClCompile Include="src\Services\Disassembly\ExecutionDisassembly\ExecutionDisassembly.c" />
-    <ClCompile Include="src\Types\Object\Object.c" />
     <ClCompile Include="src\Virtual Machine\Run\Run.c" />
     <ClCompile Include="src\Virtual Machine\Services\Stack\Stack.c" />
     <ClCompile Include="src\Virtual Machine\Services\Errors\RuntimeError.c" />
@@ -50,6 +41,18 @@
     <ClCompile Include="src\Virtual Machine\Services\Upvalues\Upvalues.c" />
     <ClCompile Include="src\Compilation\Variables\Local\LocalFunctions.c" />
     <ClCompile Include="src\Compilation\Compiler\CompilerFunctions.c" />
+    <ClCompile Include="src\Services\Disassembly\GarbageCollectionDisassembly\GarbageCollectionDisassembly.c" />
+    <ClCompile Include="src\Services\GarbageCollection\GarbageCollection.c" />
+    <ClCompile Include="src\Services\GarbageCollection\GarbageCollector\GarbageCollector.c" />
+    <ClCompile Include="src\Services\Table\TableFunctions.c" />
+    <ClCompile Include="src\Services\Bytecode\BytecodeFunctions.c" />
+    <ClCompile Include="src\Compilation\Services\Services.c" />
+    <ClCompile Include="src\Types\Object\ObjectFunctions.c" />
+    <ClCompile Include="src\Types\Value\ValueFunctions.c" />
+    <ClCompile Include="src\Types\Closure\ClosureFunctions.c" />
+    <ClCompile Include="src\Types\Upvalue\UpvalueFunctions.c" />
+    <ClCompile Include="src\Types\NativeFunction\NativeFunctionFunctions.c" />
+    <ClCompile Include="src\Types\Function\FunctionFunctions.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Services\Bytecode\Bytecode.h" />
@@ -107,6 +110,17 @@
     <ClInclude Include="src\Compilation\Variables\Local\Local.h" />
     <ClInclude Include="src\Compilation\Variables\Local\LocalFunctions.h" />
     <ClInclude Include="src\Compilation\Compiler\CompilerFunctions.h" />
+    <ClInclude Include="src\Services\GarbageCollection\GarbageCollection.h" />
+    <ClInclude Include="src\Services\Disassembly\GarbageCollectionDisassembly\GarbageCollectionDisassembly.h" />
+    <ClInclude Include="src\Services\GarbageCollection\GarbageCollector\GarbageCollector.h" />
+    <ClInclude Include="src\Services\Table\TableFunctions.h" />
+    <ClInclude Include="src\Services\Bytecode\BytecodeFunctions.h" />
+    <ClInclude Include="src\Types\Object\ObjectFunctions.h" />
+    <ClInclude Include="src\Types\Value\ValueFunctions.h" />
+    <ClInclude Include="src\Types\Closure\ClosureFunctions.h" />
+    <ClInclude Include="src\Types\Upvalue\UpvalueFunctions.h" />
+    <ClInclude Include="src\Types\NativeFunction\NativeFunctionFunctions.h" />
+    <ClInclude Include="src\Types\Function\FunctionFunctions.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

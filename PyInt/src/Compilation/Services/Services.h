@@ -6,6 +6,7 @@
 #include "../../Virtual Machine/Settings/Settings.h"
 #include "../../Services/Table/Table.h"
 #include "../../Types/Object/Object.h"
+#include "../../Services/GarbageCollection/GarbageCollector/GarbageCollector.h"
 
 typedef struct {
     Token previous;
@@ -18,11 +19,11 @@ typedef struct {
     Scanner* scanner;
     IOSettings* bytecodeSettings;
     IOSettings* outputSettings;
-    Object* heap;
+    GarbageCollector* garbageCollector;
     Table* stringsTable;
 } Services;
 
 void InitParser(Parser* parser);
-void InitServices(Services* services, Scanner* scanner, Parser* parser, IOSettings* bytecodeSettings, IOSettings* outputSettings, Object* heap, Table* stringsTable);
+void InitServices(Services* services, Scanner* scanner, Parser* parser, IOSettings* bytecodeSettings, IOSettings* outputSettings, GarbageCollector* garbageCollector, Table* stringsTable);
 
 #endif

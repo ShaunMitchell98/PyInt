@@ -1,6 +1,8 @@
 #include <string.h>
 
 #include "Table.h"
+#include "../../Types/Object/ObjectFunctions.h"
+#include "TableFunctions.h"
 #include "../Memory/Memory.h"
 
 #define TABLE_MAX_LOAD 0.75
@@ -11,8 +13,8 @@ void InitTable(Table* table) {
     table->entries = NULL;
 }
 
-void FreeTable(Table* table) {
-    FREE_ARRAY(Entry, table->entries, table->capacity);
+void FreeTable(GarbageCollector* garbageCollector, Table* table) {
+    FREE_ARRAY(garbageCollector, Entry, table->entries, table->capacity);
     InitTable(table);
 }
 
@@ -52,8 +54,8 @@ bool GetTableEntry(Table* table, String* key, Value* value) {
     return true;
 }
 
-static void AdjustCapacity(Table* table, int capacity) {
-    Entry* entries = ALLOCATE(Entry, capacity);
+static void AdjustCapacity(GarbageCollector* garbageCollector, Table* table, int capacity) {
+    Entry* entries = ALLOCATE(garbageCollector, Entry, capacity);
     
     for (int i = 0; i < capacity; i++) {
         entries[i].key = NULL;
@@ -69,15 +71,18 @@ static void AdjustCapacity(Table* table, int capacity) {
         dest->value = entry->value;
     }
     
-    FREE_ARRAY(Entry, table->entries, table->capacity);
+    FREE_ARRAY(garbageCollector, Entry, table->entries, table->capacity);
     table->entries = entries;
     table->capacity = capacity;
 }
 
-bool SetTableEntry(Table* table, String* key, Value value) {
+bool SetTableEntry(GarbageCollector* garbageCollector, Table* table, String* key, Value value) {
     if (table->count+1 > table->capacity* TABLE_MAX_LOAD) {
         int capacity = GROW_CAPACITY(table->capacity);
-        AdjustCapacity(table, capacity);
+        AddTemporary(garbageCollector, OBJ_VAL(key));
+        AddTemporary(garbageCollector, value);
+        AdjustCapacity(garbageCollector, table, capacity);
+        FreeTemporaries(garbageCollector);
     }
     
     Entry* entry = FindEntry(table->entries, table->capacity, key);
@@ -90,11 +95,11 @@ bool SetTableEntry(Table* table, String* key, Value value) {
     return isNewKey;
 }
 
-void TableAddAll(Table* from, Table* to) {
+void TableAddAll(GarbageCollector* garbageCollector, Table* from, Table* to) {
     for (int i = 0; i < from->capacity; i++) {
         Entry* entry = &from->entries [i];
         if (entry != NULL) {
-            SetTableEntry(to, entry->key, entry->value);
+            SetTableEntry(garbageCollector, to, entry->key, entry->value);
         }
     }
 }
@@ -135,39 +140,39 @@ String* FindTableString(Table* table, const char* chars, int length, uint32_t ha
     }
 }
 
-static String* AllocateString(Object* heap, Table* table, char* chars, int length, uint32_t hash) {
-    String* string = (String*)AllocateObject(heap, sizeof(String), STRING);
+static String* AllocateString(GarbageCollector* garbageCollector, Table* table, char* chars, int length, uint32_t hash) {
+    String* string = (String*)AllocateObject(garbageCollector, sizeof(String), STRING);
     string->length = length;
     string->chars = chars;
     string->hash = hash;
 
-    SetTableEntry(table, string, NONE_VAL);
+    SetTableEntry(garbageCollector, table, string, NONE_VAL);
 
     return string;
 }
 
 
-String* TakeString(Object* heap, Table* table, char* chars, int length) {
+String* TakeString(GarbageCollector* garbageCollector, Table* table, char* chars, int length) {
     uint32_t hash = HashString(chars, length);
 
     String* interned = FindTableString(table, chars, length, hash);
 
     if (interned != NULL) {
-        FREE_ARRAY(char, chars, length + 1);
+        FREE_ARRAY(garbageCollector, char, chars, length + 1);
         return interned;
     }
-    return AllocateString(heap, table, chars, length, hash);
+    return AllocateString(garbageCollector, table, chars, length, hash);
 }
 
-String* CopyStringToTable(Object* heap, Table* table, const char* chars, int length) {
+String* CopyStringToTable(GarbageCollector* garbageCollector, Table* table, const char* chars, int length) {
     uint32_t hash = HashString(chars, length);
 
     String* interned = FindTableString(table, chars, length, hash);
     if (interned != NULL) return interned;
 
-    char* heapChars = ALLOCATE(char, length + 1);
+    char* heapChars = ALLOCATE(garbageCollector, char, length + 1);
     memcpy(heapChars, chars, length);
     heapChars[length] = '\0';
 
-    return AllocateString(heap, table, heapChars, length, hash);
+    return AllocateString(garbageCollector, table, heapChars, length, hash);
 }

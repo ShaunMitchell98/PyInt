@@ -46,10 +46,4 @@ typedef struct {
 	ValueArray constants;
 } Bytecode;
 
-
-void InitBytecode(Bytecode* bytecode);
-void FreeBytecode(Bytecode* bytecode);
-void WriteBytecode(Bytecode* bytecode, uint8_t byte, int line);
-int AddConstantToValueArray(Bytecode* bytecode, Value value);
-
 #endif

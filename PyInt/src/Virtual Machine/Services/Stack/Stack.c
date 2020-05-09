@@ -3,10 +3,12 @@
 void Push(VM* vm, Value value) {
     *vm->stackTop = value;
     vm->stackTop++;
+    vm->garbageCollector->stackTop++;
 }
 
 Value Pop(VM* vm) {
     vm->stackTop--;
+    vm->garbageCollector->stackTop--;
     return *vm->stackTop;
 }
 

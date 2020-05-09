@@ -82,11 +82,28 @@ static bool Execution(int i, const char* argv[], IOSettings* executionSettings) 
     return true;
 }
 
+static bool Garbage(int i, const char* argv[], IOSettings* garbageSettings) {
+    if (strcmp(argv[i], FILE_GARBAGE) == 0) {
+        InitialiseFile(garbageSettings, argv[i + 1]);
+    }
+    else if (strcmp(argv[i], STRING_GARBAGE) == 0) {
+        InitialiseString(garbageSettings);
+    }
+    else if (strcmp(argv[i], TERMINAL_GARBAGE) == 0) {
+        InitialiseTerminal(garbageSettings);
+    }
+    else {
+        return false;
+    }
+    return true;
+}
+
 void InitialiseSettings(Settings* settings, int argc, const char* argv[]) {
     settings->input.location = LOCATION_TERMINAL;
     settings->output.location = LOCATION_TERMINAL;
     settings->bytecode.enabled = false;
     settings->execution.enabled = false;
+    settings->garbage.enabled = false;
     settings->runMode = RUN_REPL;
 
     for (int i = 0; i < argc; i++) {
@@ -100,6 +117,9 @@ void InitialiseSettings(Settings* settings, int argc, const char* argv[]) {
             continue;
         }
         else if (Execution(i, argv, &settings->execution)) {
+            continue;
+        }
+        else if (Garbage(i, argv, &settings->garbage)) {
             continue;
         }
     }

@@ -1,9 +1,10 @@
 #include <string.h>
 
-#include "NativeFunction.h"
+#include "NativeFunctionFunctions.h"
+#include "../Object/ObjectFunctions.h"
 
-NativeFunction* NewNativeFunction(Object* heap, NativeFn function, const char* name) {
-    NativeFunction* native = (NativeFunction*)AllocateObject(heap, sizeof(NativeFunction), NATIVE);
+NativeFunction* NewNativeFunction(GarbageCollector* garbageCollector, NativeFn function, const char* name) {
+    NativeFunction* native = (NativeFunction*)AllocateObject(garbageCollector, sizeof(NativeFunction), NATIVE);
     native->function = function;
     native->name = name;
     return native;

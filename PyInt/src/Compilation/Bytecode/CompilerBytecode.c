@@ -1,9 +1,10 @@
 #include "CompilerBytecode.h"
 #include "../Errors/Errors.h"
+#include "../../Services/Bytecode/BytecodeFunctions.h"
 
 
 void WriteByte(Bytecode* bytecode, Services* services, uint8_t byte) {
-    WriteBytecode(bytecode, byte, services->parser->previous.line);
+    WriteBytecode(services->garbageCollector, bytecode, byte, services->parser->previous.line);
 }
 
 void WriteBytes(Bytecode* bytecode, Services* services, uint8_t byte1, uint8_t byte2) {
@@ -12,12 +13,12 @@ void WriteBytes(Bytecode* bytecode, Services* services, uint8_t byte1, uint8_t b
 }
 
 void WriteReturn(Bytecode* bytecode, Services* services) {
-    WriteBytes(bytecode, services, CONSTANT_OP, StoreInBytecodeValueArray(bytecode, NONE_VAL));
+    WriteBytes(bytecode, services, CONSTANT_OP, StoreInBytecodeValueArray(bytecode, services, NONE_VAL));
     WriteByte(bytecode, services, RETURN_OP);
 }
 
-uint8_t StoreInBytecodeValueArray(Bytecode* bytecode, Value value) {
-    int bytecodeValueArrayAddress = AddConstantToValueArray(bytecode, value);
+uint8_t StoreInBytecodeValueArray(Bytecode* bytecode, Services* services, Value value) {
+    int bytecodeValueArrayAddress = AddConstantToValueArray(services->garbageCollector, bytecode, value);
     if (bytecodeValueArrayAddress > UINT8_MAX) {
         Error("Too many constants stored in bytecode constants");
         return 0;
@@ -27,7 +28,7 @@ uint8_t StoreInBytecodeValueArray(Bytecode* bytecode, Value value) {
 }
 
 void WriteConstantOperation(Bytecode* bytecode, Services* services, Value value) {
-    WriteBytes(bytecode, services, CONSTANT_OP, StoreInBytecodeValueArray(bytecode, value));
+    WriteBytes(bytecode, services, CONSTANT_OP, StoreInBytecodeValueArray(bytecode, services, value));
 }
 
 int WriteJump(Bytecode* bytecode, Services* services, uint8_t opcode) {

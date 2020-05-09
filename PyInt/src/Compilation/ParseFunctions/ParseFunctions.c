@@ -9,6 +9,7 @@
 #include "../Bytecode/CompilerBytecode.h"
 #include "../Helpers/Helpers.h"
 #include "../Errors/Errors.h"
+#include "../../Services/Table/TableFunctions.h"
 #include "../../Types/Function/Function.h"
 #include "../Variables/Local/LocalFunctions.h"
 #include "../Variables/Global/Global.h"
@@ -24,9 +25,9 @@ static void NumberToken(Compiler* compiler, Services* services, Bytecode* byteco
 }
 
 static void StringToken(Compiler* compiler, Services* services, Bytecode* bytecode, bool canAssign) {
-    char* string = ALLOCATE(char, services->parser->previous.length);
+    char* string = ALLOCATE(services->garbageCollector, char, services->parser->previous.length);
     string = memcpy(string, services->parser->previous.start, services->parser->previous.length);
-    uint8_t address = StoreInBytecodeValueArray(bytecode, OBJ_VAL(CopyStringToTable(services->heap, services->stringsTable, services->parser->previous.start, services->parser->previous.length)));
+    uint8_t address = StoreInBytecodeValueArray(bytecode, services, OBJ_VAL(CopyStringToTable(services->garbageCollector, services->stringsTable, services->parser->previous.start, services->parser->previous.length)));
     WriteBytes(bytecode, services, CONSTANT_OP, address);
     GetNextToken(services);
 }
@@ -116,10 +117,9 @@ static int LocalIdentifier(Compiler* compiler, Services* services, Bytecode* byt
     return localStackOffset;
 }
 
-static int UpvalueIdentifier(Compiler* compiler, Bytecode* bytecode) {
-    Services* services = compiler->services;
+static int UpvalueIdentifier(Compiler* compiler, Services* services, Bytecode* bytecode) {
     Token identifier = services->parser->previous;
-    int upvalueIndex = ResolveUpvalue(compiler, &identifier);
+    int upvalueIndex = ResolveUpvalue(compiler, services, &identifier);
 
     if (upvalueIndex != -1) {
         if (MatchToken(services, services->parser->current, EQUAL_TOKEN)) {
@@ -152,7 +152,7 @@ static void IdentifierToken(Compiler* compiler, Services* services, Bytecode* by
     if (compiler->enclosing != NULL) {
         int localStackOffset = LocalIdentifier(compiler, services, bytecode);
         if (localStackOffset == -1) {
-            int upvalueIndex = UpvalueIdentifier(compiler, bytecode);
+            int upvalueIndex = UpvalueIdentifier(compiler, services, bytecode);
             if (upvalueIndex == -1) {
                 GlobalIdentifier(compiler, services, bytecode, canAssign);
 

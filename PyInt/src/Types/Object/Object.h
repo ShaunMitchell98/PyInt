@@ -13,9 +13,8 @@ typedef enum {
 
 typedef struct {
     ObjType type;
+    bool isReachable;
     struct Object* next;
 } Object;
-
-Object* AllocateObject(Object* heap, size_t size, ObjType type);
 
 #endif

@@ -54,10 +54,5 @@ static inline bool IsObjType(Value value, ObjType type) {
 	return IS_OBJ(value) && AS_OBJ(value)->type == type;
 }
 
-void InitValueArray(ValueArray* array);
-void WriteValueArray(ValueArray* array, Value value);
-void FreeValueArray(ValueArray* array);
-void WriteValue(IOSettings* settings, Value value, PrintType printType, char* buffer, int bufferSize);
-
 #endif
 

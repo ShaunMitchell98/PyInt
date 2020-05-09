@@ -6,14 +6,15 @@
 #include "../../Types/Value/Value.h"
 #include "../Settings/Settings.h"
 #include "../Printing/VmPrinting.h"
-#include "../../Services/Table/Table.h"
+#include "../../Services/Table/TableFunctions.h"
 #include "../../Types/String/String.h"
 #include "../../Types/NativeFunction/NativeFunction.h"
+#include "../../Types/NativeFunction/NativeFunctionFunctions.h"
 
 static void DefineNative(VM* vm, const char* name, NativeFn function) {
-    Push(vm, OBJ_VAL(CopyStringToTable(vm->heap, &vm->strings, name, (int)strlen(name))));
-    Push(vm, OBJ_VAL(NewNativeFunction(vm->heap, function, name)));
-    SetTableEntry(&vm->globals, AS_STRING(vm->stack[0]), vm->stack[1]);
+    Push(vm, OBJ_VAL(CopyStringToTable(vm->garbageCollector, &vm->strings, name, (int)strlen(name))));
+    Push(vm, OBJ_VAL(NewNativeFunction(vm->garbageCollector, function, name)));
+    SetTableEntry(vm->garbageCollector, &vm->globals, AS_STRING(vm->stack[0]), vm->stack[1]);
     Pop(vm);
     Pop(vm);
 }
