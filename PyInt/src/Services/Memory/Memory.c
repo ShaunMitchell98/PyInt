@@ -7,8 +7,11 @@
 #include "../../Types/String/String.h"
 #include "../../Types/Upvalue/Upvalue.h"
 #include "../../Types/NativeFunction/NativeFunction.h"
+#include "../../Types/Class//Class.h"
+#include "../../Types/ClassInstance/ClassInstance.h"
 #include "../Bytecode/BytecodeFunctions.h"
 #include "../Disassembly/GarbageCollectionDisassembly/GarbageCollectionDisassembly.h"
+#include "../Table/TableFunctions.h"
 #include "../GarbageCollection/GarbageCollection.h"
 #include "../../Virtual Machine/VM/VM.h"
 
@@ -31,6 +34,16 @@ void* Reallocate(GarbageCollector* garbageCollector, void* currentArray, size_t 
 void FreeObject(GarbageCollector* garbageCollector, Object* object) {
     WriteObjectDeallocation(garbageCollector->garbageSettings, object);
     switch(object->type) {
+    case CLASS_INSTANCE: {
+        ClassInstance* instance = (ClassInstance*)object;
+        FreeTable(garbageCollector, &instance->fields);
+        FREE(garbageCollector, ClassInstance, object);
+        break;
+        }
+        case CLASS: {
+            FREE(garbageCollector, Class, object);
+            break;
+        }
         case CLOSURE: {
             Closure* closure = (Closure*)object;
             FREE_ARRAY(garbageCollector, Upvalue*, closure->upvalues, closure->upvalueCount);

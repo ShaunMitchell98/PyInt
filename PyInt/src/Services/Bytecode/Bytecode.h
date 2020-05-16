@@ -35,7 +35,10 @@ typedef enum {
     END_OF_ARRAY_OP,
     CALL_OP,
     CLOSURE_OP,
-    CLOSE_UPVALUE_OP
+    CLOSE_UPVALUE_OP,
+    CLASS_OP,
+    SET_PROPERTY_OP,
+    GET_PROPERTY_OP
 } Opcode;
 
 typedef struct {

@@ -7,6 +7,8 @@
 #include "../NativeFunction/NativeFunctionFunctions.h"
 #include "../String/String.h"
 #include "../Closure/Closure.h"
+#include "../Class/Class.h"
+#include "../ClassInstance/ClassInstance.h"
 
 void PrintObject(IOSettings* settings, Value value, PrintType printType, char* buffer, int bufferSize) {
     switch (OBJ_TYPE(value)) {
@@ -19,6 +21,14 @@ void PrintObject(IOSettings* settings, Value value, PrintType printType, char* b
     case NATIVE:
         PrintNativeFunction(((NativeFunction*)AS_OBJ(value))->name, buffer, bufferSize);
         break;
+    case CLASS:
+        strcat_s(buffer, bufferSize, AS_CLASS(value)->name->chars);
+        break;
+    case CLASS_INSTANCE: {
+        strcat_s(buffer, bufferSize, AS_CLASS_INSTANCE(value)->klass->name->chars);
+        strcat_s(buffer, bufferSize, " instance");
+        break;
+    }
     case STRING: {
         if (printType == OPERAND_VALUE) {
             strcat_s(buffer, bufferSize, AS_CSTRING(value));

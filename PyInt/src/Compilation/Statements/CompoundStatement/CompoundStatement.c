@@ -3,10 +3,14 @@
 #include "../IfStatement/IfStatement.h"
 #include "../WhileStatement/WhileStatement.h"
 #include "../ForStatement/ForStatement.h"
+#include "../ClassStatement/ClassStatement.h"
 #include "../Function/FunctionDefinition.h"
 
 bool CompoundStatement(Compiler* compiler, Services* services, Bytecode* bytecode) {
-    if (MatchToken(services, services->parser->current, IF_TOKEN)) {
+    if (MatchToken(services, services->parser->current, CLASS_TOKEN)) {
+        ClassStatement(compiler, services, bytecode);
+    }
+    else if (MatchToken(services, services->parser->current, IF_TOKEN)) {
         IfStatement(compiler, services, bytecode);
     }
     else if (MatchToken(services, services->parser->current, WHILE_TOKEN)) {

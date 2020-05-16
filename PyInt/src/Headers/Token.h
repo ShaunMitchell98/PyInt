@@ -56,7 +56,8 @@ typedef enum {
     GLOBAL_TOKEN,
     IDENTIFIER_TOKEN,
     POWER_TOKEN,
-    RETURN_TOKEN
+    RETURN_TOKEN,
+    PASS_TOKEN
 } TokenType;
 
 typedef struct {    

@@ -7,6 +7,9 @@
 #include "../Services/Upvalues/Upvalues.h"
 #include "../../Services/Table/TableFunctions.h"
 #include "../../Types/Closure/ClosureFunctions.h"
+#include "../../Types/Class/ClassFunctions.h"
+#include "../../Types/ClassInstance/ClassInstance.h"
+#include "../Services/Errors/RuntimeError.h"
 
 static bool Equal(Value a, Value b) {
     if (IS_CHAR(a) && IS_CHAR(b)) {
@@ -119,6 +122,12 @@ bool Run(VM* vm) {
             frame = &vm->frames[vm->frameCount - 1];
             break;
         }
+        case CLASS_OP: {
+            String* className = ReadString(frame);
+            Class* class = NewClass(vm->garbageCollector, className);
+            Push(vm, OBJ_VAL(class));
+            break;
+        }
         case CLOSURE_OP: {
             Function* function = AS_FUNCTION(ReadConstant(frame));
             Closure* closure = NewClosure(vm->garbageCollector, function);
@@ -165,6 +174,40 @@ bool Run(VM* vm) {
         case POP_OP: {
             Pop(vm);
             break;
+        }
+        case SET_PROPERTY_OP: {
+            if (!IS_CLASS_INSTANCE(Peek(vm, 1))) {
+                RuntimeError(vm, "Only instances have properties.");
+                return false;
+            }
+
+            ClassInstance* instance = AS_CLASS_INSTANCE(Peek(vm, 1));
+            String* propertyName = ReadString(frame);
+            SetTableEntry(vm->garbageCollector, &instance->fields, propertyName, Peek(vm, 0));
+
+            Value value = Pop(vm);
+            Pop(vm);
+            Push(vm, value);
+            break;
+        }
+        case GET_PROPERTY_OP: {
+            if (!IS_CLASS_INSTANCE(Peek(vm, 0))) {
+                RuntimeError(vm, "Only instances have properties.");
+                return false;
+            }
+
+            ClassInstance* instance = AS_CLASS_INSTANCE(Peek(vm, 0));
+            String* propertyName = ReadString(frame);
+
+            Value value;
+            if (GetTableEntry(&instance->fields, propertyName, &value)) {
+                Pop(vm);
+                Push(vm, value);
+                break;
+            }
+
+            RuntimeError(vm, "Undefined property '%s'", propertyName->chars);
+            return false;
         }
         case SET_GLOBAL_OP: {
             String* name = ReadString(frame);

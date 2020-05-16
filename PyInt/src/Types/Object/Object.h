@@ -4,6 +4,8 @@
 #include "../../Headers/Common.h"
 
 typedef enum {
+    CLASS_INSTANCE,
+    CLASS,  
     CLOSURE,
     FUNCTION,
     NATIVE,

@@ -53,6 +53,9 @@
     <ClCompile Include="src\Types\Upvalue\UpvalueFunctions.c" />
     <ClCompile Include="src\Types\NativeFunction\NativeFunctionFunctions.c" />
     <ClCompile Include="src\Types\Function\FunctionFunctions.c" />
+    <ClCompile Include="src\Types\Class\ClassFunctions.c" />
+    <ClCompile Include="src\Compilation\Statements\ClassStatement\ClassStatement.c" />
+    <ClCompile Include="src\Types\ClassInstance\ClassInstanceFunctions.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Services\Bytecode\Bytecode.h" />
@@ -121,6 +124,11 @@
     <ClInclude Include="src\Types\Upvalue\UpvalueFunctions.h" />
     <ClInclude Include="src\Types\NativeFunction\NativeFunctionFunctions.h" />
     <ClInclude Include="src\Types\Function\FunctionFunctions.h" />
+    <ClInclude Include="src\Types\Class\Class.h" />
+    <ClInclude Include="src\Types\Class\ClassFunctions.h" />
+    <ClInclude Include="src\Compilation\Statements\ClassStatement\ClassStatement.h" />
+    <ClInclude Include="src\Types\ClassInstance\ClassInstance.h" />
+    <ClInclude Include="src\Types\ClassInstance\ClassInstanceFunctions.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

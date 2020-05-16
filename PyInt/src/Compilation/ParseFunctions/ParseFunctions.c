@@ -187,6 +187,19 @@ static void CallToken(Compiler* compiler, Services* services, Bytecode* bytecode
     WriteBytes(bytecode, services, CALL_OP, argCount);
 }
 
+static void DotToken(Compiler* compiler, Services* services, Bytecode* bytecode, bool canAssign) {
+    ConsumeToken(services, IDENTIFIER_TOKEN, DotCallError);
+    uint8_t address = StoreInBytecodeValueArray(bytecode, services, OBJ_VAL(CopyStringToTable(services->garbageCollector, services->stringsTable, services->parser->previous.start, services->parser->previous.length)));
+
+    if (canAssign && MatchToken(services, services->parser->current, EQUAL_TOKEN)) {
+        ParsePrecedence(compiler, services, bytecode, PREC_ASSIGNMENT);
+        WriteBytes(bytecode, services, SET_PROPERTY_OP, address);
+    }
+    else {
+        WriteBytes(bytecode, services, GET_PROPERTY_OP, address);
+    }
+}
+
 ParseRule rules[] = {
     {GroupingToken,   CallToken,      PREC_CALL},         //      LEFT_PAREN_TOKEN
     {NULL,            NULL,           PREC_NONE},         //      RIGHT_PAREN_TOKEN
@@ -201,7 +214,7 @@ ParseRule rules[] = {
     {NULL,            BinaryToken,    PREC_COMPARISON},   //      LESSER_EQUAL_TOKEN
     {NULL,            NULL,           PREC_NONE},         //      SEMICOLON_TOKEN
     {NULL,            NULL,           PREC_NONE},         //      COMMA_TOKEN
-    {NULL,            NULL,           PREC_NONE},         //      DOT_TOKEN
+    {NULL,            DotToken,       PREC_CALL},         //      DOT_TOKEN
     {NULL,            BinaryToken,    PREC_TERM},         //      PLUS_TOKEN
     {UnaryToken,      BinaryToken,    PREC_TERM},         //      MINUS_TOKEN
     {NULL,            BinaryToken,    PREC_FACTOR},       //      STAR_TOKEN

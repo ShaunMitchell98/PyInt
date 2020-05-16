@@ -15,6 +15,10 @@
 #define NameError "Name expected"
 #define NewlineError "Newline expected"
 #define GlobalError "Global Error"
+#define ClassIdentifierError "Expect class name"
+#define ClassLeftBraceError "Expect '{' after class body"
+#define ClassRightBraceError "Expect '}' after class body"
+#define DotCallError "Expect property name after '.'"
 
 void Error(const char* message);
 void SyntaxError(IOSettings* outputSettings, Token* token);

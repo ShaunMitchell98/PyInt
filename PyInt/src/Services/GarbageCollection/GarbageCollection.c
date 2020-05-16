@@ -5,6 +5,8 @@
 #include "../../Compilation/Compiler/CompilerFunctions.h"
 #include "../Memory/Memory.h"
 #include "../../Types/Function/Function.h"
+#include "../../Types/Class/Class.h"
+#include "../../Types/ClassInstance/ClassInstance.h"
 #include "../Table/TableFunctions.h"
 
 static void MarkCallFrames(GarbageCollector* garbageCollector, CallFrame* callFrames, int frameCount) {
@@ -52,6 +54,17 @@ static void BlackenObject(GarbageCollector* garbageCollector, Object* object) {
     WriteObjectBlackened(garbageCollector->garbageSettings, object);
 
     switch (object->type) {
+        case CLASS_INSTANCE: {
+            ClassInstance* instance = (ClassInstance*)object;
+            MarkObject(garbageCollector, (Object*)instance->klass);
+            MarkTable(garbageCollector, &instance->fields);
+            break;
+        }
+        case CLASS: {
+            Class* class = (Class*)object;
+            MarkObject(garbageCollector, (Object*)class->name);
+            break;
+        }
         case CLOSURE: {
             Closure* closure = (Closure*)object;
             MarkObject(garbageCollector, (Object*)closure->function);

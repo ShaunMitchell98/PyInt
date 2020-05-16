@@ -2,6 +2,9 @@
 #include "../../../Types/NativeFunction/NativeFunction.h"
 #include "../Errors/RuntimeError.h"
 #include "../Stack/Stack.h"
+#include "../../../Types/Class/Class.h"
+#include "../../../Types/ClassInstance/ClassInstanceFunctions.h"
+#
 
 static bool Call(VM* vm, Closure* closure, int argCount) {
     if (argCount != closure->function->arity) {
@@ -26,6 +29,11 @@ static bool Call(VM* vm, Closure* closure, int argCount) {
 bool CallValue(VM* vm, Value callee, int argCount) {
     if (IS_OBJ(callee)) {
         switch (OBJ_TYPE(callee)) {
+        case CLASS: {
+            Class* klass = AS_CLASS(callee);
+            vm->stackTop[-argCount - 1] = OBJ_VAL(NewClassInstance(vm->garbageCollector, klass));
+            return true;
+        }
         case CLOSURE:
             return Call(vm, AS_CLOSURE(callee), argCount);
         case NATIVE: {

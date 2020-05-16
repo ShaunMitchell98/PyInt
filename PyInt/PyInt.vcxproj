@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="src\Compilation\Expressions\Expressions.c" />
     <ClCompile Include="src\Compilation\ParseFunctions\ParseFunctions.c" />
+    <ClCompile Include="src\Compilation\Statements\ClassStatement\ClassStatement.c" />
     <ClCompile Include="src\Compilation\Statements\CompoundStatement\CompoundStatement.c" />
     <ClCompile Include="src\Compilation\Statements\ExpressionStatement\ExpressionStatement.c" />
     <ClCompile Include="src\Compilation\Statements\ForStatement\ForStatement.c" />
@@ -40,6 +41,8 @@
     <ClCompile Include="src\Services\Disassembly\InstructionWriters\InstructionWriters.c" />
     <ClCompile Include="src\Services\GarbageCollection\GarbageCollection.c" />
     <ClCompile Include="src\Services\GarbageCollection\GarbageCollector\GarbageCollector.c" />
+    <ClCompile Include="src\Types\ClassInstance\ClassInstanceFunctions.c" />
+    <ClCompile Include="src\Types\Class\ClassFunctions.c" />
     <ClCompile Include="src\Types\Closure\ClosureFunctions.c" />
     <ClCompile Include="src\Types\Function\FunctionFunctions.c" />
     <ClCompile Include="src\Types\NativeFunction\NativeFunctionFunctions.c" />
@@ -76,6 +79,7 @@
     <ClInclude Include="src\Compilation\Compiler\CompilerFunctions.h" />
     <ClInclude Include="src\Compilation\Expressions\Expressions.h" />
     <ClInclude Include="src\Compilation\ParseFunctions\ParseFunctions.h" />
+    <ClInclude Include="src\Compilation\Statements\ClassStatement\ClassStatement.h" />
     <ClInclude Include="src\Compilation\Statements\CompoundStatement\CompoundStatement.h" />
     <ClInclude Include="src\Compilation\Statements\ExpressionStatement\ExpressionStatement.h" />
     <ClInclude Include="src\Compilation\Statements\SimpleStatement\SimpleStatement.h" />
@@ -104,6 +108,10 @@
     <ClInclude Include="src\Services\GarbageCollection\GarbageCollection.h" />
     <ClInclude Include="src\Services\GarbageCollection\GarbageCollector\GarbageCollector.h" />
     <ClInclude Include="src\Services\Table\TableFunctions.h" />
+    <ClInclude Include="src\Types\ClassInstance\ClassInstance.h" />
+    <ClInclude Include="src\Types\ClassInstance\ClassInstanceFunctions.h" />
+    <ClInclude Include="src\Types\Class\Class.h" />
+    <ClInclude Include="src\Types\Class\ClassFunctions.h" />
     <ClInclude Include="src\Types\Closure\Closure.h" />
     <ClInclude Include="src\Types\Closure\ClosureFunctions.h" />
     <ClInclude Include="src\Types\Function\Function.h" />

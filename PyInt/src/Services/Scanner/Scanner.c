@@ -54,7 +54,7 @@ static Token MakeToken(Scanner* scanner, TokenType tokenType) {
 }
 
 static bool IsDigit(Scanner* scanner, char _char) {
-    return (_char >= '0' && _char <= '9') || (_char == '.' && scanner->current != scanner->start);
+    return (_char >= '0' && _char <= '9') || (_char == '.' && scanner->current != scanner->start && IsDigit(scanner, scanner->current-1));
 }
 
 static bool IsAlpha (char _char) {
@@ -85,6 +85,14 @@ static Token Identifier(Scanner* scanner) {
         case 'a': {
             if (CheckKeyword(scanner, "nd", 2)) {
                 return MakeToken(scanner, AND_TOKEN);
+            }
+            else {
+                return MakeToken(scanner, IDENTIFIER_TOKEN);
+            }
+        }
+        case 'c': {
+            if (CheckKeyword(scanner, "lass", 4)) {
+                return MakeToken(scanner, CLASS_TOKEN);
             }
             else {
                 return MakeToken(scanner, IDENTIFIER_TOKEN);
@@ -150,6 +158,14 @@ static Token Identifier(Scanner* scanner) {
             case 'o': {
                 if (CheckKeyword(scanner, "r", 1)) {
                     return MakeToken(scanner, OR_TOKEN);
+                }
+                else {
+                    return MakeToken(scanner, IDENTIFIER_TOKEN);
+                }
+            }
+            case 'p': {
+                if (CheckKeyword(scanner, "ass", 3)) {
+                    return MakeToken(scanner, PASS_TOKEN);
                 }
                 else {
                     return MakeToken(scanner, IDENTIFIER_TOKEN);

@@ -106,6 +106,10 @@ static int WriteBytecodeInstruction(Compiler* compiler, IOSettings* settings, Lo
         constant = bytecode->code[offset + 1];
         offset = WriteInstructionWithConstant(settings, "CALL_OP", buffer, bufferSize, constant, bytecode->constants.values[constant], offset);
         break;
+    case CLASS_OP:
+        constant = bytecode->code[offset + 1];
+        offset = WriteInstructionWithConstant(settings, "CLASS_OP", buffer, bufferSize, constant, bytecode->constants.values[constant], offset);
+        break;
     case CLOSURE_OP: {
         offset = WriteClosureOperation(settings, buffer, bufferSize, bytecode, offset);
         break;
@@ -114,6 +118,14 @@ static int WriteBytecodeInstruction(Compiler* compiler, IOSettings* settings, Lo
         offset = WriteInstructionWithoutConstant("CLOSE_UPVALUE_OP", buffer, bufferSize, offset);
         break;
     }
+    case SET_PROPERTY_OP:
+        constant = bytecode->code[offset + 1];
+        offset = WriteInstructionWithConstant(settings, "SET_PROPERTY_OP", buffer, bufferSize, constant, bytecode->constants.values[constant], offset);
+        break;
+    case GET_PROPERTY_OP:
+        constant = bytecode->code[offset + 1];
+        offset = WriteInstructionWithConstant(settings, "GET_PROPERTY_OP", buffer, bufferSize, constant, bytecode->constants.values[constant], offset);
+        break;
     case SET_GLOBAL_OP:
         constant = bytecode->code[offset + 1];
         offset = WriteInstructionWithConstant(settings, "SET_GLOBAL_OP", buffer, bufferSize, constant, bytecode->constants.values[constant], offset);
