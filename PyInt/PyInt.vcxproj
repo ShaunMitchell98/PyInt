@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Compilation\Compiler\ClassCompiler\ClassCompilerFunctions.c" />
     <ClCompile Include="src\Compilation\Expressions\Expressions.c" />
     <ClCompile Include="src\Compilation\ParseFunctions\ParseFunctions.c" />
     <ClCompile Include="src\Compilation\Statements\ClassStatement\ClassStatement.c" />
@@ -41,6 +42,9 @@
     <ClCompile Include="src\Services\Disassembly\InstructionWriters\InstructionWriters.c" />
     <ClCompile Include="src\Services\GarbageCollection\GarbageCollection.c" />
     <ClCompile Include="src\Services\GarbageCollection\GarbageCollector\GarbageCollector.c" />
+    <ClCompile Include="src\Services\Scanner\IndentManager\IndentManagerFunctions.c" />
+    <ClCompile Include="src\Services\Scanner\ScannerError\ScannerError.c" />
+    <ClCompile Include="src\Types\BoundMethod\BoundMethodFunctions.c" />
     <ClCompile Include="src\Types\ClassInstance\ClassInstanceFunctions.c" />
     <ClCompile Include="src\Types\Class\ClassFunctions.c" />
     <ClCompile Include="src\Types\Closure\ClosureFunctions.c" />
@@ -54,6 +58,7 @@
     <ClCompile Include="src\Virtual Machine\Run\Run.c" />
     <ClCompile Include="src\Virtual Machine\Services\Call\Call.c" />
     <ClCompile Include="src\Virtual Machine\Services\Errors\RuntimeError.c" />
+    <ClCompile Include="src\Virtual Machine\Services\Methods\Methods.c" />
     <ClCompile Include="src\Virtual Machine\Services\Stack\Stack.c" />
     <ClCompile Include="src\Virtual Machine\Services\Upvalues\Upvalues.c" />
     <ClCompile Include="src\Virtual Machine\Settings\Settings.c" />
@@ -70,12 +75,14 @@
     <ClCompile Include="src\Services\Table\TableFunctions.c" />
     <ClCompile Include="src\main.c" />
     <ClCompile Include="src\Services\Memory\Memory.c" />
-    <ClCompile Include="src\Services\Scanner\Scanner.c" />
+    <ClCompile Include="src\Services\Scanner\ScannerFunctions.c" />
     <ClCompile Include="src\Types\Value\ValueFunctions.c" />
     <ClCompile Include="src\Virtual Machine\VM\VM.c" />
     <ClCompile Include="src\Virtual Machine\Printing\VmPrinting.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Compilation\Compiler\ClassCompiler\ClassCompiler.h" />
+    <ClInclude Include="src\Compilation\Compiler\ClassCompiler\ClassCompilerFunctions.h" />
     <ClInclude Include="src\Compilation\Compiler\CompilerFunctions.h" />
     <ClInclude Include="src\Compilation\Expressions\Expressions.h" />
     <ClInclude Include="src\Compilation\ParseFunctions\ParseFunctions.h" />
@@ -107,7 +114,13 @@
     <ClInclude Include="src\Services\Disassembly\InstructionWriters\InstructionWriters.h" />
     <ClInclude Include="src\Services\GarbageCollection\GarbageCollection.h" />
     <ClInclude Include="src\Services\GarbageCollection\GarbageCollector\GarbageCollector.h" />
+    <ClInclude Include="src\Services\Scanner\IndentManager\IndentManagerFunctions.h" />
+    <ClInclude Include="src\Services\Scanner\IndentManager\IndentManager.h" />
+    <ClInclude Include="src\Services\Scanner\ScannerError\ScannerError.h" />
+    <ClInclude Include="src\Services\Scanner\ScannerFunctions.h" />
     <ClInclude Include="src\Services\Table\TableFunctions.h" />
+    <ClInclude Include="src\Types\BoundMethod\BoundMethod.h" />
+    <ClInclude Include="src\Types\BoundMethod\BoundMethodFunctions.h" />
     <ClInclude Include="src\Types\ClassInstance\ClassInstance.h" />
     <ClInclude Include="src\Types\ClassInstance\ClassInstanceFunctions.h" />
     <ClInclude Include="src\Types\Class\Class.h" />
@@ -134,6 +147,7 @@
     <ClInclude Include="src\Virtual Machine\Run\Run.h" />
     <ClInclude Include="src\Virtual Machine\Services\Call\Call.h" />
     <ClInclude Include="src\Virtual Machine\Services\Errors\RuntimeError.h" />
+    <ClInclude Include="src\Virtual Machine\Services\Methods\Methods.h" />
     <ClInclude Include="src\Virtual Machine\Services\Stack\Stack.h" />
     <ClInclude Include="src\Virtual Machine\Services\Upvalues\Upvalues.h" />
     <ClInclude Include="src\Virtual Machine\Settings\Settings.h" />

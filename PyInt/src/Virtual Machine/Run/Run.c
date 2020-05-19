@@ -10,6 +10,7 @@
 #include "../../Types/Class/ClassFunctions.h"
 #include "../../Types/ClassInstance/ClassInstance.h"
 #include "../Services/Errors/RuntimeError.h"
+#include "../Services/Methods/Methods.h"
 
 static bool Equal(Value a, Value b) {
     if (IS_CHAR(a) && IS_CHAR(b)) {
@@ -197,17 +198,28 @@ bool Run(VM* vm) {
             }
 
             ClassInstance* instance = AS_CLASS_INSTANCE(Peek(vm, 0));
-            String* propertyName = ReadString(frame);
+            String* name = ReadString(frame);
 
             Value value;
-            if (GetTableEntry(&instance->fields, propertyName, &value)) {
+            if (GetTableEntry(&instance->fields, name, &value)) {
                 Pop(vm);
                 Push(vm, value);
                 break;
             }
 
-            RuntimeError(vm, "Undefined property '%s'", propertyName->chars);
-            return false;
+            if (!GetMethod(vm, instance->klass, name)) {
+                return false;
+            }
+            break;
+        }
+        case INVOKE_OP: {
+            String* methodName = ReadString(frame);
+            int argCount = ReadByte(vm);
+            if (!Invoke(vm, methodName, argCount)) {
+                return false;
+            }
+            frame = &vm->frames[vm->frameCount - 1];
+            break;
         }
         case SET_GLOBAL_OP: {
             String* name = ReadString(frame);

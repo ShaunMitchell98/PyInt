@@ -126,6 +126,9 @@ static int WriteBytecodeInstruction(Compiler* compiler, IOSettings* settings, Lo
         constant = bytecode->code[offset + 1];
         offset = WriteInstructionWithConstant(settings, "GET_PROPERTY_OP", buffer, bufferSize, constant, bytecode->constants.values[constant], offset);
         break;
+    case INVOKE_OP:
+        offset = WriteInvokeInstruction(settings, "INVOKE_OP", buffer, bufferSize, bytecode, offset);
+        break;
     case SET_GLOBAL_OP:
         constant = bytecode->code[offset + 1];
         offset = WriteInstructionWithConstant(settings, "SET_GLOBAL_OP", buffer, bufferSize, constant, bytecode->constants.values[constant], offset);

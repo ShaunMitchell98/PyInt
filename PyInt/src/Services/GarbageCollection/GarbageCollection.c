@@ -5,6 +5,7 @@
 #include "../../Compilation/Compiler/CompilerFunctions.h"
 #include "../Memory/Memory.h"
 #include "../../Types/Function/Function.h"
+#include "../../Types/BoundMethod/BoundMethod.h"
 #include "../../Types/Class/Class.h"
 #include "../../Types/ClassInstance/ClassInstance.h"
 #include "../Table/TableFunctions.h"
@@ -54,6 +55,12 @@ static void BlackenObject(GarbageCollector* garbageCollector, Object* object) {
     WriteObjectBlackened(garbageCollector->garbageSettings, object);
 
     switch (object->type) {
+        case BOUND_METHOD: {
+            BoundMethod* boundMethod = (BoundMethod*)object;
+            MarkValue(garbageCollector, boundMethod->receiver);
+            MarkObject(garbageCollector, (Object*)boundMethod->method);
+            break;
+        }
         case CLASS_INSTANCE: {
             ClassInstance* instance = (ClassInstance*)object;
             MarkObject(garbageCollector, (Object*)instance->klass);
@@ -61,8 +68,9 @@ static void BlackenObject(GarbageCollector* garbageCollector, Object* object) {
             break;
         }
         case CLASS: {
-            Class* class = (Class*)object;
-            MarkObject(garbageCollector, (Object*)class->name);
+            Class* klass = (Class*)object;
+            MarkObject(garbageCollector, (Object*)klass->name);
+            MarkTable(garbageCollector, &klass->methods);
             break;
         }
         case CLOSURE: {
@@ -96,6 +104,7 @@ static void TraceReferences(GarbageCollector* garbageCollector) {
 static void MarkRootObjects(GarbageCollector* garbageCollector) {
 
     MarkCompilerRoots(garbageCollector);
+    MarkObject(garbageCollector, (Object*)garbageCollector->initString);
     MarkTemporaries(garbageCollector);
 
     for (Value* slot = garbageCollector->stack; slot < garbageCollector->stackTop; slot++) {

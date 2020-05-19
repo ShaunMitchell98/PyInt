@@ -1,6 +1,7 @@
 #include "Helpers.h"
 #include "../../Headers/Common.h"
 #include "../Errors/Errors.h"
+#include "../../Services/Scanner/ScannerFunctions.h"
 
 void GetNextToken(Services* services) {
     

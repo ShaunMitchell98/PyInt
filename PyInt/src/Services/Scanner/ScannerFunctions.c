@@ -1,46 +1,15 @@
-#include <stdio.h>
 #include  <stddef.h>
 
-#include "Scanner.h"
+#include "ScannerFunctions.h"
+#include "ScannerError/ScannerError.h"
+#include "IndentManager/IndentManagerFunctions.h"
 #include "../../Headers/Common.h"
-
-static void ScanError(const char* message) {
-    fprintf(stderr, "%s\n", message);
-}
-
-static void PushIndent(Scanner* scanner, int indentNumber) {
-    if (scanner->stackIndex < INDENT_STACK_MAX){
-        scanner->indentStack[scanner->stackIndex] = indentNumber;
-        scanner->stackIndex++;
-    }
-    else {
-        ScanError(ScanningIndentError);
-    }
-}
-
-static int PopIndent(Scanner* scanner, int spaceCount) {
-    int dedentCount;
-    for (int i = 0; i < scanner->stackIndex; i++) {
-        if (scanner->indentStack[i] == spaceCount) {
-            dedentCount = scanner->stackIndex -1;
-            scanner->stackIndex -= 1;
-            return dedentCount;
-        }
-    }
-    return -1;
-}
-
-static int PeekIndent(Scanner* scanner) {
-    return scanner->indentStack[scanner->stackIndex-1];
-}
 
 void InitScanner(Scanner* scanner, const char* sourceCode) {
     scanner->start = sourceCode;
     scanner->current = sourceCode;
-    scanner->stackIndex = 0;
     scanner->line = 1;
-    scanner->newLine = true;
-    PushIndent(scanner, 0);
+    InitIndentManager(&scanner->indentManager);
     return;
 }
 
@@ -230,51 +199,9 @@ static void SkipWhiteSpace(Scanner* scanner) {
     }
 }
 
-static SpaceType CheckIndent(Scanner* scanner) {
-    int spaceCount = 0;
-    while (true) {
-        switch(*scanner->current) {
-            case '\t':
-                spaceCount += 4;
-                scanner->current++;
-                break;
-            case '\r':
-                spaceCount = 0;
-                break;
-            case ' ':
-                spaceCount++;
-                scanner->current++;
-                break;
-            default:
-                goto Label;
-                
-        }
-    }
-Label:;
-    int difference = spaceCount - PeekIndent(scanner);
-    if (difference == 0) {
-        return SAME;
-    }
-    else if (difference > 0) {
-        PushIndent(scanner, spaceCount);
-        return INDENT;
-    }
-    else {
-        int dedentNumber = PopIndent(scanner, spaceCount);
-        
-        if (dedentNumber == -1) {
-            return DEDENT_ERROR;
-        }
-        else {
-            return DEDENT;
-        }
-    }
-}
-
 Token GetToken(Scanner* scanner) {
-    if (scanner->newLine) {
-        scanner->newLine = false;
-        switch(CheckIndent(scanner)) {
+    if (scanner->indentManager.newLine) {
+        switch(GetIndentType(scanner)) {
             case INDENT:
                 return MakeToken(scanner, INDENT_TOKEN);
             case DEDENT:
@@ -282,6 +209,8 @@ Token GetToken(Scanner* scanner) {
             case DEDENT_ERROR:
                 ScanError("Invalid whitespace.");
                 return MakeToken(scanner, ERROR_TOKEN);
+            case SAME:
+                break;
             default:
                 break;
         }
@@ -366,7 +295,7 @@ Token GetToken(Scanner* scanner) {
             return MakeToken(scanner, EOF_TOKEN);
         case '\n':
             scanner->line++;
-            scanner->newLine = true;
+            scanner->indentManager.newLine = true;
             return MakeToken(scanner, NEWLINE_TOKEN);
         default:
             return MakeToken(scanner, ERROR_TOKEN);

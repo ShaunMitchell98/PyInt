@@ -4,7 +4,7 @@
 #include "../../../Services/Table/TableFunctions.h"
 
 uint8_t StoreGlobalInBytecodeConstantTable(Bytecode* bytecode, Services* services, Token* name) {
-    return StoreInBytecodeValueArray(bytecode, services, OBJ_VAL(CopyStringToTable(services->garbageCollector, services->stringsTable, name->start, name->length)));
+    return StoreInBytecodeConstantsTable(bytecode, services, OBJ_VAL(CopyStringToTable(services->garbageCollector, services->stringsTable, name->start, name->length)));
 }
 
 void SetGlobalVariable(Bytecode* bytecode, Services* services) {

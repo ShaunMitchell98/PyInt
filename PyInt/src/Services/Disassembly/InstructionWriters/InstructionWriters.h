@@ -13,6 +13,7 @@ int WriteInstructionWithoutConstant(const char* instructionName, char* buffer, i
 int WriteInstructionWithConstant(IOSettings* settings, const char* instructionName, char* buffer, int bufferSize, uint8_t constant, Value value, int offset);
 int WriteClosureOperation(IOSettings* settings, char* buffer, int bufferSize, Bytecode* bytecode, int offset);
 int WriteInstructionWithJump(const char* instructionName, char* buffer, int bufferSize, Bytecode* bytecode, int sign, int offset);
+int WriteInvokeInstruction(IOSettings* settings, const char* instructionName, char* buffer, int bufferSize, Bytecode* bytecode, int offset);
 void DisassembleStack(IOSettings* settings, Value* stack, Value* stackTop, char* buffer, int bufferSize);
 void WriteInstructionAddress(char* buffer, int bufferSize, int offset);
 void WriteLineNumber(Bytecode* bytecode, char* buffer, int bufferSize, int offset);

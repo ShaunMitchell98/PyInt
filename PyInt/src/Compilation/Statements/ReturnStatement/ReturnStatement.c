@@ -9,6 +9,10 @@ void ReturnStatement(Compiler* compiler, Services* services, Bytecode* bytecode)
         Error("Cannot return from top-level code.");
     }
 
+    if (compiler->function->type == INITIALISER_FUNCTION) {
+        Error("Cannot return a value from an initialiser");
+    }
+
     TestListStarExpression(compiler, services, bytecode);
     WriteByte(bytecode, services, RETURN_OP);
     compiler->function->hasReturnStatement = true;

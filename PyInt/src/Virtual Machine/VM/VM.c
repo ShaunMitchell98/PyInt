@@ -1,5 +1,5 @@
 #include "VM.h"
-#include "../../Services/Scanner/Scanner.h"
+#include "../../Services/Scanner/ScannerFunctions.h"
 #include "../../Compilation/Compiler/CompilerFunctions.h"
 #include "../../Services/Memory/Memory.h"
 #include "../../Compilation/Services/Services.h"
@@ -27,6 +27,9 @@ void InitVM(VM* vm, GarbageCollector* garbageCollector, Settings* settings) {
     garbageCollector->stringsTable = &vm->strings;
     garbageCollector->stack = vm->stack;
     garbageCollector->stackTop = vm->stackTop;
+
+    garbageCollector->initString = NULL;
+    garbageCollector->initString = CopyStringToTable(garbageCollector, &vm->strings, "__init__", 8);
     DefineStandardFunctions(vm);
 }
 

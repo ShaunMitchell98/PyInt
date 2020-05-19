@@ -8,8 +8,11 @@ static void SmallStatement(Compiler* compiler, Services* services, Bytecode* byt
     if (MatchToken(services, services->parser->current, GLOBAL_TOKEN)) {
         GlobalStatement(services, bytecode);
     }
-    if (MatchToken(services, services->parser->current, RETURN_TOKEN)) {
+    else if (MatchToken(services, services->parser->current, RETURN_TOKEN)) {
         ReturnStatement(compiler, services, bytecode);
+    }
+    else if (MatchToken(services, services->parser->current, PASS_TOKEN)) {
+        GetNextToken(services);
     }
     else {
         ExpressionStatement(compiler, services, bytecode);

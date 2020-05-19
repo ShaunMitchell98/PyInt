@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="src\Services\Memory\Memory.c" />
-    <ClCompile Include="src\Services\Scanner\Scanner.c" />
     <ClCompile Include="src\main.c" />
     <ClCompile Include="src\Repl.c" />
     <ClCompile Include="src\RunFile.c" />
@@ -56,6 +55,12 @@
     <ClCompile Include="src\Types\Class\ClassFunctions.c" />
     <ClCompile Include="src\Compilation\Statements\ClassStatement\ClassStatement.c" />
     <ClCompile Include="src\Types\ClassInstance\ClassInstanceFunctions.c" />
+    <ClCompile Include="src\Virtual Machine\Services\Methods\Methods.c" />
+    <ClCompile Include="src\Types\BoundMethod\BoundMethodFunctions.c" />
+    <ClCompile Include="src\Compilation\Compiler\ClassCompiler\ClassCompilerFunctions.c" />
+    <ClCompile Include="src\Services\Scanner\ScannerFunctions.c" />
+    <ClCompile Include="src\Services\Scanner\ScannerError\ScannerError.c" />
+    <ClCompile Include="src\Services\Scanner\IndentManager\IndentManagerFunctions.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Services\Bytecode\Bytecode.h" />
@@ -129,6 +134,15 @@
     <ClInclude Include="src\Compilation\Statements\ClassStatement\ClassStatement.h" />
     <ClInclude Include="src\Types\ClassInstance\ClassInstance.h" />
     <ClInclude Include="src\Types\ClassInstance\ClassInstanceFunctions.h" />
+    <ClInclude Include="src\Virtual Machine\Services\Methods\Methods.h" />
+    <ClInclude Include="src\Types\BoundMethod\BoundMethod.h" />
+    <ClInclude Include="src\Types\BoundMethod\BoundMethodFunctions.h" />
+    <ClInclude Include="src\Compilation\Compiler\ClassCompiler\ClassCompiler.h" />
+    <ClInclude Include="src\Compilation\Compiler\ClassCompiler\ClassCompilerFunctions.h" />
+    <ClInclude Include="src\Services\Scanner\ScannerFunctions.h" />
+    <ClInclude Include="src\Services\Scanner\ScannerError\ScannerError.h" />
+    <ClInclude Include="src\Services\Scanner\IndentManager\IndentManager.h" />
+    <ClInclude Include="src\Services\Scanner\IndentManager\IndentManagerFunctions.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

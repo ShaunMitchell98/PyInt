@@ -1,3 +1,4 @@
+#include <string.h>
 #include "FunctionDefinition.h"
 #include "../../Errors/Errors.h"
 #include "../../../Types/Function/Function.h"
@@ -7,6 +8,10 @@
 #include "../../Expressions/Expressions.h"
 #include "../../Variables/Global/Global.h"
 #include "../../Compiler/CompilerFunctions.h"
+#include "../../../Services/Memory/Memory.h"
+#include "../../Compiler/ClassCompiler/ClassCompiler.h"
+#include "../../../Services/Table/TableFunctions.h"
+#include "../../../Types/Closure/ClosureFunctions.h"
 
 void EndScope(Local* locals, int localCount, Bytecode* bytecode, Services* services) {
     while (localCount > 0) {
@@ -18,6 +23,16 @@ void EndScope(Local* locals, int localCount, Bytecode* bytecode, Services* servi
         }
         localCount--;
     }
+}
+
+static void InitialiseSelf(Compiler* compiler, Services* services) {
+    char* heapChars = ALLOCATE(services->garbageCollector, char, services->parser->current.length + 1);
+    memcpy(heapChars, services->parser->current.start, services->parser->current.length);
+    heapChars[services->parser->current.length] = '\0';
+
+    compiler->locals->name.start = heapChars;
+    compiler->locals->name.length = services->parser->current.length;
+    compiler->function->arity--;
 }
 
 static void CompileFunction(Compiler* compiler, Services* services) {
@@ -33,7 +48,13 @@ static void CompileFunction(Compiler* compiler, Services* services) {
                 Error("Cannot have more than 255 parameters");
             }
 
-            PushLocalToCompilerStack(&newCompiler, &services->parser->current);
+            if (newCompiler.function->arity == 1 && compiler->type == CLASS_COMPILER) {
+                InitialiseSelf(&newCompiler, services);
+            }
+            else {
+                PushLocalToCompilerStack(&newCompiler, &services->parser->current);
+            }
+
             GetNextToken(services);
         } while (MatchToken(services, services->parser->current, COMMA_TOKEN));
     }
@@ -43,7 +64,14 @@ static void CompileFunction(Compiler* compiler, Services* services) {
     Suite(&newCompiler, services, &newCompiler.function->bytecode);
 
     Function* function = EndCompiler(&newCompiler, services);
-    WriteBytes(bytecode, services, CLOSURE_OP, StoreInBytecodeValueArray(bytecode, services, OBJ_VAL(function)));
+
+    if (compiler->type == CLASS_COMPILER) {
+        ClassCompiler* classCompiler = (ClassCompiler*)compiler;
+        Closure* closure = NewClosure(services->garbageCollector, function);
+        SetTableEntry(services->garbageCollector, &classCompiler->klass->methods, function->name, OBJ_VAL(closure));
+    }
+
+    WriteBytes(bytecode, services, CLOSURE_OP, StoreInBytecodeConstantsTable(bytecode, services, OBJ_VAL(function)));
 
     for (int i = 0; i < function->upvalueCount; i++) {
         WriteByte(bytecode, services, compiler->upvalues[i].isLocal ? 1 : 0);
@@ -57,7 +85,6 @@ void FunctionDefinition(Compiler* compiler, Services* services, Bytecode* byteco
     int address;
     if (compiler->enclosing != NULL) {
         address = PushLocalToCompilerStack(compiler, &services->parser->current);
-        compiler->localCount++;
     }
     else {
         address = StoreGlobalInBytecodeConstantTable(bytecode, services, &services->parser->current);

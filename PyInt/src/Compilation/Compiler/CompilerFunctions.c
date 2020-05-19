@@ -9,11 +9,13 @@
 #include "../Helpers/Helpers.h"
 #include "../Statements/Statement/Statement.h"
 #include "../../Types/Function/FunctionFunctions.h"
+#include "../../Types/Class/ClassFunctions.h"
 
 static void InitScriptCompiler(Compiler* compiler, Services* services) {
-    compiler->function = NewFunction(services->garbageCollector);
+    compiler->function = NewFunction(services->garbageCollector, SCRIPT_FUNCTION);
     compiler->localCount = 0;
     compiler->enclosing = NULL;
+    compiler->type = SCRIPT_COMPILER;
     compiler->function->name = CopyStringToTable(services->garbageCollector, services->stringsTable, "Script", 6);
 
     compiler->locals->isCaptured = false;
@@ -25,7 +27,17 @@ static void InitScriptCompiler(Compiler* compiler, Services* services) {
 }
 
 void InitFunctionCompiler(Compiler* currentCompiler, Compiler* compiler, Services* services) {
-    compiler->function = NewFunction(services->garbageCollector);
+    Token previous = services->parser->previous;
+    FunctionType type;
+
+    if (previous.length == 8 && memcmp(previous.start, "__init__", 8) == 0) {
+        type = INITIALISER_FUNCTION;
+    }
+    else {
+        type = STANDARD_FUNCTION;
+    }
+
+    compiler->function = NewFunction(services->garbageCollector, type);
     compiler->localCount = 0;
     compiler->enclosing = (struct Compiler*) currentCompiler;
     compiler->function->name = CopyStringToTable(services->garbageCollector, services->stringsTable, services->parser->previous.start, services->parser->previous.length);
@@ -40,7 +52,7 @@ void InitFunctionCompiler(Compiler* currentCompiler, Compiler* compiler, Service
 
 Function* EndCompiler(Compiler* compiler, Services* services) {
     if (!compiler->function->hasReturnStatement) {
-        WriteReturn(&compiler->function->bytecode, services);
+        WriteReturn(compiler->function->type, &compiler->function->bytecode, services);
     }
 
     Function* function = compiler->function;

@@ -27,7 +27,7 @@ static void NumberToken(Compiler* compiler, Services* services, Bytecode* byteco
 static void StringToken(Compiler* compiler, Services* services, Bytecode* bytecode, bool canAssign) {
     char* string = ALLOCATE(services->garbageCollector, char, services->parser->previous.length);
     string = memcpy(string, services->parser->previous.start, services->parser->previous.length);
-    uint8_t address = StoreInBytecodeValueArray(bytecode, services, OBJ_VAL(CopyStringToTable(services->garbageCollector, services->stringsTable, services->parser->previous.start, services->parser->previous.length)));
+    uint8_t address = StoreInBytecodeConstantsTable(bytecode, services, OBJ_VAL(CopyStringToTable(services->garbageCollector, services->stringsTable, services->parser->previous.start, services->parser->previous.length)));
     WriteBytes(bytecode, services, CONSTANT_OP, address);
     GetNextToken(services);
 }
@@ -189,11 +189,16 @@ static void CallToken(Compiler* compiler, Services* services, Bytecode* bytecode
 
 static void DotToken(Compiler* compiler, Services* services, Bytecode* bytecode, bool canAssign) {
     ConsumeToken(services, IDENTIFIER_TOKEN, DotCallError);
-    uint8_t address = StoreInBytecodeValueArray(bytecode, services, OBJ_VAL(CopyStringToTable(services->garbageCollector, services->stringsTable, services->parser->previous.start, services->parser->previous.length)));
+    uint8_t address = StoreInBytecodeConstantsTable(bytecode, services, OBJ_VAL(CopyStringToTable(services->garbageCollector, services->stringsTable, services->parser->previous.start, services->parser->previous.length)));
 
     if (canAssign && MatchToken(services, services->parser->current, EQUAL_TOKEN)) {
         ParsePrecedence(compiler, services, bytecode, PREC_ASSIGNMENT);
         WriteBytes(bytecode, services, SET_PROPERTY_OP, address);
+    }
+    else if (MatchToken(services, services->parser->current, LEFT_PAREN_TOKEN)) {
+        uint8_t argCount = ArguementList(compiler, services, bytecode);
+        WriteBytes(bytecode, services, INVOKE_OP, address);
+        WriteByte(bytecode, services, argCount);
     }
     else {
         WriteBytes(bytecode, services, GET_PROPERTY_OP, address);

@@ -8,8 +8,9 @@
 #include "../Value/Value.h"
 
 typedef enum {
-    TYPE_FUNCTION,
-    TYPE_SCRIPT
+    STANDARD_FUNCTION,
+    INITIALISER_FUNCTION,
+    SCRIPT_FUNCTION
 } FunctionType;
 
 typedef struct {
@@ -19,6 +20,7 @@ typedef struct {
     bool hasReturnStatement;
     Bytecode bytecode;
     String* name;
+    FunctionType type;
 } Function;
 
 #define IS_FUNCTION(value) IsObjType(value, FUNCTION)

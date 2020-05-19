@@ -8,6 +8,7 @@
 #include "../../Types/Upvalue/Upvalue.h"
 #include "../../Types/NativeFunction/NativeFunction.h"
 #include "../../Types/Class//Class.h"
+#include "../../Types/BoundMethod/BoundMethod.h"
 #include "../../Types/ClassInstance/ClassInstance.h"
 #include "../Bytecode/BytecodeFunctions.h"
 #include "../Disassembly/GarbageCollectionDisassembly/GarbageCollectionDisassembly.h"
@@ -34,13 +35,19 @@ void* Reallocate(GarbageCollector* garbageCollector, void* currentArray, size_t 
 void FreeObject(GarbageCollector* garbageCollector, Object* object) {
     WriteObjectDeallocation(garbageCollector->garbageSettings, object);
     switch(object->type) {
-    case CLASS_INSTANCE: {
-        ClassInstance* instance = (ClassInstance*)object;
-        FreeTable(garbageCollector, &instance->fields);
-        FREE(garbageCollector, ClassInstance, object);
-        break;
+        case BOUND_METHOD: {
+            FREE(garbageCollector, BoundMethod, object);
+            break;
+        }
+        case CLASS_INSTANCE: {
+            ClassInstance* instance = (ClassInstance*)object;
+            FreeTable(garbageCollector, &instance->fields);
+            FREE(garbageCollector, ClassInstance, object);
+            break;
         }
         case CLASS: {
+            Class* klass = (Class*)object;
+            FreeTable(garbageCollector, &klass->methods);
             FREE(garbageCollector, Class, object);
             break;
         }
@@ -81,5 +88,6 @@ void FreeObjects(GarbageCollector* garbageCollector) {
         object = next;
     }
 
+    FreeObject(garbageCollector, (Object*)garbageCollector->initString);
     free(garbageCollector->greyObjectsStack);
 }

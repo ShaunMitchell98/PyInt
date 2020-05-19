@@ -12,12 +12,17 @@ void WriteBytes(Bytecode* bytecode, Services* services, uint8_t byte1, uint8_t b
     WriteByte(bytecode, services, byte2);
 }
 
-void WriteReturn(Bytecode* bytecode, Services* services) {
-    WriteBytes(bytecode, services, CONSTANT_OP, StoreInBytecodeValueArray(bytecode, services, NONE_VAL));
+void WriteReturn(FunctionType type, Bytecode* bytecode, Services* services) {
+    if (type == INITIALISER_FUNCTION) {
+        WriteBytes(bytecode, services, GET_LOCAL_OP, 0);
+    }
+    else {
+        WriteBytes(bytecode, services, CONSTANT_OP, StoreInBytecodeConstantsTable(bytecode, services, NONE_VAL));
+    }
     WriteByte(bytecode, services, RETURN_OP);
 }
 
-uint8_t StoreInBytecodeValueArray(Bytecode* bytecode, Services* services, Value value) {
+uint8_t StoreInBytecodeConstantsTable(Bytecode* bytecode, Services* services, Value value) {
     int bytecodeValueArrayAddress = AddConstantToValueArray(services->garbageCollector, bytecode, value);
     if (bytecodeValueArrayAddress > UINT8_MAX) {
         Error("Too many constants stored in bytecode constants");
@@ -28,7 +33,7 @@ uint8_t StoreInBytecodeValueArray(Bytecode* bytecode, Services* services, Value 
 }
 
 void WriteConstantOperation(Bytecode* bytecode, Services* services, Value value) {
-    WriteBytes(bytecode, services, CONSTANT_OP, StoreInBytecodeValueArray(bytecode, services, value));
+    WriteBytes(bytecode, services, CONSTANT_OP, StoreInBytecodeConstantsTable(bytecode, services, value));
 }
 
 int WriteJump(Bytecode* bytecode, Services* services, uint8_t opcode) {

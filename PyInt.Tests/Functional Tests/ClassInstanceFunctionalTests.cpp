@@ -13,14 +13,26 @@ namespace PyIntFunctionalTests
 	public:
 		TEST_METHOD(CanSetProperty)
 		{
-			char* output = RunInterpreter("class MyClass():\n\tpass\ninstance = MyClass()\ninstance.value = 5\nprint(instance.value)");
+			char* output = RunInterpreter("class MyClass:\n\tpass\ninstance = MyClass()\ninstance.value = 5\nprint(instance.value)");
 			Assert::AreEqual("5", output);
 			free(output);
 		}
 
 		TEST_METHOD(CanUpdateProperty) {
-			char* output = RunInterpreter("class MyClass():\n\tpass\ninstance = MyClass()\ninstance.value = 5\n\ninstance.value = 'Hello World'\nprint(instance.value)");
+			char* output = RunInterpreter("class MyClass:\n\tpass\ninstance = MyClass()\ninstance.value = 5\n\ninstance.value = 'Hello World'\nprint(instance.value)");
 			Assert::AreEqual("Hello World", output);
+			free(output);
+		}
+
+		TEST_METHOD(CanCallMethod) {
+			char* output = RunInterpreter("class MyClass:\n\tdef numberPrinter(self):\n\t\treturn 6 + 7\ninstance = MyClass()\nprint(instance.numberPrinter())");
+			Assert::AreEqual("13", output);
+			free(output);
+		}
+
+		TEST_METHOD(CanCallMethodFromAsProperty) {
+			char* output = RunInterpreter("class MyClass:\n\tdef numberPrinter(self):\n\t\treturn 6+7\ninstance = MyClass()\nmethod = instance.numberPrinter\nprint(method())");
+			Assert::AreEqual("13", output);
 			free(output);
 		}
 	};

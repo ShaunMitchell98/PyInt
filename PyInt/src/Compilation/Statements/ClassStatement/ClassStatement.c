@@ -4,6 +4,10 @@
 #include "../../Variables/Local/LocalFunctions.h"
 #include "../../Variables/Global/Global.h"
 #include "../../Bytecode/CompilerBytecode.h"
+#include "../../Expressions/Expressions.h"
+#include "../../Compiler/CompilerFunctions.h"
+#include "../Function/FunctionDefinition.h"
+#include "../../Compiler/ClassCompiler/ClassCompilerFunctions.h"
 
 void ClassStatement(Compiler* compiler, Services* services, Bytecode* bytecode) {
 	ConsumeToken(services, IDENTIFIER_TOKEN, ClassIdentifierError);
@@ -16,13 +20,18 @@ void ClassStatement(Compiler* compiler, Services* services, Bytecode* bytecode) 
         address = StoreGlobalInBytecodeConstantTable(bytecode, services, &services->parser->previous);
     }
 
-    WriteBytes(bytecode, services, CLASS_OP, address);
-    ConsumeToken(services, LEFT_PAREN_TOKEN, LeftParenError);
-    ConsumeToken(services, RIGHT_PAREN_TOKEN, RightParenError);
+    ClassCompiler newCompiler;
+    InitClassCompiler(compiler, &newCompiler, services);
     ConsumeToken(services, COLON_TOKEN, ColonError);
-    ConsumeToken(services, NEWLINE_TOKEN, NewlineError);
-    ConsumeToken(services, INDENT_TOKEN, IndentError);
-    ConsumeToken(services, PASS_TOKEN, "");
-    ConsumeToken(services, NEWLINE_TOKEN, NewlineError);
-    ConsumeToken(services, DEDENT_TOKEN, "");
+    Suite(&newCompiler, services, &newCompiler.compiler.function->bytecode);
+    Class* klass = EndClassCompiler(&newCompiler, services);
+    WriteBytes(bytecode, services, CONSTANT_OP, StoreInBytecodeConstantsTable(bytecode, services, OBJ_VAL(klass)));
+    
+    if (compiler->enclosing != NULL) {
+        WriteBytes(bytecode, services, SET_LOCAL_OP, address);
+    }
+    else {
+        WriteBytes(bytecode, services, SET_GLOBAL_OP, address);
+    }
+
 }

@@ -4,6 +4,7 @@
 #include "../../Headers/Common.h"
 
 typedef enum {
+    BOUND_METHOD,
     CLASS_INSTANCE,
     CLASS,  
     CLOSURE,

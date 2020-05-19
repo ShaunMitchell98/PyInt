@@ -61,6 +61,26 @@ int WriteInstructionWithJump(const char* instructionName, char* buffer, int buff
     return offset + 3;
 }
 
+int WriteInvokeInstruction(IOSettings* settings, const char* instructionName, char* buffer, int bufferSize, Bytecode* bytecode, int offset) {
+    uint8_t constant = bytecode->code[offset + 1];
+    uint8_t argCount = bytecode->code[offset + 2];
+    strcat_s(buffer, bufferSize, instructionName);
+    strcat_s(buffer, bufferSize, " (");
+
+    char text[10] = "\0";
+    _itoa_s(argCount, text, 10, 10);
+    strcat_s(buffer, bufferSize, text);
+    strcat_s(buffer, bufferSize, " args) ");
+
+    _itoa_s(constant, text, 10, 10);
+    strcat_s(buffer, bufferSize, text);
+    strcat_s(buffer, bufferSize, " ");
+
+    WriteValue(settings, bytecode->constants.values[constant], OPERAND_VALUE, buffer, bufferSize);
+    strcat_s(buffer, bufferSize, "\n");
+    return offset + 3;
+}
+
 void DisassembleStack(IOSettings* settings, Value* stack, Value* stackTop, char* buffer, int bufferSize) {
     for (Value* slot = stack; slot < stackTop; slot++) {
         strcat_s(buffer, bufferSize, "[");

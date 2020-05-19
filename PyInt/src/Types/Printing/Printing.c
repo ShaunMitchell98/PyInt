@@ -9,9 +9,13 @@
 #include "../Closure/Closure.h"
 #include "../Class/Class.h"
 #include "../ClassInstance/ClassInstance.h"
+#include "../BoundMethod/BoundMethod.h"
 
 void PrintObject(IOSettings* settings, Value value, PrintType printType, char* buffer, int bufferSize) {
     switch (OBJ_TYPE(value)) {
+    case BOUND_METHOD: 
+        PrintFunction(AS_BOUND_METHOD(value)->method->function, buffer, bufferSize, printType);
+        break;
     case CLOSURE:
         PrintFunction(AS_CLOSURE(value)->function, buffer, bufferSize, printType);
         break;

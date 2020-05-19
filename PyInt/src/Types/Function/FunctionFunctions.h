@@ -5,7 +5,7 @@
 #include "../../Headers/PrintType.h"
 #include "../../Services/GarbageCollection/GarbageCollector/GarbageCollector.h"
 
-Function* NewFunction(GarbageCollector* garbageCollector);
+Function* NewFunction(GarbageCollector* garbageCollector, FunctionType type);
 void PrintFunction(Function* function, char* buffer, int bufferSize, PrintType printType);
 
 #endif

@@ -34,6 +34,7 @@ typedef struct {
 	size_t bytesAllocated;
 	size_t thresholdForCollection;
 	ValueArray unallocatedTemporaries;
+	String* initString;
 } GarbageCollector;
 
 void InitGarbageCollector(GarbageCollector* garbageCollector, IOSettings* settings);
