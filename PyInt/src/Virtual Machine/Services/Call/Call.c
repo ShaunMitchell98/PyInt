@@ -6,6 +6,7 @@
 #include "../../../Types/Class/Class.h"
 #include "../../../Types/ClassInstance/ClassInstanceFunctions.h"
 #include "../../../Services/Table/TableFunctions.h"
+#include "../RunClosure/RunClosure.h"
 #
 
 bool Call(VM* vm, Closure* closure, int argCount) {
@@ -20,12 +21,7 @@ bool Call(VM* vm, Closure* closure, int argCount) {
         return false;
     }
 
-    CallFrame* frame = &vm->frames[vm->frameCount++];
-    frame->closure = closure;
-    frame->ip = closure->function->bytecode.code;
-
-    frame->locals = vm->stackTop - argCount - 1;
-    return true;
+    return RunClosure(vm, closure, argCount);
 }
 
 bool CallValue(VM* vm, Value callee, int argCount) {
@@ -40,14 +36,15 @@ bool CallValue(VM* vm, Value callee, int argCount) {
             Class* klass = AS_CLASS(callee);
             vm->stackTop[-argCount - 1] = OBJ_VAL(NewClassInstance(vm->garbageCollector, klass));
             Value initialiser;
+            RunClosure(vm, klass->init, 0);
             if (GetTableEntry(&klass->methods, vm->garbageCollector->initString, &initialiser)) {
                 return Call(vm, AS_CLOSURE(initialiser), argCount);
             }
             else if (argCount != 0) {
                 RuntimeError(vm, "Expected 0 arguements but got %d.", argCount);
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
         case CLOSURE:
             return Call(vm, AS_CLOSURE(callee), argCount);
@@ -56,7 +53,7 @@ bool CallValue(VM* vm, Value callee, int argCount) {
             Value result = native(&vm->settings.output, argCount, vm->stackTop - argCount);
             vm->stackTop -= argCount + 1;
             Push(vm, result);
-            return true;
+            return false;
         }
         default:
             //Non-callable object type;

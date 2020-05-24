@@ -117,7 +117,7 @@ bool Run(VM* vm) {
         }
         case CALL_OP: {
             int argCount = ReadByte(frame);
-            if (!CallValue(vm, Peek(vm, argCount), argCount)) {
+            if (CallValue(vm, Peek(vm, argCount), argCount)) {
                 return INTERPRET_RUNTIME_ERROR;
             }
             frame = &vm->frames[vm->frameCount - 1];
@@ -186,9 +186,8 @@ bool Run(VM* vm) {
             String* propertyName = ReadString(frame);
             SetTableEntry(vm->garbageCollector, &instance->fields, propertyName, Peek(vm, 0));
 
-            Value value = Pop(vm);
             Pop(vm);
-            Push(vm, value);
+            Pop(vm);
             break;
         }
         case GET_PROPERTY_OP: {
@@ -215,7 +214,7 @@ bool Run(VM* vm) {
         case INVOKE_OP: {
             String* methodName = ReadString(frame);
             int argCount = ReadByte(vm);
-            if (!Invoke(vm, methodName, argCount)) {
+            if (Invoke(vm, methodName, argCount)) {
                 return false;
             }
             frame = &vm->frames[vm->frameCount - 1];
@@ -269,7 +268,7 @@ bool Run(VM* vm) {
             CloseUpvalues(vm, vm->stackTop - 1);
             Pop(vm);
             break;
-        }
+        } 
         case RETURN_OP: {
             Value result = Pop(vm);
 
@@ -285,7 +284,7 @@ bool Run(VM* vm) {
             Push(vm, result);
 
             frame = &vm->frames[vm->frameCount - 1];
-            break;
+            return false;
         }
         case NONE_OP:
             break;

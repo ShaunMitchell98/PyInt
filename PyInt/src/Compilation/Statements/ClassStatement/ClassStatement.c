@@ -23,7 +23,10 @@ void ClassStatement(Compiler* compiler, Services* services, Bytecode* bytecode) 
     ClassCompiler newCompiler;
     InitClassCompiler(compiler, &newCompiler, services);
     ConsumeToken(services, COLON_TOKEN, ColonError);
+    WriteBytes(&newCompiler.compiler.function->bytecode, services, SET_LOCAL_OP, 0);
+    newCompiler.compiler.localCount++;
     Suite(&newCompiler, services, &newCompiler.compiler.function->bytecode);
+    WriteBytes(&newCompiler.compiler.function->bytecode, services, GET_LOCAL_OP, 0);
     Class* klass = EndClassCompiler(&newCompiler, services);
     WriteBytes(bytecode, services, CONSTANT_OP, StoreInBytecodeConstantsTable(bytecode, services, OBJ_VAL(klass)));
     

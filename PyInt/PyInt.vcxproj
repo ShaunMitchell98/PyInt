@@ -58,6 +58,7 @@
     <ClCompile Include="src\Virtual Machine\Run\Run.c" />
     <ClCompile Include="src\Virtual Machine\Services\Call\Call.c" />
     <ClCompile Include="src\Virtual Machine\Services\Errors\RuntimeError.c" />
+    <ClCompile Include="src\Virtual Machine\Services\RunClosure\RunClosure.c" />
     <ClCompile Include="src\Virtual Machine\Services\Methods\Methods.c" />
     <ClCompile Include="src\Virtual Machine\Services\Stack\Stack.c" />
     <ClCompile Include="src\Virtual Machine\Services\Upvalues\Upvalues.c" />
@@ -147,6 +148,7 @@
     <ClInclude Include="src\Virtual Machine\Run\Run.h" />
     <ClInclude Include="src\Virtual Machine\Services\Call\Call.h" />
     <ClInclude Include="src\Virtual Machine\Services\Errors\RuntimeError.h" />
+    <ClInclude Include="src\Virtual Machine\Services\RunClosure\RunClosure.h" />
     <ClInclude Include="src\Virtual Machine\Services\Methods\Methods.h" />
     <ClInclude Include="src\Virtual Machine\Services\Stack\Stack.h" />
     <ClInclude Include="src\Virtual Machine\Services\Upvalues\Upvalues.h" />

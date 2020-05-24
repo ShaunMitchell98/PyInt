@@ -2,6 +2,8 @@
 #include "../CompilerFunctions.h"
 #include "../../../Services/Table/TableFunctions.h"
 #include "../../../Types/Class/ClassFunctions.h"
+#include "../../../Types/Closure/ClosureFunctions.h"
+#include "../../Bytecode/CompilerBytecode.h"
 
 void InitClassCompiler(Compiler* currentCompiler, ClassCompiler* classCompiler, Services* services) {
     InitFunctionCompiler(currentCompiler, (Compiler*)classCompiler, services);
@@ -13,6 +15,10 @@ void InitClassCompiler(Compiler* currentCompiler, ClassCompiler* classCompiler, 
 }
 
 Class* EndClassCompiler(ClassCompiler* currentCompiler, Services* services) {
-    EndCompiler((Compiler*)currentCompiler, services);
+    WriteByte(&currentCompiler->compiler.function->bytecode, services, RETURN_OP);
+    currentCompiler->compiler.function->hasReturnStatement = true;
+    Function* function = EndCompiler((Compiler*)currentCompiler, services);
+    Closure* closure = NewClosure(services->garbageCollector, function);
+    currentCompiler->klass->init = closure;
     return currentCompiler->klass;
 }

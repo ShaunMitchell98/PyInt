@@ -35,5 +35,11 @@ namespace PyIntFunctionalTests
 			Assert::AreEqual("13", output);
 			free(output);
 		}
+
+		TEST_METHOD(CanAccessPropertyFromInstance) {
+			char* output = RunInterpreter("class MyClass:\n\tproperty = 6\n\tproperty2 = 5\ninstance = MyClass()\nprint(instance.property + instance.property2)");
+			Assert::AreEqual("11", output);
+			free(output);
+		}
 	};
 }

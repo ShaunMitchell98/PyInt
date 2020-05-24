@@ -71,6 +71,11 @@ static void BlackenObject(GarbageCollector* garbageCollector, Object* object) {
             Class* klass = (Class*)object;
             MarkObject(garbageCollector, (Object*)klass->name);
             MarkTable(garbageCollector, &klass->methods);
+            Closure* closure = klass->init;
+            MarkObject(garbageCollector, (Object*)closure->function);
+            for (int i = 0; i < closure->upvalueCount; i++) {
+                MarkObject(garbageCollector, (Object*)closure->upvalues[i]);
+            }
             break;
         }
         case CLOSURE: {

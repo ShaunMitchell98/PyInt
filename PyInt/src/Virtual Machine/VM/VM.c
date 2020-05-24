@@ -7,7 +7,6 @@
 #include "../Services/Stack/Stack.h"
 #include "../NativeFunctions/NativeFunctions.h"
 #include "../Services/Call/Call.h"
-#include "../Run/Run.h"
 #include "../../Services/GarbageCollection/GarbageCollection.h"
 #include "../../Services/Table/TableFunctions.h"
 #include "../../Types/Closure/ClosureFunctions.h"
@@ -64,9 +63,8 @@ InterpretResult Interpret(const char* sourceCode, Settings* settings) {
     Closure* closure = NewClosure(vm.garbageCollector, function);
     Pop(&vm);
     Push(&vm, OBJ_VAL(closure));
-    CallValue(&vm, OBJ_VAL(closure), 0);
+    bool RuntimeError = CallValue(&vm, OBJ_VAL(closure), 0);
     
-    bool RuntimeError = Run(&vm);
     FreeVM(&vm);
     if (RuntimeError) {
         return INTERPRET_RUNTIME_ERROR;

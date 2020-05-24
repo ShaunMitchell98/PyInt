@@ -4,7 +4,7 @@
 #include "Scanner.h"
 #include "../../Headers/Token.h"
 
-void InitScanner(IndentManager* scanner, const char* sourceCode);
-Token GetToken(IndentManager* scanner);
+void InitScanner(Scanner* scanner, const char* sourceCode);
+Token GetToken(Scanner* scanner);
 
 #endif

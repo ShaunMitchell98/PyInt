@@ -61,6 +61,7 @@
     <ClCompile Include="src\Services\Scanner\ScannerFunctions.c" />
     <ClCompile Include="src\Services\Scanner\ScannerError\ScannerError.c" />
     <ClCompile Include="src\Services\Scanner\IndentManager\IndentManagerFunctions.c" />
+    <ClCompile Include="src\Virtual Machine\Services\RunClosure\RunClosure.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Services\Bytecode\Bytecode.h" />
@@ -143,6 +144,7 @@
     <ClInclude Include="src\Services\Scanner\ScannerError\ScannerError.h" />
     <ClInclude Include="src\Services\Scanner\IndentManager\IndentManager.h" />
     <ClInclude Include="src\Services\Scanner\IndentManager\IndentManagerFunctions.h" />
+    <ClInclude Include="src\Virtual Machine\Services\RunClosure\RunClosure.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

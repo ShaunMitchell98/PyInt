@@ -80,6 +80,24 @@ static void UnaryToken(Compiler* compiler, Services* services, Bytecode* bytecod
     }
 }
 
+static uint8_t ArguementList(Compiler* compiler, Services* services, Bytecode* bytecode) {
+    uint8_t argCount = 0;
+    if (!CheckToken(services, RIGHT_PAREN_TOKEN)) {
+        do {
+            ParsePrecedence(compiler, services, bytecode, PREC_ASSIGNMENT);
+
+            if (argCount == 255) {
+                Error("Cannot have more than 255 arguements");
+            }
+
+            argCount++;
+        } while (MatchToken(services, services->parser->current, COMMA_TOKEN));
+    }
+
+    ConsumeToken(services, RIGHT_PAREN_TOKEN, "Expect ')' after arguements");
+    return argCount;
+}
+
 static int NewLocalIdentifier(Compiler* compiler, Services* services, Bytecode* bytecode, Token* identifier) {
     if (MatchToken(services, services->parser->current, EQUAL_TOKEN)) {
         ParsePrecedence(compiler, services, bytecode, PREC_ASSIGNMENT);
@@ -148,8 +166,24 @@ static void GlobalIdentifier(Compiler* compiler, Services* services, Bytecode* b
 }
 
 static void IdentifierToken(Compiler* compiler, Services* services, Bytecode* bytecode, bool canAssign) {
+    if (compiler->type == CLASS_COMPILER) {
+        uint8_t address = StoreInBytecodeConstantsTable(bytecode, services, OBJ_VAL(CopyStringToTable(services->garbageCollector, services->stringsTable, services->parser->previous.start, services->parser->previous.length)));
 
-    if (compiler->enclosing != NULL) {
+        if (canAssign && MatchToken(services, services->parser->current, EQUAL_TOKEN)) {
+            WriteBytes(bytecode, services, GET_LOCAL_OP, 0);
+            ParsePrecedence(compiler, services, bytecode, PREC_ASSIGNMENT);
+            WriteBytes(bytecode, services, SET_PROPERTY_OP, address);
+        }
+        else if (MatchToken(services, services->parser->current, LEFT_PAREN_TOKEN)) {
+            uint8_t argCount = ArguementList(compiler, services, bytecode);
+            WriteBytes(bytecode, services, INVOKE_OP, address);
+            WriteByte(bytecode, services, argCount);
+        }
+        else {
+            WriteBytes(bytecode, services, GET_PROPERTY_OP, address);
+        }
+    }
+    else if (compiler->enclosing != NULL) {
         int localStackOffset = LocalIdentifier(compiler, services, bytecode);
         if (localStackOffset == -1) {
             int upvalueIndex = UpvalueIdentifier(compiler, services, bytecode);
@@ -162,24 +196,6 @@ static void IdentifierToken(Compiler* compiler, Services* services, Bytecode* by
     else {
         GlobalIdentifier(compiler, services, bytecode, canAssign);
     }
-}
-
-static uint8_t ArguementList(Compiler* compiler, Services* services, Bytecode* bytecode) {
-    uint8_t argCount = 0;
-    if (!CheckToken(services, RIGHT_PAREN_TOKEN)) {
-        do {
-            ParsePrecedence(compiler, services, bytecode, PREC_ASSIGNMENT);
-
-            if (argCount == 255) {
-                Error("Cannot have more than 255 arguements");
-            }
-
-            argCount++;
-        } while (MatchToken(services, services->parser->current, COMMA_TOKEN));
-    }
-
-    ConsumeToken(services, RIGHT_PAREN_TOKEN, "Expect ')' after arguements");
-    return argCount;
 }
 
 static void CallToken(Compiler* compiler, Services* services, Bytecode* bytecode, bool canAssign) {

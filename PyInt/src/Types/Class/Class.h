@@ -5,10 +5,12 @@
 #include "../String/String.h"
 #include "../Value/Value.h"
 #include "../../Services/Table/Table.h"
+#include "../Closure/Closure.h"
 
 typedef struct {
 	Object obj;
 	String* name;
+	Closure* init;
 	Table methods;
 } Class;
 
