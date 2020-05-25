@@ -47,5 +47,11 @@ namespace PyIntFunctionalTests
 			Assert::AreEqual("17", output);
 			free(output);
 		}
+
+		TEST_METHOD(CanAccessPropertyFromMethod) {
+			char* output = RunInterpreter("class MyClass:\n\tdef __init__(self, property):\n\t\tself.property = property\n\tdef addConstant(self, constant):\n\t\treturn self.property + constant\ninstance = MyClass(7)\nprint(instance.addConstant(9))");
+			Assert::AreEqual("16", output);
+			free(output);
+		}
 	};
 }
