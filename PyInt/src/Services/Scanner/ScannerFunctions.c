@@ -225,7 +225,7 @@ Token GetToken(Scanner* scanner) {
     scanner->current++;
     
     if (IsDigit(scanner, currentChar)) return Number(scanner);
-    if (IsAlpha(currentChar)) return Identifier(scanner);
+    if (IsAlpha(currentChar) || currentChar == '_') return Identifier(scanner);
     
     switch(currentChar) {
         case '.':

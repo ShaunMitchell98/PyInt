@@ -41,5 +41,11 @@ namespace PyIntFunctionalTests
 			Assert::AreEqual("11", output);
 			free(output);
 		}
+
+		TEST_METHOD(CanCallInitialiser) {
+			char* output = RunInterpreter("class MyClass:\n\tdef __init__(self, property1, property2):\n\t\tself.property1 = property1\n\t\tself.property2 = property2\ninstance = MyClass(8,9)\nprint(instance.property1 + instance.property2)");
+			Assert::AreEqual("17", output);
+			free(output);
+		}
 	};
 }

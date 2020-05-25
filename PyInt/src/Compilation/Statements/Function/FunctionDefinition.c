@@ -32,7 +32,6 @@ static void InitialiseSelf(Compiler* compiler, Services* services) {
 
     compiler->locals->name.start = heapChars;
     compiler->locals->name.length = services->parser->current.length;
-    compiler->function->arity--;
 }
 
 static void CompileFunction(Compiler* compiler, Services* services) {
@@ -60,6 +59,10 @@ static void CompileFunction(Compiler* compiler, Services* services) {
     }
     ConsumeToken(services, RIGHT_PAREN_TOKEN, RightParenError);
 
+    if (compiler->type == CLASS_COMPILER) {
+        newCompiler.function->arity--;
+    }
+
     ConsumeToken(services, COLON_TOKEN, ColonError);
     Suite(&newCompiler, services, &newCompiler.function->bytecode);
 
@@ -69,6 +72,7 @@ static void CompileFunction(Compiler* compiler, Services* services) {
         ClassCompiler* classCompiler = (ClassCompiler*)compiler;
         Closure* closure = NewClosure(services->garbageCollector, function);
         SetTableEntry(services->garbageCollector, &classCompiler->klass->methods, function->name, OBJ_VAL(closure));
+        FREE(services->garbageCollector, char*, newCompiler.locals[0].name.start);
     }
 
     WriteBytes(bytecode, services, CLOSURE_OP, StoreInBytecodeConstantsTable(bytecode, services, OBJ_VAL(function)));
