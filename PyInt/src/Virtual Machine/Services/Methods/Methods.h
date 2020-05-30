@@ -5,6 +5,7 @@
 #include "../../VM/VM.h"
 #include "../../../Types/Class/Class.h"
 
+bool InvokeFromClass(VM* vm, Class* klass, String* name, int argCount);
 bool GetMethod(VM* vm, Class* klass, String* name);
 bool Invoke(VM* vm, String* name, int argCount);
 

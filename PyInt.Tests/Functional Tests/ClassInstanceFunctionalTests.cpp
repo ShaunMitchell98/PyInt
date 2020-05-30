@@ -53,5 +53,17 @@ namespace PyIntFunctionalTests
 			Assert::AreEqual("16", output);
 			free(output);
 		}
+
+		TEST_METHOD(ClassCanCallSuperClassMethods) {
+			char* output = RunInterpreter("class superclass:\n\tdef myFunc(self):\n\t\treturn 6 + 7\nclass subclass(superclass):\n\tdef mySubFunc(self):\n\t\treturn superclass.myFunc()\ninstance = subclass()\nprint(instance.mySubFunc())");
+			Assert::AreEqual("13", output);
+			free(output);
+		}
+
+		TEST_METHOD(ClassCanCallSuperClassMethodAndOwnMethod) {
+			char* output = RunInterpreter("class superclass:\n\tdef superFunc(self):\n\t\treturn 6\nclass subclass(superclass):\n\tdef subFunc(self):\n\t\treturn 7\n\tdef myFunc(self):\n\t\treturn self.subFunc() + superclass.superFunc()\ninstance = subclass()\nprint(instance.myFunc())");
+			Assert::AreEqual("13", output);
+			free(output);
+		}
 	};
 }

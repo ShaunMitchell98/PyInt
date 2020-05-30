@@ -5,7 +5,7 @@
 #include "../../Bytecode/CompilerBytecode.h"
 #include "../../Errors/Errors.h"
 
-static bool IdentifiersEqual(Token* a, Token* b) {
+bool IdentifiersEqual(Token* a, Token* b) {
     if (a->length != b->length) return false;
     return memcmp(a->start, b->start, a->length) == 0;
 }

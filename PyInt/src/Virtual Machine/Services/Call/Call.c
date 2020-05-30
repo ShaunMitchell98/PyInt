@@ -34,7 +34,7 @@ bool CallValue(VM* vm, Value callee, int argCount) {
         }
         case CLASS: {
             Class* klass = AS_CLASS(callee);
-            vm->stackTop[-argCount - 1] = OBJ_VAL(NewClassInstance(vm->garbageCollector, klass));
+            vm->stackTop[-argCount-1] = OBJ_VAL(NewClassInstance(vm->garbageCollector, klass));
             Value initialiser;
             RunClosure(vm, klass->init, 0);
             if (GetTableEntry(&klass->methods, vm->garbageCollector->initString, &initialiser)) {

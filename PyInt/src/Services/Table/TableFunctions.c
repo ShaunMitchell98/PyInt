@@ -97,7 +97,7 @@ bool SetTableEntry(GarbageCollector* garbageCollector, Table* table, String* key
 
 void TableAddAll(GarbageCollector* garbageCollector, Table* from, Table* to) {
     for (int i = 0; i < from->capacity; i++) {
-        Entry* entry = &from->entries [i];
+        Entry* entry = &from->entries[i];
         if (entry != NULL) {
             SetTableEntry(garbageCollector, to, entry->key, entry->value);
         }

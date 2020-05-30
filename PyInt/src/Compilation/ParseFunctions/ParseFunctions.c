@@ -16,6 +16,8 @@
 #include "../Variables/Upvalue/UpvalueResolver.h"
 #include "../Services/Services.h"
 #include "../Compiler/Compiler.h"
+#include "../Compiler/ClassCompiler/ClassCompiler.h"
+#include "../../Types/String/String.h"
 
 static ParseRule* GetRule(TokenType type);
 
@@ -165,31 +167,93 @@ static void GlobalIdentifier(Compiler* compiler, Services* services, Bytecode* b
     }
 }
 
-static void IdentifierToken(Compiler* compiler, Services* services, Bytecode* bytecode, bool canAssign) {
-    if (compiler->type == CLASS_COMPILER) {
-        uint8_t address = StoreInBytecodeConstantsTable(bytecode, services, OBJ_VAL(CopyStringToTable(services->garbageCollector, services->stringsTable, services->parser->previous.start, services->parser->previous.length)));
-
-        if (canAssign && MatchToken(services, services->parser->current, EQUAL_TOKEN)) {
-            WriteBytes(bytecode, services, GET_LOCAL_OP, 0);
-            ParsePrecedence(compiler, services, bytecode, PREC_ASSIGNMENT);
-            WriteBytes(bytecode, services, SET_PROPERTY_OP, address);
-        }
-        else if (MatchToken(services, services->parser->current, LEFT_PAREN_TOKEN)) {
-            uint8_t argCount = ArguementList(compiler, services, bytecode);
-            WriteBytes(bytecode, services, INVOKE_OP, address);
-            WriteByte(bytecode, services, argCount);
-        }
-        else {
-            WriteBytes(bytecode, services, GET_PROPERTY_OP, address);
-        }
-    }
-    else if (compiler->enclosing != NULL) {
+static void SuperClassMethodIdentifier(Compiler* compiler, Services* services, Bytecode* bytecode, bool canAssign) {
+    if (compiler->enclosing != NULL) {
         int localStackOffset = LocalIdentifier(compiler, services, bytecode);
         if (localStackOffset == -1) {
             int upvalueIndex = UpvalueIdentifier(compiler, services, bytecode);
             if (upvalueIndex == -1) {
                 GlobalIdentifier(compiler, services, bytecode, canAssign);
+            }
+        }
+    }
+    else {
+        GlobalIdentifier(compiler, services, bytecode, canAssign);
+    }
+    ConsumeToken(services, DOT_TOKEN, "Expect '.' after super reference.");
+    ConsumeToken(services, IDENTIFIER_TOKEN, "Expect superclass method name.");
+    uint8_t address = StoreInBytecodeConstantsTable(bytecode, services, OBJ_VAL(CopyStringToTable(services->garbageCollector, services->stringsTable, services->parser->previous.start, services->parser->previous.length)));
+    if (MatchToken(services, services->parser->current, LEFT_PAREN_TOKEN)) {
+        uint8_t argCount = ArguementList(compiler, services, bytecode);
+        WriteBytes(bytecode, services, INVOKE_SUPER_OP, address);
+        WriteByte(bytecode, services, argCount);
+    }
+    else {
+        WriteBytes(bytecode, services, GET_SUPERCLASS_OP, address);
+    }
+    return;
+}
 
+static void SelfProperty(Compiler* compiler, Services* services, Bytecode* bytecode, bool canAssign) {
+    uint8_t address = StoreInBytecodeConstantsTable(bytecode, services, OBJ_VAL(CopyStringToTable(services->garbageCollector, services->stringsTable, services->parser->previous.start, services->parser->previous.length)));
+    if (canAssign && MatchToken(services, services->parser->current, EQUAL_TOKEN)) {
+        WriteBytes(bytecode, services, GET_LOCAL_OP, 0);
+        ParsePrecedence(compiler, services, bytecode, PREC_ASSIGNMENT);
+        WriteBytes(bytecode, services, SET_PROPERTY_OP, address);
+    }
+    else if (MatchToken(services, services->parser->current, LEFT_PAREN_TOKEN)) {
+        uint8_t argCount = ArguementList(compiler, services, bytecode);
+        WriteBytes(bytecode, services, INVOKE_OP, address);
+        WriteByte(bytecode, services, argCount);
+    }
+    else {
+        WriteBytes(bytecode, services, GET_LOCAL_OP, 0);
+        WriteBytes(bytecode, services, GET_PROPERTY_OP, address);
+    }
+}
+
+static bool ClassPropertyIdentifier(Compiler* compiler, Services* services, Bytecode* bytecode, bool canAssign) {
+    Compiler* tempCompiler = compiler;
+    while (tempCompiler->type != CLASS_COMPILER && tempCompiler->enclosing != SCRIPT_COMPILER) {
+        tempCompiler = tempCompiler->enclosing;
+    }
+
+    if (tempCompiler->type == CLASS_COMPILER) {
+        String* identifier = CopyStringToTable(services->garbageCollector, services->stringsTable, services->parser->previous.start, services->parser->previous.length);
+        String* superclassName = ((ClassCompiler*)tempCompiler)->superclassName;
+
+        if (memcmp(services->parser->previous.start, compiler->locals[0].name.start, services->parser->previous.length) == 0) {
+            ConsumeToken(services, DOT_TOKEN, "Expect '.' after self reference.");
+            ConsumeToken(services, IDENTIFIER_TOKEN, "Expect property name.");
+            SelfProperty(compiler, services, bytecode, canAssign);
+            return true;
+        }
+
+        if (compiler == tempCompiler) {
+            SelfProperty(compiler, services, bytecode, canAssign);
+            return true;
+        }
+        
+        if (superclassName != NULL && memcmp(services->parser->previous.start, superclassName->chars, services->parser->previous.length) == 0) {
+            SuperClassMethodIdentifier(compiler, services, bytecode, canAssign);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static void IdentifierToken(Compiler* compiler, Services* services, Bytecode* bytecode, bool canAssign) {
+
+    if (compiler->enclosing != NULL) {
+        bool isProperty = ClassPropertyIdentifier(compiler, services, bytecode, canAssign);
+        if (!isProperty) {
+            int localStackOffset = LocalIdentifier(compiler, services, bytecode);
+            if (localStackOffset == -1) {
+                int upvalueIndex = UpvalueIdentifier(compiler, services, bytecode);
+                if (upvalueIndex == -1) {
+                    GlobalIdentifier(compiler, services, bytecode, canAssign);
+                }
             }
         }
     }

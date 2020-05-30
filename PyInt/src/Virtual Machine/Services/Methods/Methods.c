@@ -8,11 +8,11 @@
 #include "../Call/Call.h"
 #include "../Errors/RuntimeError.h"
 
-static bool InvokeFromClass(VM* vm, Class* klass, String* name, int argCount) {
+bool InvokeFromClass(VM* vm, Class* klass, String* name, int argCount) {
 	Value method;
 	if (!GetTableEntry(&klass->methods, name, &method)) {
 		RuntimeError(vm, "Undefined property '%s'", name->chars);
-		return false;
+		return true;
 	}
 
 	return Call(vm, AS_CLOSURE(method), argCount);

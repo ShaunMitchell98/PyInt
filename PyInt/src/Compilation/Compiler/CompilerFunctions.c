@@ -46,6 +46,7 @@ void InitFunctionCompiler(Compiler* currentCompiler, Compiler* compiler, Service
     compiler->locals->name.start = "";
     compiler->locals->name.length = 0;
     compiler->localCount++;
+    compiler->type = FUNCTION_COMPILER;
 
     services->garbageCollector->compiler = compiler;
 }

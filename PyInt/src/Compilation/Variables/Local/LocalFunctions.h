@@ -7,6 +7,7 @@
 #include "../../../Headers/Token.h"
 #include "../../Compiler/Compiler.h"
 
+bool IdentifiersEqual(Token* a, Token* b);
 int GetLocalStackOffset(Local* locals, int localCount, Token* token);
 int PushLocalToCompilerStack(Compiler* compiler, Token* token);
 int SetNewLocalVariable(Compiler* compiler, Bytecode* bytecode, Services* services, Token* identifier);

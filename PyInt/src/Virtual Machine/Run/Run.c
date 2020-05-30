@@ -129,6 +129,19 @@ bool Run(VM* vm) {
             Push(vm, OBJ_VAL(class));
             break;
         }
+        case INHERIT_OP: {
+            Value superclass = Peek(vm, 1);
+
+            if (!IS_CLASS(superclass)) {
+                RuntimeError(vm, "Superclass must be a class");
+                return false;
+            }
+
+            Class* subclass = AS_CLASS(Peek(vm, 0));
+            TableAddAll(vm->garbageCollector, &AS_CLASS(superclass)->methods, &subclass->methods);
+            Pop(vm);
+            break;
+        }
         case CLOSURE_OP: {
             Function* function = AS_FUNCTION(ReadConstant(frame));
             Closure* closure = NewClosure(vm->garbageCollector, function);
@@ -213,11 +226,29 @@ bool Run(VM* vm) {
         }
         case INVOKE_OP: {
             String* methodName = ReadString(frame);
-            int argCount = ReadByte(vm);
+            int argCount = ReadByte(frame);
             if (Invoke(vm, methodName, argCount)) {
                 return false;
             }
             frame = &vm->frames[vm->frameCount - 1];
+            break;
+        }
+        case INVOKE_SUPER_OP: {
+            String* methodName = ReadString(frame);
+            int argCount = ReadByte(frame);
+            Class* superclass = AS_CLASS(Peek(vm, 0));
+            if (InvokeFromClass(vm, superclass, methodName, argCount)) {
+                return false;
+            }
+            frame = &vm->frames[vm->frameCount - 1];
+            break;
+        }
+        case GET_SUPERCLASS_OP: {
+            String* name = ReadString(frame);
+            Class* superclass = AS_CLASS(Peek(vm, 0));
+            if (!GetMethod(vm, superclass, name)) {
+                return false;
+            }
             break;
         }
         case SET_GLOBAL_OP: {

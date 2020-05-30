@@ -77,7 +77,6 @@ int WriteInvokeInstruction(IOSettings* settings, const char* instructionName, ch
     strcat_s(buffer, bufferSize, " ");
 
     WriteValue(settings, bytecode->constants.values[constant], OPERAND_VALUE, buffer, bufferSize);
-    strcat_s(buffer, bufferSize, "\n");
     return offset + 3;
 }
 

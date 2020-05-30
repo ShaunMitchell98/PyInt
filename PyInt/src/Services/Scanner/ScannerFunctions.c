@@ -23,7 +23,7 @@ static Token MakeToken(Scanner* scanner, TokenType tokenType) {
 }
 
 static bool IsDigit(Scanner* scanner, char _char) {
-    return (_char >= '0' && _char <= '9') || (_char == '.' && scanner->current != scanner->start && IsDigit(scanner, scanner->current-1));
+    return (_char >= '0' && _char <= '9');
 }
 
 static bool IsAlpha (char _char) {
@@ -170,7 +170,7 @@ static Token Identifier(Scanner* scanner) {
 }
 
 static Token Number(Scanner* scanner) {
-    while (IsDigit(scanner, *scanner->current)) {
+    while (IsDigit(scanner, *scanner->current) || (*scanner->current == '.')) {
         scanner->current++;
     }
     return MakeToken(scanner, NUMBER_TOKEN);

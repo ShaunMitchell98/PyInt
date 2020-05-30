@@ -83,11 +83,18 @@ static int WriteExecutionInstruction(IOSettings* settings, Value* stack, Bytecod
         break;
     case CALL_OP:
         constant = bytecode->code[offset + 1];
-        offset = WriteInstructionWithConstant(settings, "CALL_OP", buffer, bufferSize, constant, bytecode->constants.values[constant], offset);
+        offset = WriteInstructionWithConstant(settings, "CALL_OP", buffer, bufferSize, constant, *(stack+constant), offset);
         break;
     case CLASS_OP:
         constant = bytecode->code[offset + 1];
         offset = WriteInstructionWithConstant(settings, "CLASS_OP", buffer, bufferSize, constant, bytecode->constants.values[constant], offset);
+        break;
+    case INHERIT_OP:
+        offset = WriteInstructionWithoutConstant("INHERIT_OP", buffer, bufferSize, offset);
+        break;
+    case GET_SUPERCLASS_OP:
+        constant = bytecode->code[offset + 1];
+        offset = WriteInstructionWithConstant(settings, "GET_SUPERCLASS_OP", buffer, bufferSize, constant, bytecode->constants.values[constant], offset);
         break;
     case CLOSURE_OP: {
         offset = WriteClosureOperation(settings, buffer, bufferSize, bytecode, offset);
@@ -107,6 +114,9 @@ static int WriteExecutionInstruction(IOSettings* settings, Value* stack, Bytecod
         break;
     case INVOKE_OP: 
         offset = WriteInvokeInstruction(settings, "INVOKE_OP", buffer, bufferSize, bytecode, offset);
+        break;
+    case INVOKE_SUPER_OP:
+        offset = WriteInvokeInstruction(settings, "INVOKE_SUPER_OP", buffer, bufferSize, bytecode, offset);
         break;
     case SET_GLOBAL_OP:
         constant = bytecode->code[offset + 1];
