@@ -53,7 +53,7 @@ namespace PyIntFunctionalTests
 		}
 
 		TEST_METHOD(IfStatementWithMultipleElifStatements_GivenMultipleTrueElifs_RunsFirstTrueElifBody) {
-			char* output = RunInterpreter("if (5 == 4):\n\t print(4)\nelif (4 == 3):\n\t print(7)\nelif (5 > 2):\n\t print(3)\nelif (3 < 6):\n\t print(9)");
+			char* output = RunInterpreterFromFile("IfStatementWithMultipleElifStatements_GivenMultipleTrueElifs_RunsFirstTrueElifBody");
 			Assert::AreEqual("3", output);
 			free(output);
 		}

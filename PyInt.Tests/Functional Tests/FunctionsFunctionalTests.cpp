@@ -47,15 +47,15 @@ namespace PyIntFunctionalTests
 		}
 
 		TEST_METHOD(Function_WithReassignedLocalVariables_UsesLatestValues) {
-			char* input = "def add():\n\ta=5\n\tb=7\n\ta=3\n\tb=98\n\treturn a + b\nprint(add())";
-			char* output = RunInterpreter(input);
+			char* input = "Function_WithReassignedLocalVariables_UsesLatestValues";
+			char* output = RunInterpreterFromFile(input);
 			Assert::AreEqual("101", output);
 			free(output);
 		}
 
 		TEST_METHOD(Function_ReturnedFromOuterVariable_CanBeCalledWithClosedOverVariables) {
-			char* input = "def outerFunction():\n\tmyLocal=4\n\tdef innerFunction():\n\t\treturn myLocal+3\n\treturn innerFunction\nmyFunction = outerFunction()\nprint(myFunction())";
-			char* output = RunInterpreter(input);
+			char* input = "Function_ReturnedFromOuterVariable_CanBeCalledWithClosedOverVariables";
+			char* output = RunInterpreterFromFile(input);
 			Assert::AreEqual("7", output);
 			free(output);
 		}

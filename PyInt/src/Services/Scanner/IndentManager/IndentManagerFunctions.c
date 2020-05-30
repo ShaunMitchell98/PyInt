@@ -41,9 +41,13 @@ IndentType GetIndentType(Scanner* scanner) {
             break;
         case '\r':
             spaceCount = 0;
+            scanner->current++;
             break;
         case ' ':
             spaceCount++;
+            scanner->current++;
+            break;
+        case '\n':
             scanner->current++;
             break;
         default:

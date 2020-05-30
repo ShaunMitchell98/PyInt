@@ -29,3 +29,14 @@ char* RunInterpreter(char* code) {
 	Interpret(code, &settings);
 	return settings.output.string;
 }
+
+char* RunInterpreterFromFile(char* path) {
+	char* fullPath = (char*)malloc(150);
+	fullPath[0] = '\0';
+	strcat_s(fullPath, 150, "C:\\Users\\User\\source\\repos\\PyInt\\PyInt.Tests\\Test Programs\\");
+	strcat_s(fullPath, 150, path);
+	strcat_s(fullPath, 150, ".txt");
+	char* code = ReadFile(fullPath);
+	free(fullPath);
+	return RunInterpreter(code);
+}

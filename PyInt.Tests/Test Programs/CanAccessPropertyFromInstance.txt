@@ -1,0 +1,6 @@
+class MyClass:
+	property1 = 6
+	property2 = 5
+
+instance = MyClass()
+print(instance.property1 + instance.property2)

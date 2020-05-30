@@ -1,0 +1,6 @@
+class MyClass:
+	pass
+
+instance = MyClass()
+instance.value = 5
+print(instance.value)

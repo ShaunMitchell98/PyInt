@@ -1,0 +1,13 @@
+class superclass:
+	def superFunc(self):
+		return 6
+
+class subclass(superclass):
+	def subFunc(self):
+		return 7
+	
+	def myFunc(self):
+		return self.subFunc() + superclass.superFunc()
+		
+instance = subclass()
+print(instance.myFunc())

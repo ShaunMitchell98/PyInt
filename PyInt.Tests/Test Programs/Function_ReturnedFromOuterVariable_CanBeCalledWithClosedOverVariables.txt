@@ -1,0 +1,10 @@
+def outerFunction():
+	myLocal=4
+	
+	def innerFunction():
+		return myLocal+3
+	
+	return innerFunction
+	
+myFunction = outerFunction()
+print(myFunction())

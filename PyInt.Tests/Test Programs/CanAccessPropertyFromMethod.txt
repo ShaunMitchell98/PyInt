@@ -1,0 +1,9 @@
+class MyClass:
+	def __init__(self, property):
+		self.property = property
+
+	def addConstant(self, constant):
+		return self.property + constant
+			
+instance = MyClass(7)
+print(instance.addConstant(9))
