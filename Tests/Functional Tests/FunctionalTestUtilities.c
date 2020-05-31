@@ -20,6 +20,7 @@ static Settings InitialiseTestSettings() {
 	settings.garbage.filePath = "C:\\Users\\User\\Documents\\GarbageCollection.txt";
 	settings.garbage.location = LOCATION_FILE;
 	settings.output.string = (char*)malloc(100);
+	settings.runMode = RUN_FILE;
 	settings.output.string[0] = '\0';
 	return settings;
 }
