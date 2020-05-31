@@ -146,7 +146,4 @@
     <ClInclude Include="src\Services\Scanner\IndentManager\IndentManagerFunctions.h" />
     <ClInclude Include="src\Virtual Machine\Services\RunClosure\RunClosure.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="README.md" />
-  </ItemGroup>
 </Project>

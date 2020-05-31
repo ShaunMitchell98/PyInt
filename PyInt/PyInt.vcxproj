@@ -164,9 +164,6 @@
     <ClInclude Include="src\Virtual Machine\Printing\VmPrinting.h" />
     <ClInclude Include="src\Compilation\Statements\IfStatement\IfStatement.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="README.md" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{7532B857-A40E-4879-BC0F-D4B941E10030}</ProjectGuid>
