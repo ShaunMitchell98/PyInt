@@ -40,6 +40,15 @@
     <ClCompile Include="Functional Tests\ClassInstanceFunctionalTests.cpp">
       <Filter>UnitTests</Filter>
     </ClCompile>
+    <ClCompile Include="Unit Tests\BytecodeUnitTests.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit Tests\InterpreterSettingsUnitTests.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit Tests\ScannerUnitTests.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Functional Tests\FunctionalTestUtilities.h" />
