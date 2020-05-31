@@ -177,9 +177,6 @@
     <ClCompile Include="Functional Tests\LogicFunctionalTests.cpp" />
     <ClCompile Include="Functional Tests\NativeFunctionsFunctionalTests.cpp" />
     <ClCompile Include="Functional Tests\WhileLoopFunctionalTests.cpp" />
-    <ClCompile Include="Unit Tests\BytecodeUnitTests.cpp" />
-    <ClCompile Include="Unit Tests\InterpreterSettingsUnitTests.cpp" />
-    <ClCompile Include="Unit Tests\ScannerUnitTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Functional Tests\FunctionalTestUtilities.h" />

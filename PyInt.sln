@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PyInt.Source", "PyInt\PyInt.vcxproj", "{7532B857-A40E-4879-BC0F-D4B941E10030}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PyInt", "PyInt\PyInt.vcxproj", "{7532B857-A40E-4879-BC0F-D4B941E10030}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PyInt.Tests", "PyInt.Tests\PyInt.Tests.vcxproj", "{CA28CCAE-177F-460F-BD45-00984E98DCD5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tests", "Tests\Tests.vcxproj", "{CA28CCAE-177F-460F-BD45-00984E98DCD5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

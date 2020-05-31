@@ -33,7 +33,7 @@ char* RunInterpreter(char* code) {
 char* RunInterpreterFromFile(char* path) {
 	char* fullPath = (char*)malloc(150);
 	fullPath[0] = '\0';
-	strcat_s(fullPath, 150, "C:\\Users\\User\\source\\repos\\PyInt\\PyInt.Tests\\Test Programs\\");
+	strcat_s(fullPath, 150, "C:\\Users\\User\\source\\repos\\PyInt\\Tests\\Test Programs\\");
 	strcat_s(fullPath, 150, path);
 	strcat_s(fullPath, 150, ".txt");
 	char* code = ReadFile(fullPath);
