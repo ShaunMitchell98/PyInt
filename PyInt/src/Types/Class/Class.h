@@ -7,10 +7,13 @@
 #include "../../Services/Table/Table.h"
 #include "../Closure/Closure.h"
 
+#define INIT_ARRAY_SIZE 5
+
 typedef struct {
 	Object obj;
 	String* name;
-	Closure* init;
+	Closure* init[INIT_ARRAY_SIZE];
+	int initCount;
 	Table methods;
 } Class;
 

@@ -8,6 +8,9 @@ Class* NewClass(GarbageCollector* garbageCollector, String* name) {
 	Class* klass = (Class*)AllocateObject(garbageCollector, sizeof(Class), CLASS);
 	klass->name = name;
 	InitTable(&klass->methods);
-	klass->init = NULL;
+	for (int i = 0; i < INIT_ARRAY_SIZE; i++) {
+		klass->init[i] = NULL;
+	}
+	klass->initCount = 0;
 	return klass;
 }

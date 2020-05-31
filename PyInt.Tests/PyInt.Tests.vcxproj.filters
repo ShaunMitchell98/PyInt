@@ -57,5 +57,8 @@
     <Text Include="Test Programs\IfStatementWithMultipleElifStatements_GivenMultipleTrueElifs_RunsFirstTrueElifBody.txt" />
     <Text Include="Test Programs\Function_ReturnedFromOuterVariable_CanBeCalledWithClosedOverVariables.txt" />
     <Text Include="Test Programs\Function_WithReassignedLocalVariables_UsesLatestValues.txt" />
+    <Text Include="Test Programs\CanCallSuperMethodFromDerivedInstance.txt" />
+    <Text Include="Test Programs\ClassInstanceCanAccessSuperClassProperty.txt" />
+    <Text Include="Test Programs\ClassInstanceCanAccessSuperClassPropertySetInInitialiser.txt" />
   </ItemGroup>
 </Project>

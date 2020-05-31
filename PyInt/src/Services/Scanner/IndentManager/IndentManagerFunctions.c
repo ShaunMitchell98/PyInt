@@ -49,6 +49,7 @@ IndentType GetIndentType(Scanner* scanner) {
             break;
         case '\n':
             scanner->current++;
+            spaceCount = 0;
             break;
         default:
             completed = true;

@@ -186,10 +186,13 @@
     <Text Include="Test Programs\CanCallInitialiser.txt" />
     <Text Include="Test Programs\CanCallMethod.txt" />
     <Text Include="Test Programs\CanCallMethodBoundToProperty.txt" />
+    <Text Include="Test Programs\CanCallSuperMethodFromDerivedInstance.txt" />
     <Text Include="Test Programs\CanSetProperty.txt" />
     <Text Include="Test Programs\CanUpdateProperty.txt" />
     <Text Include="Test Programs\ClassCanCallSuperClassMethods.txt" />
     <Text Include="Test Programs\ClassCanCallSuperClassMethodAndOwnMethod.txt" />
+    <Text Include="Test Programs\ClassInstanceCanAccessSuperClassProperty.txt" />
+    <Text Include="Test Programs\ClassInstanceCanAccessSuperClassPropertySetInInitialiser.txt" />
     <Text Include="Test Programs\Function_ReturnedFromOuterVariable_CanBeCalledWithClosedOverVariables.txt" />
     <Text Include="Test Programs\Function_WithReassignedLocalVariables_UsesLatestValues.txt" />
     <Text Include="Test Programs\IfStatementWithMultipleElifStatements_GivenMultipleTrueElifs_RunsFirstTrueElifBody.txt" />

@@ -139,6 +139,10 @@ bool Run(VM* vm) {
 
             Class* subclass = AS_CLASS(Peek(vm, 0));
             TableAddAll(vm->garbageCollector, &AS_CLASS(superclass)->methods, &subclass->methods);
+            for (int i = 0; i < INIT_ARRAY_SIZE; i++) {
+                subclass->init[subclass->initCount + i] = AS_CLASS(superclass)->init[i];
+            }
+            Pop(vm);
             Pop(vm);
             break;
         }

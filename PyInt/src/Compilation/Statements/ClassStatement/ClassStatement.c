@@ -11,6 +11,7 @@
 #include "../Function/FunctionDefinition.h"
 #include "../../Compiler/ClassCompiler/ClassCompilerFunctions.h"
 #include "../../../Services/Table/TableFunctions.h"
+#include "../../ParseFunctions/ParseFunctions.h"
 
 void ClassStatement(Compiler* compiler, Services* services, Bytecode* bytecode) {
 	ConsumeToken(services, IDENTIFIER_TOKEN, ClassIdentifierError);
@@ -31,8 +32,8 @@ void ClassStatement(Compiler* compiler, Services* services, Bytecode* bytecode) 
             Error("A class cannot inherit from itself.");
         }
         superclassName = services->parser->current;
+        ParsePrecedence(compiler, services, bytecode, PREC_ASSIGNMENT);
         hasSuperclass = true;
-        GetNextToken(services);
         ConsumeToken(services, RIGHT_PAREN_TOKEN, RightParenError);
     }
 
@@ -50,6 +51,10 @@ void ClassStatement(Compiler* compiler, Services* services, Bytecode* bytecode) 
     WriteBytes(&newCompiler.compiler.function->bytecode, services, GET_LOCAL_OP, 0);
     Class* klass = EndClassCompiler(&newCompiler, services);
     WriteBytes(bytecode, services, CONSTANT_OP, StoreInBytecodeConstantsTable(bytecode, services, OBJ_VAL(klass)));
+    if (hasSuperclass) {
+        WriteByte(bytecode, services, INHERIT_OP);
+        WriteBytes(bytecode, services, CONSTANT_OP, StoreInBytecodeConstantsTable(bytecode, services, OBJ_VAL(klass)));
+    }
     
     if (compiler->enclosing != NULL) {
         WriteBytes(bytecode, services, SET_LOCAL_OP, classNameAddress);

@@ -1,0 +1,12 @@
+class superclass:
+	property = 79
+
+	def myFunc(self):
+		return 6 + 7
+
+class subclass(superclass):
+	def mySubFunc(self):
+		return superclass.myFunc()
+		
+instance = subclass()
+print(instance.property)

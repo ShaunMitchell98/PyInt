@@ -65,5 +65,24 @@ namespace PyIntFunctionalTests
 			Assert::AreEqual("13", output);
 			free(output);
 		}
+
+		TEST_METHOD(CanCallSuperMethodFromDerivedInstance) {
+			char* output = RunInterpreterFromFile("CanCallSuperMethodFromDerivedInstance");
+			Assert::AreEqual("13", output);
+			free(output);
+		}
+
+		TEST_METHOD(ClassInstanceCanAccessSuperClassPropertySetInInitialiser) {
+			char* output = RunInterpreterFromFile("ClassInstanceCanAccessSuperClassPropertySetInInitialiser");
+			Assert::AreEqual("7", output);
+			free(output);
+		}
+
+
+		TEST_METHOD(ClassInstanceCanAccessSuperClassProperty) {
+			char* output = RunInterpreterFromFile("ClassInstanceCanAccessSuperClassProperty");
+			Assert::AreEqual("79", output);
+			free(output);
+		}
 	};
 }

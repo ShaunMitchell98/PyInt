@@ -36,7 +36,11 @@ bool CallValue(VM* vm, Value callee, int argCount) {
             Class* klass = AS_CLASS(callee);
             vm->stackTop[-argCount-1] = OBJ_VAL(NewClassInstance(vm->garbageCollector, klass));
             Value initialiser;
-            RunClosure(vm, klass->init, 0);
+            int i = 0; 
+            while (klass->init[i] != NULL) {
+                RunClosure(vm, klass->init[i], 0);
+                i++;
+            }
             if (GetTableEntry(&klass->methods, vm->garbageCollector->initString, &initialiser)) {
                 return Call(vm, AS_CLOSURE(initialiser), argCount);
             }

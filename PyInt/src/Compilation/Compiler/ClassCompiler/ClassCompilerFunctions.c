@@ -22,6 +22,6 @@ Class* EndClassCompiler(ClassCompiler* currentCompiler, Services* services) {
     currentCompiler->compiler.function->hasReturnStatement = true;
     Function* function = EndCompiler((Compiler*)currentCompiler, services);
     Closure* closure = NewClosure(services->garbageCollector, function);
-    currentCompiler->klass->init = closure;
+    currentCompiler->klass->init[currentCompiler->klass->initCount++] = closure;
     return currentCompiler->klass;
 }
