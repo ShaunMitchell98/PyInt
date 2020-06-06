@@ -6,6 +6,10 @@
 #include "Repl.h"
 
 void Repl(Settings* settings) {
+    VM vm;
+    GarbageCollector garbageCollector;
+    InitVM(&vm, &garbageCollector, settings);
+    
     char line[1024];
     while (true) {
         printf("\n");
@@ -22,9 +26,10 @@ void Repl(Settings* settings) {
             return;
         }
         else if (strcmp(line, "quit()\n") == 0 || strcmp(line, "Ctrl-D") == 0) {
+            FreeVM(&vm);
             exit(0);
         }
 
-        Interpret(line, settings);
+        Interpret(&vm, line, settings);
     }
 }

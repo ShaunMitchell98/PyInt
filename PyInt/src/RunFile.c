@@ -39,7 +39,11 @@ char* ReadFile(const char* path) {
 void RunFile(Settings* settings) {
     char* sourceCode = ReadFile(settings->input.filePath);
 
-    InterpretResult result = Interpret(sourceCode, settings);
+    VM vm;
+    GarbageCollector garbageCollector;
+    InitVM(&vm, &garbageCollector, settings);
+    InterpretResult result = Interpret(&vm, sourceCode, settings);
+    FreeVM(&vm);
     free(sourceCode);
 
     if (result == INTERPRET_COMPILE_ERROR) exit(65);

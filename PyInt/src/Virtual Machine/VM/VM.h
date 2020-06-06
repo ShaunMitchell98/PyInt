@@ -36,7 +36,7 @@ typedef enum {
 void Push(VM* vm, Value value);
 Value Pop(VM* vm);
 void InitVM(VM* vm, GarbageCollector* garbageCollector, Settings* settings);
-InterpretResult Interpret(const char* sourceCode, Settings* settings);
+InterpretResult Interpret(VM* vm, const char* sourceCode, Settings* settings);
 void FreeVM(VM* vm);
 
 #endif

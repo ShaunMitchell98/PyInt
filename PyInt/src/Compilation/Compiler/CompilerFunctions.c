@@ -78,7 +78,7 @@ Function* Compile(RunMode runMode, Services* services) {
 
     GetNextToken(services);
     if (runMode == RUN_REPL) {
-        TestList(&compiler, services, &compiler.function->bytecode);
+        Statement(&compiler, services, &compiler.function->bytecode);
     }
     else {
         while (services->parser->current.type != EOF_TOKEN) {

@@ -10,9 +10,9 @@
 static Settings InitialiseTestSettings() {
 	Settings settings;
 	settings.output.location = LOCATION_STRING;
-	settings.bytecode.enabled = true;
-	settings.execution.enabled = true;
-	settings.garbage.enabled = true;
+	settings.bytecode.enabled = false;
+	settings.execution.enabled = false;
+	settings.garbage.enabled = false;
 	settings.bytecode.filePath = "C:\\Users\\User\\Documents\\Bytecode.txt";
 	settings.bytecode.location = LOCATION_FILE;
 	settings.execution.filePath = "C:\\Users\\User\\Documents\\Execution.txt";
@@ -26,8 +26,13 @@ static Settings InitialiseTestSettings() {
 }
 
 char* RunInterpreter(char* code) {
+
+	VM vm;
+	GarbageCollector garbageCollector;
 	Settings settings = InitialiseTestSettings();
-	Interpret(code, &settings);
+	InitVM(&vm, &garbageCollector, &settings);
+	Interpret(&vm, code, &settings);
+	FreeVM(&vm);
 	return settings.output.string;
 }
 

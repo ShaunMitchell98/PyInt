@@ -39,11 +39,7 @@ void FreeVM(VM* vm) {
     FreeTable(vm->garbageCollector, &vm->globals);
 }
 
-InterpretResult Interpret(const char* sourceCode, Settings* settings) {
-    VM vm;
-    GarbageCollector garbageCollector;
-    InitVM(&vm, &garbageCollector, settings);
-
+InterpretResult Interpret(VM* vm, const char* sourceCode, Settings* settings) {
     Scanner scanner;
     InitScanner(&scanner, sourceCode);
 
@@ -51,7 +47,7 @@ InterpretResult Interpret(const char* sourceCode, Settings* settings) {
     InitParser(&parser);
 
     Services services;
-    InitServices(&services, &scanner, &parser, &settings->bytecode, &settings->output, &garbageCollector, &vm.strings);
+    InitServices(&services, &scanner, &parser, &settings->bytecode, &settings->output, vm->garbageCollector, &vm->strings);
 
     Function* function = Compile(settings->runMode, &services);
     
@@ -59,13 +55,12 @@ InterpretResult Interpret(const char* sourceCode, Settings* settings) {
         return INTERPRET_COMPILE_ERROR;
     }
     
-    Push(&vm, OBJ_VAL(function));
-    Closure* closure = NewClosure(vm.garbageCollector, function);
-    Pop(&vm);
-    Push(&vm, OBJ_VAL(closure));
-    bool RuntimeError = CallValue(&vm, OBJ_VAL(closure), 0);
+    Push(vm, OBJ_VAL(function));
+    Closure* closure = NewClosure(vm->garbageCollector, function);
+    Pop(vm);
+    Push(vm, OBJ_VAL(closure));
+    bool RuntimeError = CallValue(vm, OBJ_VAL(closure), 0);
     
-    FreeVM(&vm);
     if (RuntimeError) {
         return INTERPRET_RUNTIME_ERROR;
     }
