@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PyInt", "PyInt\PyInt.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tests", "Tests\Tests.vcxproj", "{CA28CCAE-177F-460F-BD45-00984E98DCD5}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PyInt.Console", "PyInt.Console\PyInt.Console.vcxproj", "{A554B470-68F7-4383-958E-33D28E3C7191}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{CA28CCAE-177F-460F-BD45-00984E98DCD5}.Release|x64.Build.0 = Release|x64
 		{CA28CCAE-177F-460F-BD45-00984E98DCD5}.Release|x86.ActiveCfg = Release|Win32
 		{CA28CCAE-177F-460F-BD45-00984E98DCD5}.Release|x86.Build.0 = Release|Win32
+		{A554B470-68F7-4383-958E-33D28E3C7191}.Debug|x64.ActiveCfg = Debug|x64
+		{A554B470-68F7-4383-958E-33D28E3C7191}.Debug|x64.Build.0 = Debug|x64
+		{A554B470-68F7-4383-958E-33D28E3C7191}.Debug|x86.ActiveCfg = Debug|Win32
+		{A554B470-68F7-4383-958E-33D28E3C7191}.Debug|x86.Build.0 = Debug|Win32
+		{A554B470-68F7-4383-958E-33D28E3C7191}.Release|x64.ActiveCfg = Release|x64
+		{A554B470-68F7-4383-958E-33D28E3C7191}.Release|x64.Build.0 = Release|x64
+		{A554B470-68F7-4383-958E-33D28E3C7191}.Release|x86.ActiveCfg = Release|Win32
+		{A554B470-68F7-4383-958E-33D28E3C7191}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

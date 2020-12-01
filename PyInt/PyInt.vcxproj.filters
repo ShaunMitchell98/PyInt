@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="src\Services\Memory\Memory.c" />
-    <ClCompile Include="src\main.c" />
     <ClCompile Include="src\Repl.c" />
     <ClCompile Include="src\RunFile.c" />
     <ClCompile Include="src\Compilation\Statements\ForStatement\ForStatement.c" />

@@ -3,9 +3,9 @@
 #include <stdlib.h>
 
 #include "FunctionalTestUtilities.h"
-#include "../PyInt/src/Virtual Machine/Settings/Settings.h"
-#include "../PyInt/src/RunFile.h"
-#include "../PyInt/src/Virtual Machine/VM/VM.h"
+#include "../../PyInt/src/Virtual Machine/Settings/Settings.h"
+#include "../../PyInt/src/RunFile.h"
+#include "../../PyInt/src/Virtual Machine/VM/VM.h"
 
 static Settings InitialiseTestSettings() {
 	Settings settings;

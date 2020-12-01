@@ -74,7 +74,6 @@
     <ClCompile Include="src\Compilation\Variables\Upvalue\UpvalueResolver.c" />
     <ClCompile Include="src\Services\Disassembly\Disassembly.c" />
     <ClCompile Include="src\Services\Table\TableFunctions.c" />
-    <ClCompile Include="src\main.c" />
     <ClCompile Include="src\Services\Memory\Memory.c" />
     <ClCompile Include="src\Services\Scanner\ScannerFunctions.c" />
     <ClCompile Include="src\Types\Value\ValueFunctions.c" />
@@ -174,7 +173,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -252,6 +251,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
