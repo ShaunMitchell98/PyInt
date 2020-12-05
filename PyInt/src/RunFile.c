@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "RunFile.h"
-#include "Virtual Machine/VM/VM.h"
+#include "Virtual Machine/VM/VMFunctions.h"
 
 char* ReadFile(const char* path) {
     FILE file;
@@ -39,11 +39,7 @@ char* ReadFile(const char* path) {
 void RunFile(Settings* settings) {
     char* sourceCode = ReadFile(settings->input.filePath);
 
-    VM vm;
-    GarbageCollector garbageCollector;
-    InitVM(&vm, &garbageCollector, settings);
-    InterpretResult result = Interpret(&vm, sourceCode, settings);
-    FreeVM(&vm);
+    InterpretResult result = Interpret(sourceCode, settings);
     free(sourceCode);
 
     if (result == INTERPRET_COMPILE_ERROR) exit(65);

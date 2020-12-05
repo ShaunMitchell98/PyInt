@@ -26,17 +26,4 @@ typedef struct {
     GarbageCollector* garbageCollector;
 } VM;
 
-typedef enum {
-    INTERPRET_COMPILE_ERROR,
-    INTERPRET_RUNTIME_ERROR,
-    INTERPRET_OK
-} InterpretResult;
-
-
-void Push(VM* vm, Value value);
-Value Pop(VM* vm);
-void InitVM(VM* vm, GarbageCollector* garbageCollector, Settings* settings);
-InterpretResult Interpret(VM* vm, const char* sourceCode, Settings* settings);
-void FreeVM(VM* vm);
-
 #endif

@@ -12,7 +12,6 @@
     <ClCompile Include="src\Compilation\Statements\WhileStatement\WhileStatement.c" />
     <ClCompile Include="src\Compilation\Helpers\Helpers.c" />
     <ClCompile Include="src\Virtual Machine\NativeFunctions\NativeFunctions.c" />
-    <ClCompile Include="src\Virtual Machine\VM\VM.c" />
     <ClCompile Include="src\Compilation\Errors\Errors.c" />
     <ClCompile Include="src\Types\String\String.c" />
     <ClCompile Include="src\Types\Printing\Printing.c" />
@@ -61,6 +60,7 @@
     <ClCompile Include="src\Services\Scanner\ScannerError\ScannerError.c" />
     <ClCompile Include="src\Services\Scanner\IndentManager\IndentManagerFunctions.c" />
     <ClCompile Include="src\Virtual Machine\Services\RunClosure\RunClosure.c" />
+    <ClCompile Include="src\Virtual Machine\VM\VMFunctions.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Services\Bytecode\Bytecode.h" />
@@ -144,5 +144,6 @@
     <ClInclude Include="src\Services\Scanner\IndentManager\IndentManager.h" />
     <ClInclude Include="src\Services\Scanner\IndentManager\IndentManagerFunctions.h" />
     <ClInclude Include="src\Virtual Machine\Services\RunClosure\RunClosure.h" />
+    <ClInclude Include="src\Virtual Machine\VM\VMFunctions.h" />
   </ItemGroup>
 </Project>

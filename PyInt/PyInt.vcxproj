@@ -77,8 +77,8 @@
     <ClCompile Include="src\Services\Memory\Memory.c" />
     <ClCompile Include="src\Services\Scanner\ScannerFunctions.c" />
     <ClCompile Include="src\Types\Value\ValueFunctions.c" />
-    <ClCompile Include="src\Virtual Machine\VM\VM.c" />
     <ClCompile Include="src\Virtual Machine\Printing\VmPrinting.c" />
+    <ClCompile Include="src\Virtual Machine\VM\VMFunctions.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Compilation\Compiler\ClassCompiler\ClassCompiler.h" />
@@ -162,6 +162,7 @@
     <ClInclude Include="src\RunFile.h" />
     <ClInclude Include="src\Virtual Machine\Printing\VmPrinting.h" />
     <ClInclude Include="src\Compilation\Statements\IfStatement\IfStatement.h" />
+    <ClInclude Include="src\Virtual Machine\VM\VMFunctions.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -205,15 +206,19 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="PropertySheet.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="PropertySheet.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="PropertySheet.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="PropertySheet.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

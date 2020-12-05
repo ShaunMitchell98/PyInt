@@ -3,13 +3,10 @@
 #include <string.h>
 
 #include "Virtual Machine/VM/VM.h"
+#include "Virtual Machine/VM/VMFunctions.h"
 #include "Repl.h"
 
-void Repl(Settings* settings) {
-    VM vm;
-    GarbageCollector garbageCollector;
-    InitVM(&vm, &garbageCollector, settings);
-    
+void Repl(Settings* settings) {    
     char line[1024];
     while (true) {
         printf("\n");
@@ -26,10 +23,9 @@ void Repl(Settings* settings) {
             return;
         }
         else if (strcmp(line, "quit()\n") == 0 || strcmp(line, "Ctrl-D") == 0) {
-            FreeVM(&vm);
             exit(0);
         }
 
-        Interpret(&vm, line, settings);
+        Interpret(line, settings);
     }
 }

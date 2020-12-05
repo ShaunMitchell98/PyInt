@@ -1,4 +1,4 @@
-#include "VM.h"
+#include "VMFunctions.h"
 #include "../../Services/Scanner/ScannerFunctions.h"
 #include "../../Compilation/Compiler/CompilerFunctions.h"
 #include "../../Services/Memory/Memory.h"
@@ -11,7 +11,7 @@
 #include "../../Services/Table/TableFunctions.h"
 #include "../../Types/Closure/ClosureFunctions.h"
 
-void InitVM(VM* vm, GarbageCollector* garbageCollector, Settings* settings) {
+static void InitVM(VM* vm, Settings* settings) {
     ResetStack(vm);
     vm->arrayIndex = 0;
     vm->settings = *settings;
@@ -20,8 +20,8 @@ void InitVM(VM* vm, GarbageCollector* garbageCollector, Settings* settings) {
     InitTable(&vm->strings);
     InitTable(&vm->globals);
 
+    GarbageCollector* garbageCollector = (GarbageCollector*)malloc(sizeof(GarbageCollector));
     InitGarbageCollector(garbageCollector, &settings->garbage);
-    vm->garbageCollector = garbageCollector;
     garbageCollector->globalsTable = &vm->globals;
     garbageCollector->stringsTable = &vm->strings;
     garbageCollector->stack = vm->stack;
@@ -29,38 +29,43 @@ void InitVM(VM* vm, GarbageCollector* garbageCollector, Settings* settings) {
 
     garbageCollector->initString = NULL;
     garbageCollector->initString = CopyStringToTable(garbageCollector, &vm->strings, "__init__", 8);
+    vm->garbageCollector = garbageCollector;
     DefineStandardFunctions(vm);
 }
 
-void FreeVM(VM* vm) {
+static void FreeVM(VM* vm) {
     ResetStack(vm);
     FreeObjects(vm->garbageCollector);
     FreeTable(vm->garbageCollector, &vm->strings);
     FreeTable(vm->garbageCollector, &vm->globals);
+    free(vm->garbageCollector);
 }
 
-InterpretResult Interpret(VM* vm, const char* sourceCode, Settings* settings) {
+InterpretResult Interpret(const char* sourceCode, Settings* settings) {
     Scanner scanner;
+    VM vm;
+    InitVM(&vm, settings);
     InitScanner(&scanner, sourceCode);
 
     Parser parser;
     InitParser(&parser);
 
     Services services;
-    InitServices(&services, &scanner, &parser, &settings->bytecode, &settings->output, vm->garbageCollector, &vm->strings);
+    InitServices(&services, &scanner, &parser, &settings->bytecode, &settings->output, vm.garbageCollector, &vm.strings);
 
     Function* function = Compile(settings->runMode, &services);
-    
+
     if (function == NULL) {
         return INTERPRET_COMPILE_ERROR;
     }
-    
-    Push(vm, OBJ_VAL(function));
-    Closure* closure = NewClosure(vm->garbageCollector, function);
-    Pop(vm);
-    Push(vm, OBJ_VAL(closure));
-    bool RuntimeError = CallValue(vm, OBJ_VAL(closure), 0);
-    
+
+    Push(&vm, OBJ_VAL(function));
+    Closure* closure = NewClosure(vm.garbageCollector, function);
+    Pop(&vm);
+    Push(&vm, OBJ_VAL(closure));
+    bool RuntimeError = CallValue(&vm, OBJ_VAL(closure), 0);
+    FreeVM(&vm);
+
     if (RuntimeError) {
         return INTERPRET_RUNTIME_ERROR;
     }

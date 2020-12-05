@@ -11,6 +11,7 @@
 #include "../../Types/ClassInstance/ClassInstance.h"
 #include "../Services/Errors/RuntimeError.h"
 #include "../Services/Methods/Methods.h"
+#include "../VM/VMFunctions.h"
 
 static bool Equal(Value a, Value b) {
     if (IS_CHAR(a) && IS_CHAR(b)) {

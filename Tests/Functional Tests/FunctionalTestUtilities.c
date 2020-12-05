@@ -6,6 +6,7 @@
 #include "../../PyInt/src/Virtual Machine/Settings/Settings.h"
 #include "../../PyInt/src/RunFile.h"
 #include "../../PyInt/src/Virtual Machine/VM/VM.h"
+#include "../../PyInt/src/Virtual Machine/VM/VMFunctions.h"
 
 static Settings InitialiseTestSettings() {
 	Settings settings;
@@ -26,20 +27,15 @@ static Settings InitialiseTestSettings() {
 }
 
 char* RunInterpreter(char* code) {
-
-	VM vm;
-	GarbageCollector garbageCollector;
 	Settings settings = InitialiseTestSettings();
-	InitVM(&vm, &garbageCollector, &settings);
-	Interpret(&vm, code, &settings);
-	FreeVM(&vm);
+	Interpret(code, &settings);
 	return settings.output.string;
 }
 
 char* RunInterpreterFromFile(char* path) {
 	char* fullPath = (char*)malloc(150);
 	fullPath[0] = '\0';
-	strcat_s(fullPath, 150, "C:\\Users\\User\\source\\repos\\PyInt\\Tests\\Test Programs\\");
+	strcat_s(fullPath, 150, "C:\\Users\\Shaun Mitchell\\source\\repos\\PyInt\\Tests\\Test Programs\\");
 	strcat_s(fullPath, 150, path);
 	strcat_s(fullPath, 150, ".txt");
 	char* code = ReadFile(fullPath);

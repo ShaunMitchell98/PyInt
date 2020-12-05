@@ -10,6 +10,7 @@
 #include "../../Types/String/String.h"
 #include "../../Types/NativeFunction/NativeFunction.h"
 #include "../../Types/NativeFunction/NativeFunctionFunctions.h"
+#include "../Services/Stack/Stack.h"
 
 static void DefineNative(VM* vm, const char* name, NativeFn function) {
     Push(vm, OBJ_VAL(CopyStringToTable(vm->garbageCollector, &vm->strings, name, (int)strlen(name))));
