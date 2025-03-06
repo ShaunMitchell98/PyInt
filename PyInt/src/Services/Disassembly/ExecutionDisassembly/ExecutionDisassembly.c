@@ -1,3 +1,8 @@
+#include <string.h>
+
+// Include our platform compatibility header
+#include "platform_compat.h"
+
 #include "ExecutionDisassembly.h"
 #include "../../../Types/String/String.h"
 #include "../InstructionWriters/InstructionWriters.h"
@@ -5,12 +10,12 @@
 #include "../../../Types/Value/ValueFunctions.h"
 
 static int WriteLocalInstruction(IOSettings* settings, const char* instructionName, char* buffer, int bufferSize, uint8_t constant, Value local, int offset) {
-    strcat_s(buffer, bufferSize, instructionName);
-    strcat_s(buffer, bufferSize, "\t\t ");
+    PYINT_STRCAT(buffer, bufferSize, instructionName);
+    PYINT_STRCAT(buffer, bufferSize, "\t\t ");
     char text[10] = "\0";
-    _itoa_s(constant, text, 10, 10);
-    strcat_s(buffer, bufferSize, text);
-    strcat_s(buffer, bufferSize, "\t\t ");
+    PYINT_ITOA(constant, text, 10, 10);
+    PYINT_STRCAT(buffer, bufferSize, text);
+    PYINT_STRCAT(buffer, bufferSize, "\t\t ");
 
     WriteValue(settings, local, OPERAND_VALUE, buffer, bufferSize);
     return offset + 2;
@@ -165,20 +170,20 @@ static int WriteExecutionInstruction(IOSettings* settings, Value* stack, Bytecod
 }
 
 static int DisassembleExecutionInstruction(IOSettings* settings, Value* stack, Bytecode* bytecode, char* buffer, int bufferSize, int offset) {
-    strcat_s(buffer, bufferSize, "\t");
+    PYINT_STRCAT(buffer, bufferSize, "\t");
     WriteInstructionAddress(buffer, bufferSize, offset);
 
-    strcat_s(buffer, bufferSize, "\t\t");
+    PYINT_STRCAT(buffer, bufferSize, "\t\t");
     WriteLineNumber(bytecode, buffer, bufferSize, offset);
 
-    strcat_s(buffer, bufferSize, "\t  ");
+    PYINT_STRCAT(buffer, bufferSize, "\t  ");
     offset = WriteExecutionInstruction(settings, stack, bytecode, buffer, bufferSize, offset);
 
     return offset;
 }
 
 static void WriteExecutionLineDivider(char* buffer, int bufferSize) {
-    strcat_s(buffer, bufferSize, "\n-----------------------------------------------------------------------------------------------------------------------------\n");
+    PYINT_STRCAT(buffer, bufferSize, "\n-----------------------------------------------------------------------------------------------------------------------------\n");
 }
 
 void InitialiseExecutionDisassembly(IOSettings* executionSettings) {
@@ -186,9 +191,9 @@ void InitialiseExecutionDisassembly(IOSettings* executionSettings) {
     char* buffer = (char*)malloc(bufferSize);
     *buffer = '\0';
 
-    strcat_s(buffer, bufferSize, "Execution Readout \n");
+    PYINT_STRCAT(buffer, bufferSize, "Execution Readout \n");
     WriteExecutionLineDivider(buffer, bufferSize);
-    strcat_s(buffer, bufferSize, "Instruction Address   Line        Instruction         Operand address    Operand value           Stack");
+    PYINT_STRCAT(buffer, bufferSize, "Instruction Address   Line        Instruction         Operand address    Operand value           Stack");
     WriteExecutionLineDivider(buffer, bufferSize);
 
     HandleOutput(buffer, executionSettings);
@@ -204,21 +209,21 @@ void DisassembleExecution(Bytecode* bytecode, int offset, Value* stack, Value* s
     char stackWhitespace[10] = "";
 
     if (newOffset == offset + 1) {
-        strcpy_s(stackWhitespace, 10, "\t\t\t\t\t\t\t");
+        PYINT_STRCPY(stackWhitespace, 10, "\t\t\t\t\t\t\t");
     }
     else if (newOffset == offset + 2) {
-        strcpy_s(stackWhitespace, 10, "\t\t\t");
+        PYINT_STRCPY(stackWhitespace, 10, "\t\t\t");
     }
     else if (newOffset == offset + 3) {
-        strcpy_s(stackWhitespace, 10, "\t\t");
+        PYINT_STRCPY(stackWhitespace, 10, "\t\t");
     }
 
-    strcat_s(buffer, bufferSize, stackWhitespace);
+    PYINT_STRCAT(buffer, bufferSize, stackWhitespace);
 
     DisassembleStack(executionSettings, stack, stackTop, buffer, bufferSize);
 
     if (newOffset >= bytecode->count) {
-        strcat_s(buffer, bufferSize, "--------------------------------------------------------------------------------------------------------------------------- \n \n");
+        PYINT_STRCAT(buffer, bufferSize, "--------------------------------------------------------------------------------------------------------------------------- \n \n");
     }
 
     HandleOutput(buffer, executionSettings);

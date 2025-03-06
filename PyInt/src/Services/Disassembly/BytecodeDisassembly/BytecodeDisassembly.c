@@ -1,39 +1,44 @@
+#include <string.h>
+
+// Include our platform compatibility header
+#include "platform_compat.h"
+
 #include "BytecodeDisassembly.h"
 #include "../InstructionWriters/InstructionWriters.h"
 #include "../Disassembly.h"
 #include "../../../Compilation/Variables/Upvalue/UpvalueResolver.h"
 
 static int WriteLocalInstruction(const char* instructionName, char* buffer, int bufferSize, uint8_t constant, const char* localName, int localLength, int offset) {
-    strcat_s(buffer, bufferSize, instructionName);
-    strcat_s(buffer, bufferSize, "\t\t ");
+    PYINT_STRCAT(buffer, bufferSize, instructionName);
+    PYINT_STRCAT(buffer, bufferSize, "\t\t ");
     char text[10] = "\0";
-    _itoa_s(constant, text, 10, 10);
-    strcat_s(buffer, bufferSize, text);
-    strcat_s(buffer, bufferSize, "\t\t ");
+    PYINT_ITOA(constant, text, 10, 10);
+    PYINT_STRCAT(buffer, bufferSize, text);
+    PYINT_STRCAT(buffer, bufferSize, "\t\t ");
 
     char* name = (char*)malloc(localLength + 1);
     memcpy(name, localName, localLength);
     name[localLength] = '\0';
 
-    strcat_s(buffer, bufferSize, name);
+    PYINT_STRCAT(buffer, bufferSize, name);
     free(name);
     return offset + 2;
 }
 
-static WriteUpvalueInstruction(const char* instructionName, char* buffer, int bufferSize, uint8_t constant, CompilerUpvalue* upvalue, Compiler* compiler, int offset) {
-    strcat_s(buffer, bufferSize, instructionName);
-    strcat_s(buffer, bufferSize, "\t ");
+static int WriteUpvalueInstruction(const char* instructionName, char* buffer, int bufferSize, uint8_t constant, CompilerUpvalue* upvalue, Compiler* compiler, int offset) {
+    PYINT_STRCAT(buffer, bufferSize, instructionName);
+    PYINT_STRCAT(buffer, bufferSize, "\t ");
     char text[10] = "\0";
-    _itoa_s(constant, text, 10, 10);
-    strcat_s(buffer, bufferSize, text);
-    strcat_s(buffer, bufferSize, "\t\t ");
+    PYINT_ITOA(constant, text, 10, 10);
+    PYINT_STRCAT(buffer, bufferSize, text);
+    PYINT_STRCAT(buffer, bufferSize, "\t\t ");
 
     Token* token = GetUpvalueToken(compiler, upvalue->index, upvalue->isLocal);
     char* name = (char*)malloc(token->length + 1);
     memcpy(name, token->start, token->length);
     name[token->length] = '\0';
 
-    strcat_s(buffer, bufferSize, name);
+    PYINT_STRCAT(buffer, bufferSize, name);
     free(name);
     return offset + 2;
 }
@@ -180,20 +185,20 @@ static int WriteBytecodeInstruction(Compiler* compiler, IOSettings* settings, Lo
 }
 
 static int DisassembleBytecodeInstruction(Compiler* compiler, IOSettings* settings, Local* stack, CompilerUpvalue* upvalues, Bytecode* bytecode, char* buffer, int bufferSize, int offset) {
-    strcat_s(buffer, bufferSize, "\t");
+    PYINT_STRCAT(buffer, bufferSize, "\t");
     WriteInstructionAddress(buffer, bufferSize, offset);
 
-    strcat_s(buffer, bufferSize, "\t\t");
+    PYINT_STRCAT(buffer, bufferSize, "\t\t");
     WriteLineNumber(bytecode, buffer, bufferSize, offset);
 
-    strcat_s(buffer, bufferSize, "\t  ");
+    PYINT_STRCAT(buffer, bufferSize, "\t  ");
     offset = WriteBytecodeInstruction(compiler, settings, stack, upvalues, bytecode, buffer, bufferSize, offset);
 
     return offset;
 }
 
 static void WriteBytecodeLineDivider(char* buffer, int bufferSize) {
-    strcat_s(buffer, bufferSize, "\n------------------------------------------------------------------------------------------\n");
+    PYINT_STRCAT(buffer, bufferSize, "\n------------------------------------------------------------------------------------------\n");
 }
 
 void DisassembleBytecode(Compiler* compiler, Local* stack, CompilerUpvalue* upvalues, Bytecode* bytecode, const char* functionName, IOSettings* bytecodeSettings) {
@@ -201,19 +206,19 @@ void DisassembleBytecode(Compiler* compiler, Local* stack, CompilerUpvalue* upva
     char* buffer = (char*)malloc(bufferSize);
     *buffer = '\0';
 
-    strcat_s(buffer, bufferSize, "Bytecode Readout - ");
-    strcat_s(buffer, bufferSize, functionName);
-    strcat_s(buffer, bufferSize, "\n");
+    PYINT_STRCAT(buffer, bufferSize, "Bytecode Readout - ");
+    PYINT_STRCAT(buffer, bufferSize, functionName);
+    PYINT_STRCAT(buffer, bufferSize, "\n");
     WriteBytecodeLineDivider(buffer, bufferSize);
-    strcat_s(buffer, bufferSize, "Instruction Address   Line        Instruction         Operand address    Operand value");
+    PYINT_STRCAT(buffer, bufferSize, "Instruction Address   Line        Instruction         Operand address    Operand value");
     WriteBytecodeLineDivider(buffer, bufferSize);
 
     for (int offset = 0; offset < bytecode->count;) {
         offset = DisassembleBytecodeInstruction(compiler, bytecodeSettings, stack, upvalues, bytecode, buffer, bufferSize, offset);
-        strcat_s(buffer, bufferSize, "\n");
+        PYINT_STRCAT(buffer, bufferSize, "\n");
     }
 
     WriteBytecodeLineDivider(buffer, bufferSize);
-    strcat_s(buffer, bufferSize, "\n");
+    PYINT_STRCAT(buffer, bufferSize, "\n");
     HandleOutput(buffer, bytecodeSettings);
 }

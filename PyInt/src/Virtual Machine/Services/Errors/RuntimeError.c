@@ -6,7 +6,7 @@
 #include "../../CallFrame/CallFrame.h"
 #include "../../../Types/Function/Function.h"
 
-void RuntimeError(VM* vm, const char* format) {
+void RuntimeError(VM* vm, const char* format, ...) {
     va_list args;
     va_start(args, format);
     vfprintf(stderr, format, args);

@@ -1,5 +1,5 @@
 #ifndef PyInt_ClassInstance_h
-#define PyInt_ClasInstance_h
+#define PyInt_ClassInstance_h
 
 #include "../Object/Object.h"
 #include "../Value/Value.h"

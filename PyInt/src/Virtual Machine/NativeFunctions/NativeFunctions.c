@@ -1,5 +1,9 @@
 #include <string.h>
 #include <time.h>
+#include <stdio.h>
+
+// Include our platform compatibility header
+#include "platform_compat.h"
 
 #include "NativeFunctions.h"
 #include "../VM/VM.h"
@@ -40,15 +44,15 @@ static Value Print(IOSettings* settings, int argCount, Value* args) {
 
 static Value Len(IOSettings* settings, int argCount, Value* args) {
     if (argCount != 1) {
-        RuntimeError(settings, "len() takes exactly one argument (%d given).", argCount);
+        fprintf(stderr, "len() takes exactly one argument (%d given).\n", argCount);
         return NONE_VAL;
     }
     
     if (!IS_OBJ(args[0])) {
-        RuntimeError(settings, "Object of type '%s' has no len().", 
-            IS_NUMBER(args[0]) ? "number" : 
-            IS_BOOLEAN(args[0]) ? "boolean" : 
-            IS_CHAR(args[0]) ? "char" : "none");
+        const char* typeStr = IS_NUMBER(args[0]) ? "number" : 
+                             IS_BOOLEAN(args[0]) ? "boolean" : 
+                             IS_CHAR(args[0]) ? "char" : "none";
+        fprintf(stderr, "Object of type '%s' has no len().\n", typeStr);
         return NONE_VAL;
     }
     
@@ -57,13 +61,13 @@ static Value Len(IOSettings* settings, int argCount, Value* args) {
         return NUMBER_VAL(string->length);
     }
     
-    RuntimeError(settings, "Object of type '%s' has no len().", 
-        OBJ_TYPE(args[0]) == FUNCTION ? "function" :
-        OBJ_TYPE(args[0]) == CLOSURE ? "closure" :
-        OBJ_TYPE(args[0]) == CLASS ? "class" :
-        OBJ_TYPE(args[0]) == NATIVE ? "native function" :
-        OBJ_TYPE(args[0]) == CLASS_INSTANCE ? "instance" :
-        OBJ_TYPE(args[0]) == BOUND_METHOD ? "method" : "object");
+    const char* typeStr = OBJ_TYPE(args[0]) == FUNCTION ? "function" :
+                         OBJ_TYPE(args[0]) == CLOSURE ? "closure" :
+                         OBJ_TYPE(args[0]) == CLASS ? "class" :
+                         OBJ_TYPE(args[0]) == NATIVE ? "native function" :
+                         OBJ_TYPE(args[0]) == CLASS_INSTANCE ? "instance" :
+                         OBJ_TYPE(args[0]) == BOUND_METHOD ? "method" : "object";
+    fprintf(stderr, "Object of type '%s' has no len().\n", typeStr);
     
     return NONE_VAL;
 }

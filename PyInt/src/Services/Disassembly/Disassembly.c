@@ -1,18 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Include our platform compatibility header
+#include "platform_compat.h"
+
 #include "Disassembly.h"
 
 static void DisassembleToTerminal(char* buffer) {
-    printf(buffer);
+    printf("%s", buffer);
 }
 
 static void DisassembleToFile(char* buffer, const char* filePath) {
     FILE file;
     FILE* fp = &file;
-    errno_t err = fopen_s(&fp, filePath, "a");
-
+    
+    #ifdef WIN32
+    errno_t err = PYINT_FOPEN(fp, filePath, "a");
     if (err != 0) {
+    #else
+    PYINT_FOPEN(fp, filePath, "a");
+    if (fp == NULL) {
+    #endif
         fprintf(stderr, "Can't open bytecode disassembly output file: %s", filePath);
         return;
     }

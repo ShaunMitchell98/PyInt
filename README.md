@@ -17,3 +17,28 @@ As well as writing commands in the terminal, you can run a file using the arguem
 
 ![File Input](https://github.com/ShaunMitchell98/PyInt/blob/master/Images/Text%20File%20Input(1).png)
 ![](https://github.com/ShaunMitchell98/PyInt/blob/master/Images/Text%20File%20Input(2).png)
+
+## Building on macOS/Linux
+
+PyInt can now be built on macOS and Linux using CMake:
+
+1. Make sure you have CMake installed:
+   ```
+   # macOS
+   brew install cmake
+   
+   # Linux
+   sudo apt-get install cmake
+   ```
+
+2. Run the build script:
+   ```
+   ./build.sh
+   ```
+
+3. Run the interpreter:
+   ```
+   ./build/PyInt.Console/pyint
+   ```
+
+**Note:** For a full build with all features working on macOS/Linux, the Windows-specific functions in the source code need to be replaced with cross-platform alternatives. The compatibility layer in the `compat` directory provides macros to help with this.

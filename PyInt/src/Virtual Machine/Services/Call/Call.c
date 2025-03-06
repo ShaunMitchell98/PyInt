@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "Call.h"
 #include "../../../Types/NativeFunction/NativeFunction.h"
 #include "../Errors/RuntimeError.h"
@@ -7,12 +9,12 @@
 #include "../../../Types/ClassInstance/ClassInstanceFunctions.h"
 #include "../../../Services/Table/TableFunctions.h"
 #include "../RunClosure/RunClosure.h"
-#
 
 bool Call(VM* vm, Closure* closure, int argCount) {
     if (argCount != closure->function->arity) {
-        RuntimeError(vm, "Expected %d arguments but got %d.",
+        fprintf(stderr, "Expected %d arguments but got %d.\n", 
             closure->function->arity, argCount);
+        RuntimeError(vm, "Argument count mismatch");
         return false;
     }
 
@@ -45,7 +47,8 @@ bool CallValue(VM* vm, Value callee, int argCount) {
                 return Call(vm, AS_CLOSURE(initialiser), argCount);
             }
             else if (argCount != 0) {
-                RuntimeError(vm, "Expected 0 arguements but got %d.", argCount);
+                fprintf(stderr, "Expected 0 arguments but got %d.\n", argCount);
+                RuntimeError(vm, "Arguments not expected for class");
                 return true;
             }
             return false;

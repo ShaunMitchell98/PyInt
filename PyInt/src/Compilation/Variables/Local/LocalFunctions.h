@@ -1,5 +1,5 @@
 #ifndef PyInt_LocalFunctions_h
-#define PyInt_Local_Functions_h
+#define PyInt_LocalFunctions_h
 
 #include "Local.h"
 #include "../../../Services/Bytecode/Bytecode.h"
