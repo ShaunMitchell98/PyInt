@@ -67,7 +67,11 @@ bool PrintValueToFile(IOSettings* settings, Value a) {
     else {
         return false;
     }
-    WriteToFile(text, settings->filePath);
+    
+    // Use the first file path for output if available
+    if (settings->filePathCount > 0) {
+        WriteToFile(text, settings->filePaths[0]);
+    }
     return true;
 }
 

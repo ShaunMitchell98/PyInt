@@ -30,8 +30,9 @@ static void DisassembleToFile(char* buffer, const char* filePath) {
 }
 
 void HandleOutput(char* buffer, IOSettings* settings) {
-    if (settings->location == LOCATION_FILE) {
-        DisassembleToFile(buffer, settings->filePath);
+    if (settings->location == LOCATION_FILE && settings->filePathCount > 0) {
+        // Use the first file path for output
+        DisassembleToFile(buffer, settings->filePaths[0]);
         free(buffer);
     }
     else if (settings->location == LOCATION_TERMINAL) {

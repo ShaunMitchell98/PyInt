@@ -19,12 +19,22 @@ static char* AllocateBuffer() {
 }
 
 void WriteCollectionStart(IOSettings* outputSettings) {
+    // Only output if the garbage collection output is enabled
+    if (!outputSettings->enabled) {
+        return;
+    }
+    
     char* buffer = AllocateBuffer();
     PYINT_STRCAT(buffer, BUFFER_SIZE, "Begin Garbage Collection\n");
     HandleOutput(buffer, outputSettings);
 }
 
 void WriteObjectAllocation(IOSettings* outputSettings, Object* object, int size) {
+    // Only output if the garbage collection output is enabled
+    if (!outputSettings->enabled) {
+        return;
+    }
+    
     char* buffer = AllocateBuffer();
     PYINT_STRCAT(buffer, BUFFER_SIZE, "Allocate ");
 
@@ -37,6 +47,11 @@ void WriteObjectAllocation(IOSettings* outputSettings, Object* object, int size)
 }
 
 void WriteObjectMarking(IOSettings* outputSettings, Object* object) {
+    // Only output if the garbage collection output is enabled
+    if (!outputSettings->enabled) {
+        return;
+    }
+    
     char* buffer = AllocateBuffer();
     PYINT_STRCAT(buffer, BUFFER_SIZE, "Mark ");
     PrintObject(outputSettings, OBJ_VAL(object), PROGRAM_OUTPUT, buffer, BUFFER_SIZE);
@@ -45,6 +60,11 @@ void WriteObjectMarking(IOSettings* outputSettings, Object* object) {
 }
 
 void WriteObjectBlackened(IOSettings* outputSettings, Object* object) {
+    // Only output if the garbage collection output is enabled
+    if (!outputSettings->enabled) {
+        return;
+    }
+    
     char* buffer = AllocateBuffer();
     PYINT_STRCAT(buffer, BUFFER_SIZE, "Blacken ");
     WriteValue(outputSettings, OBJ_VAL(object), PROGRAM_OUTPUT, buffer, BUFFER_SIZE);
@@ -53,6 +73,11 @@ void WriteObjectBlackened(IOSettings* outputSettings, Object* object) {
 }
 
 void WriteObjectDeallocation(IOSettings* outputSettings, Object* object) {
+    // Only output if the garbage collection output is enabled
+    if (!outputSettings->enabled) {
+        return;
+    }
+    
     char* buffer = AllocateBuffer();
     PYINT_STRCAT(buffer, BUFFER_SIZE, "Free ");
     PrintObject(outputSettings, OBJ_VAL(object), GARBAGE_OUTPUT, buffer, BUFFER_SIZE);
@@ -61,12 +86,22 @@ void WriteObjectDeallocation(IOSettings* outputSettings, Object* object) {
 }
 
 void WriteCollectionEnd(IOSettings* outputSettings) {
+    // Only output if the garbage collection output is enabled
+    if (!outputSettings->enabled) {
+        return;
+    }
+    
     char* buffer = AllocateBuffer();
     PYINT_STRCAT(buffer, BUFFER_SIZE, "End Garbage Collection\n");
     HandleOutput(buffer, outputSettings);
 }
 
 void WriteCollectionAmount(IOSettings* outputSettings, size_t bytesBefore, size_t bytesAfter) {
+    // Only output if the garbage collection output is enabled
+    if (!outputSettings->enabled) {
+        return;
+    }
+    
     char* buffer = AllocateBuffer();
     PYINT_STRCAT(buffer, BUFFER_SIZE, "Collected ");
 
