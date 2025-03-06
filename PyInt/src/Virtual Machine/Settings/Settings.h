@@ -23,6 +23,9 @@
 #define STRING_INPUT "-si"
 #define STRING_GARBAGE "-sg"
 
+// Maximum number of input files
+#define MAX_INPUT_FILES 100
+
 typedef enum {
     LOCATION_TERMINAL,
     LOCATION_FILE,
@@ -31,7 +34,8 @@ typedef enum {
 
 typedef struct {
     Location location;
-    const char* filePath;
+    const char** filePaths;  // Array of file paths
+    int filePathCount;       // Number of file paths
     char* string;
     bool enabled;
 } IOSettings;

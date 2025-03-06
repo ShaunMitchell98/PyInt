@@ -8,12 +8,12 @@ void Error(const char* message) {
 }
 
 void SyntaxError(IOSettings* outputSettings, Token* token) {
-
-    if (outputSettings->location == LOCATION_FILE) {
-        fprintf(stderr, "File \\%s\\, line %d \n \t %s \n \t ^ \n SyntaxError: invalid syntax \n", outputSettings->filePath, token->line, token->start);
+    if (outputSettings->location == LOCATION_FILE && outputSettings->filePathCount > 0) {
+        // Use the first file path for error reporting
+        fprintf(stderr, "File \\%s\\, line %d \n \t %s \n \t ^ \n SyntaxError: invalid syntax \n", 
+            outputSettings->filePaths[0], token->line, token->start);
     }
     else {
         fprintf(stderr, "%s \n \t ^ \n SyntaxError: invalid syntax \n", token->start);
-
     }
 }
