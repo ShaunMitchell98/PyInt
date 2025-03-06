@@ -1,5 +1,8 @@
 #include <string.h>
 
+// Include our platform compatibility header
+#include "platform_compat.h"
+
 #include "Printing.h"
 #include "../Object/Object.h"
 #include "../Function/FunctionFunctions.h"
@@ -26,31 +29,31 @@ void PrintObject(IOSettings* settings, Value value, PrintType printType, char* b
         PrintNativeFunction(((NativeFunction*)AS_OBJ(value))->name, buffer, bufferSize);
         break;
     case CLASS:
-        strcat_s(buffer, bufferSize, AS_CLASS(value)->name->chars);
+        PYINT_STRCAT(buffer, bufferSize, AS_CLASS(value)->name->chars);
         break;
     case CLASS_INSTANCE: {
-        strcat_s(buffer, bufferSize, AS_CLASS_INSTANCE(value)->klass->name->chars);
-        strcat_s(buffer, bufferSize, " instance");
+        PYINT_STRCAT(buffer, bufferSize, AS_CLASS_INSTANCE(value)->klass->name->chars);
+        PYINT_STRCAT(buffer, bufferSize, " instance");
         break;
     }
     case STRING: {
         if (printType == OPERAND_VALUE) {
-            strcat_s(buffer, bufferSize, AS_CSTRING(value));
+            PYINT_STRCAT(buffer, bufferSize, AS_CSTRING(value));
         }
         else if (printType == STACK) {
-            strcat_s(buffer, bufferSize, AS_CSTRING(value));
+            PYINT_STRCAT(buffer, bufferSize, AS_CSTRING(value));
         }
         else if (printType == PROGRAM_OUTPUT) {
-            strcat_s(buffer, bufferSize, AS_CSTRING(value));
-            strcat_s(buffer, bufferSize, "\n");
+            PYINT_STRCAT(buffer, bufferSize, AS_CSTRING(value));
+            PYINT_STRCAT(buffer, bufferSize, "\n");
         }
         else if (printType == TEST_OUTPUT) {
-            strcat_s(settings->string, 100, AS_CSTRING(value));
+            PYINT_STRCAT(settings->string, 100, AS_CSTRING(value));
         }
         break;
     }
     case UPVALUE:
-        strcat_s(buffer, bufferSize, "upvalue");
+        PYINT_STRCAT(buffer, bufferSize, "upvalue");
         break;
     }
 }

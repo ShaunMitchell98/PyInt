@@ -1,5 +1,5 @@
 #ifndef PyInt_CompilerFunctions_h
-#define PyInt_CompilerFunction_h
+#define PyInt_CompilerFunctions_h
 
 #include "Compiler.h"
 #include "../../Headers/RunMode.h"

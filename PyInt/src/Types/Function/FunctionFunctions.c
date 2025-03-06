@@ -1,5 +1,8 @@
 #include <string.h>
 
+// Include our platform compatibility header
+#include "platform_compat.h"
+
 #include "FunctionFunctions.h"
 #include "../Object/ObjectFunctions.h"
 #include "../../Services/Memory/Memory.h"
@@ -19,12 +22,12 @@ Function* NewFunction(GarbageCollector* garbageCollector, FunctionType type) {
 void PrintFunction(Function* function, char* buffer, int bufferSize, PrintType printType) {
     switch (printType) {
         case GARBAGE_OUTPUT: 
-            strcat_s(buffer, bufferSize, "Function");
+            PYINT_STRCAT(buffer, bufferSize, "Function");
             break;
         default: {
-            strcat_s(buffer, bufferSize, "<fn ");
-            strcat_s(buffer, bufferSize, function->name->chars);
-            strcat_s(buffer, bufferSize, ">");
+            PYINT_STRCAT(buffer, bufferSize, "<fn ");
+            PYINT_STRCAT(buffer, bufferSize, function->name->chars);
+            PYINT_STRCAT(buffer, bufferSize, ">");
             break;
         }
     }

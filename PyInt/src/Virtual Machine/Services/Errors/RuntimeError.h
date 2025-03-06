@@ -3,6 +3,6 @@
 
 #include "../../VM/VM.h"
 
-void RuntimeError(VM* vm, const char* format);
+void RuntimeError(VM* vm, const char* format, ...);
 
 #endif

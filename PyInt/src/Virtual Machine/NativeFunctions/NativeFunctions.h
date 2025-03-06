@@ -1,4 +1,4 @@
-#ifndef PyInt_Nativeunctions_h
+#ifndef PyInt_NativeFunctions_h
 #define PyInt_NativeFunctions_h
 
 #include "../VM/VM.h"
